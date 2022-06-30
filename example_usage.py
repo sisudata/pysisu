@@ -2,7 +2,7 @@ import pysisu
 import os
 
 API_KEY = os.environ.get('SISU_API_KEY')
-url = 'https://dev.sisu.ai'
+url = 'https://vip.sisudata.com'
 
 table = pysisu.get_table(
     url, 7340, API_KEY, {"top_drivers": "False", "limit": 50}, True)
