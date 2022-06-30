@@ -34,3 +34,11 @@ Then to generate the proto api run the following command.
 ```
 protoc -I . --python_betterproto_out=. api.proto
 ```
+
+# Local development
+
+```
+python -m pip install -e .
+export SISU_API_KEY=<key>
+python example_usage.py
+```
