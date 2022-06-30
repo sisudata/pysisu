@@ -40,5 +40,19 @@ protoc -I . --python_betterproto_out=. api.proto
 ```
 python -m pip install -e .
 export SISU_API_KEY=<key>
-python example_usage.py
+```
+
+# Example
+
+```python
+import pysisu
+import os
+
+API_KEY = os.environ.get('SISU_API_KEY')
+url = 'https://vip.sisudata.com'
+
+table = pysisu.get_table(url, 7340, API_KEY, {"top_drivers": "False", "limit": 50}, True)
+print(','.join([x.column_name for x in table.header]))
+for row in table.rows:
+    print(row)
 ```
