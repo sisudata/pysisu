@@ -1,3 +1,4 @@
 .vscode/
-sisu_api.egg-info/
+pysisu.egg-info/
 *.pyc
+build/

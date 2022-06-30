@@ -1,4 +1,4 @@
-# sisu_api
+# pysisu
 
 This repo contains a python package called `sisu_api` that will querying and convert all results into a Table format.
 

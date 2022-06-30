@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple, Type
 import requests
 import urllib
-from sisu_api.sisu.v1.api import Factor, FactorValue, KeyDriverAnalysisResultGroupComparison, KeyDriverAnalysisResultSubgroup, KeyDriverAnalysisResultTimeComparison, LatestAnalysisResultResponse
+from pysisu.sisu.v1.api import Factor, FactorValue, KeyDriverAnalysisResultGroupComparison, KeyDriverAnalysisResultSubgroup, KeyDriverAnalysisResultTimeComparison, LatestAnalysisResultResponse
 import datetime
 
 
