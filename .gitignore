@@ -1,0 +1,4 @@
+.vscode/
+pysisu.egg-info/
+*.pyc
+build/
