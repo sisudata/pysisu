@@ -120,7 +120,7 @@ class FactorDimVal:
 def get_factor(dimension: str, factor: Factor) -> FactorDimVal:
     if factor.bin:
         return FactorDimVal(dimension, f'{factor.bin.lower_bound_percentile} to {factor.bin.upper_bound_percentile}')
-    elif factor.value:
+    elif factor.value is not None:
         return FactorDimVal(dimension, get_factor_value(factor))
     elif factor.keyword:
         return FactorDimVal(dimension, factor.keyword.keyword)
@@ -245,12 +245,15 @@ def pathjoin(*args) -> str:
 
 def _get_table(url: str, static_analysis_id: int, auth_key: str, params: dict = {}) -> Table:
     path = ['api/v1/analyses/', str(static_analysis_id), 'runs/latest']
-    url_path = build_url(url,  pathjoin(*path), params)
 
+    url_path = build_url(url,  pathjoin(*path), params)
+    
     headers = headers = {"Authorization": auth_key}
 
     r = requests.get(url_path, headers=headers)
-    assert(r.status_code == 200)
+    if(r.status_code != 200):
+        raise Exception("Result did not complete", r)
+    
     latest_analysis_response: LatestAnalysisResultResponse = LatestAnalysisResultResponse().from_dict(r.json())
     key_driver_analysis_result = latest_analysis_response.analysis_result.key_driver_analysis_result
 
@@ -265,8 +268,8 @@ def _get_table(url: str, static_analysis_id: int, auth_key: str, params: dict = 
         raise ValueError("Invalid analysis_result")
 
 
-def get_table(url: str, static_analysis_id: int, auth_key: str, params: dict = {}, auto_paginate: bool = False) -> Table:
-    table = _get_table(url, static_analysis_id, auth_key, params)
+def get_results(analysis_id: int, auth_key: str, params: dict = {}, auto_paginate: bool = True, url: str = 'https://vip.sisudata.com') -> Table:
+    table = _get_table(url, analysis_id, auth_key, params)
     if auto_paginate:
         if not table.rows:
             return table
@@ -276,8 +279,7 @@ def get_table(url: str, static_analysis_id: int, auth_key: str, params: dict = {
             return table
         params['starting_after'] = table.rows[-1].subgroup_id
 
-        rest_of_table = get_table(
-            url, static_analysis_id, auth_key, params, auto_paginate)
+        rest_of_table = get_results(analysis_id, auth_key, params, auto_paginate, url)
 
         table.rows = table.rows + rest_of_table.rows
         return table

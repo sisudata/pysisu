@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 
-from .query_wrapper import get_table
+from .query_wrapper import get_results
