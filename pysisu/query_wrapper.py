@@ -120,7 +120,7 @@ class FactorDimVal:
 def get_factor(dimension: str, factor: Factor) -> FactorDimVal:
     if factor.bin:
         return FactorDimVal(dimension, f'{factor.bin.lower_bound_percentile} to {factor.bin.upper_bound_percentile}')
-    elif factor.value is not None:
+    elif bool(factor.value):
         return FactorDimVal(dimension, get_factor_value(factor))
     elif factor.keyword:
         return FactorDimVal(dimension, factor.keyword.keyword)
