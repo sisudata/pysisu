@@ -16,20 +16,16 @@
 
 from io import UnsupportedOperation
 from typing import Union
-from urllib import request
-from pysisu.formats import LatestAnalysisFormats
+import requests
+from pysisu.formats import LatestAnalysisResultsFormats, Table
+from pysisu.latest_analysis_result import to_table
 from pysisu.query_helpers import build_url, pathjoin
 from pysisu.sisu.v1.api import LatestAnalysisResultResponse
 
 
-class Table:
-    # TODO move over from query_wrapper
-    pass
-
-
 class PySisu:
     '''
-    Allows the ability to fetch/send commands to the sisu_api
+    Allows the ability to fetch/send commands to the sisu_api.
     '''
 
     _url: str
@@ -47,12 +43,33 @@ class PySisu:
         self._api_key = api_key
         return self
 
+    def auto_paginate(
+        self,
+        analysis_id: int,
+        params: dict,
+        result: LatestAnalysisResultResponse,
+    ) -> None:
+        kda_result = result.analysis_result.key_driver_analysis_result
+        subgroups = kda_result.subgroups
+        if subgroups:
+            return result
+        if params.get('limit'):
+            params['limit'] -= len(subgroups)
+        if params.get('limit', 0) < 0:
+            return result
+
+        rest_of_table = self.get_results(
+            analysis_id, params, True, format=LatestAnalysisResultsFormats.PROTO)
+        kda_result.subgroups = subgroups + \
+            rest_of_table.analysis_result.key_driver_analysis_result.subgroups
+        return result
+
     def get_results(
         self,
         analysis_id: int,
         params: dict = {},
         auto_paginate: bool = True,
-        format: LatestAnalysisFormats = LatestAnalysisFormats.CSV,
+        format: LatestAnalysisResultsFormats = LatestAnalysisResultsFormats.TABLE,
     ) -> Union[LatestAnalysisResultResponse, Table]:
 
         if auto_paginate:
@@ -63,8 +80,15 @@ class PySisu:
 
         headers = headers = {"Authorization": self._api_key}
 
-        r = request.get(url_path, headers=headers)
+        r = requests.get(url_path, headers=headers)
         if(r.status_code != 200):
             raise Exception("Result did not complete", r)
 
-        return LatestAnalysisResultResponse().from_dict(r.json())
+        result = LatestAnalysisResultResponse().from_dict(r.json())
+        if auto_paginate:
+            result = self.auto_paginate(analysis_id, params, result)
+
+        if format == LatestAnalysisResultsFormats.TABLE:
+            return to_table(result)
+        else:
+            return result

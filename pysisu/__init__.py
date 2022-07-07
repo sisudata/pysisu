@@ -14,5 +14,5 @@
 # limitations under the License.
 #
 
-from .query_wrapper import get_results
-from .pysisu import PySisu
+from .pysisu_class import PySisu
+import formats
