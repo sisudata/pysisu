@@ -17,6 +17,7 @@
 from io import UnsupportedOperation
 from typing import Union
 from urllib import request
+from pysisu.formats import LatestAnalysisFormats
 from pysisu.query_helpers import build_url, pathjoin
 from pysisu.sisu.v1.api import LatestAnalysisResultResponse
 
@@ -50,7 +51,8 @@ class PySisu:
         self,
         analysis_id: int,
         params: dict = {},
-        auto_paginate: bool = True
+        auto_paginate: bool = True,
+        format: LatestAnalysisFormats = LatestAnalysisFormats.CSV,
     ) -> Union[LatestAnalysisResultResponse, Table]:
 
         if auto_paginate:
