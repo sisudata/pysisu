@@ -22,6 +22,10 @@ from pysisu.latest_analysis_result import to_table
 from pysisu.query_helpers import build_url, pathjoin
 from pysisu.sisu.v1.api import LatestAnalysisResultResponse
 
+RECURSION_MAX = 1000
+RESPONSE_MAX = 100
+MAX_LIMIT = RECURSION_MAX * RESPONSE_MAX
+
 
 class PySisu:
     '''
@@ -49,31 +53,30 @@ class PySisu:
         params: dict,
         result: LatestAnalysisResultResponse,
     ) -> None:
+        if params.get('limit', MAX_LIMIT) >= MAX_LIMIT:
+            params['limit'] = MAX_LIMIT
+
         kda_result = result.analysis_result.key_driver_analysis_result
         subgroups = kda_result.subgroups
-        if subgroups:
-            return result
         if params.get('limit'):
             params['limit'] -= len(subgroups)
-        if params.get('limit', 0) < 0:
+
+        if params.get('limit', 1) <= 0 or len(subgroups) == 0:
             return result
 
-        rest_of_table = self.get_results(
+        next_page = self.get_results(
             analysis_id, params, True, format=LatestAnalysisResultsFormats.PROTO)
         kda_result.subgroups = subgroups + \
-            rest_of_table.analysis_result.key_driver_analysis_result.subgroups
+            next_page.analysis_result.key_driver_analysis_result.subgroups
         return result
 
     def get_results(
         self,
         analysis_id: int,
-        params: dict = {},
+        params: dict = {"top_drivers": "True"},
         auto_paginate: bool = True,
         format: LatestAnalysisResultsFormats = LatestAnalysisResultsFormats.TABLE,
     ) -> Union[LatestAnalysisResultResponse, Table]:
-
-        if auto_paginate:
-            raise UnsupportedOperation("This will be supported soon")
         path = ['api/v1/analyses/', str(analysis_id), 'runs/latest']
 
         url_path = build_url(self._url,  pathjoin(*path), params)
