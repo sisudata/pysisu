@@ -53,6 +53,11 @@ class PySisu:
         params: dict,
         result: LatestAnalysisResultResponse,
     ) -> None:
+        '''
+        Appends the rest of the subgroups to `result`. 
+
+        MUTATES: result
+        '''
         if params.get('limit', MAX_LIMIT) >= MAX_LIMIT:
             params['limit'] = MAX_LIMIT
 
