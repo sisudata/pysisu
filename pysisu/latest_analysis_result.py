@@ -15,36 +15,20 @@
 #
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Type
-import requests
-import urllib
+from typing import Dict, List, Optional, Tuple
+from pysisu.formats import HeaderColumn, Row as FormatRow, Table
+from pysisu.sisu.v1.api import LatestAnalysisResultResponse
 from pysisu.sisu.v1.api import Factor, FactorValue, KeyDriverAnalysisResultGroupComparison, KeyDriverAnalysisResultSubgroup, KeyDriverAnalysisResultTimeComparison, LatestAnalysisResultResponse
 import datetime
 
 
-class safelist(list):
-    # taken from https://stackoverflow.com/questions/5125619/why-doesnt-list-have-safe-get-method-like-dictionary
-    def get(self, index, default=None):
-        try:
-            return self.__getitem__(index)
-        except IndexError:
-            return default
+@dataclass
+class LatestAnalysisResultTable(Table):
+    pass
 
 
 @dataclass
-class Table:
-    header: List["HeaderColumn"]
-    rows: List["Row"]
-
-
-@dataclass
-class HeaderColumn:
-    column_name: str
-    column_type: Type
-
-
-@dataclass
-class Row:
+class Row(FormatRow):
     subgroup_id: int
     is_top_driver: bool
     factor_0_dimension: str
@@ -92,11 +76,13 @@ class GeneralPerformanceRow(Row):
     value: float
 
 
-def build_url(base_url, path, args_dict):
-    url_parts = list(urllib.parse.urlparse(base_url))
-    url_parts[2] = path
-    url_parts[4] = urllib.parse.urlencode(args_dict)
-    return urllib.parse.urlunparse(url_parts)
+class safelist(list):
+    # taken from https://stackoverflow.com/questions/5125619/why-doesnt-list-have-safe-get-method-like-dictionary
+    def get(self, index, default=None):
+        try:
+            return self.__getitem__(index)
+        except IndexError:
+            return default
 
 
 def get_factor_value(factor: Factor) -> str:
@@ -149,7 +135,7 @@ def build_header_from_row(rows: List[Row]) -> List[HeaderColumn]:
 def get_table_time_comparision(
     subgroups: List[KeyDriverAnalysisResultSubgroup],
     time_comparision: KeyDriverAnalysisResultTimeComparison
-) -> Table:
+) -> LatestAnalysisResultTable:
     rows = []
     for subgroup in subgroups:
         factor_0, factor_1, factor_2 = get_factors(subgroup.factors)
@@ -174,7 +160,7 @@ def get_table_time_comparision(
         )
         rows.append(r)
 
-    return Table(
+    return LatestAnalysisResultTable(
         build_header_from_row(rows),
         rows
     )
@@ -183,7 +169,7 @@ def get_table_time_comparision(
 def get_table_group_comparision(
     subgroups: List[KeyDriverAnalysisResultSubgroup],
     group_comparision: KeyDriverAnalysisResultGroupComparison
-) -> Table:
+) -> LatestAnalysisResultTable:
     rows = []
     for subgroup in subgroups:
         factor_0, factor_1, factor_2 = get_factors(subgroup.factors)
@@ -206,7 +192,7 @@ def get_table_group_comparision(
         )
         rows.append(r)
 
-    return Table(
+    return LatestAnalysisResultTable(
         build_header_from_row(rows),
         rows
     )
@@ -214,7 +200,7 @@ def get_table_group_comparision(
 
 def get_table_general_performance(
     subgroups: List[KeyDriverAnalysisResultSubgroup]
-) -> Table:
+) -> LatestAnalysisResultTable:
     rows = []
     for subgroup in subgroups:
         factor_0, factor_1, factor_2 = get_factors(subgroup.factors)
@@ -233,29 +219,14 @@ def get_table_general_performance(
         )
         rows.append(r)
 
-    return Table(
+    return LatestAnalysisResultTable(
         build_header_from_row(rows),
         rows
     )
 
 
-def pathjoin(*args) -> str:
-    return '/'.join(s.strip('/') for s in args)
-
-
-def _get_table(url: str, static_analysis_id: int, auth_key: str, params: dict = {}) -> Table:
-    path = ['api/v1/analyses/', str(static_analysis_id), 'runs/latest']
-
-    url_path = build_url(url,  pathjoin(*path), params)
-    
-    headers = headers = {"Authorization": auth_key}
-
-    r = requests.get(url_path, headers=headers)
-    if(r.status_code != 200):
-        raise Exception("Result did not complete", r)
-    
-    latest_analysis_response: LatestAnalysisResultResponse = LatestAnalysisResultResponse().from_dict(r.json())
-    key_driver_analysis_result = latest_analysis_response.analysis_result.key_driver_analysis_result
+def to_table(result: LatestAnalysisResultResponse) -> LatestAnalysisResultTable:
+    key_driver_analysis_result = result.analysis_result.key_driver_analysis_result
 
     subgroups = key_driver_analysis_result.subgroups
     if key_driver_analysis_result.time_comparison:
@@ -266,22 +237,3 @@ def _get_table(url: str, static_analysis_id: int, auth_key: str, params: dict = 
         return get_table_general_performance(subgroups)
     else:
         raise ValueError("Invalid analysis_result")
-
-
-def get_results(analysis_id: int, auth_key: str, params: dict = {}, auto_paginate: bool = True, url: str = 'https://vip.sisudata.com') -> Table:
-    table = _get_table(url, analysis_id, auth_key, params)
-    if auto_paginate:
-        if not table.rows:
-            return table
-        if params.get('limit'):
-            params['limit'] -= len(table.rows)
-        if params.get('limit', 0) < 0:
-            return table
-        params['starting_after'] = table.rows[-1].subgroup_id
-
-        rest_of_table = get_results(analysis_id, auth_key, params, auto_paginate, url)
-
-        table.rows = table.rows + rest_of_table.rows
-        return table
-    else:
-        return table

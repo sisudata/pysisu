@@ -14,14 +14,15 @@
 # limitations under the License.
 #
 
-import os
-from pysisu import PySisu
+import urllib
 
-API_KEY = os.environ.get('SISU_API_KEY')
-ANALYSIS_ID = 15245
 
-sisu = PySisu(API_KEY)
-table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
-print(','.join([x.column_name for x in table.header]))
-for row in table.rows:
-    print(row)
+def pathjoin(*args) -> str:
+    return '/'.join(s.strip('/') for s in args)
+
+
+def build_url(base_url, path, args_dict):
+    url_parts = list(urllib.parse.urlparse(base_url))
+    url_parts[2] = path
+    url_parts[4] = urllib.parse.urlencode(args_dict)
+    return urllib.parse.urlunparse(url_parts)

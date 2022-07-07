@@ -6,14 +6,18 @@
 
 Take a look at `example_usage.py` for a simple example.
 ```python
-API_KEY = os.environ.get('SISU_API_KEY')
-url = 'https://vip.sisudata.com'
+from pysisu import PySisu
+import os
 
-table = sisu_api.get_table(
-    url, 7340, API_KEY, {"top_drivers": "False"}, True)
+API_KEY = os.environ.get('SISU_API_KEY')
+ANALYSIS_ID = 13234
+
+sisu = PySisu(API_KEY)
+table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
 print(','.join([x.column_name for x in table.header]))
 for row in table.rows:
     print(row)
+
 ```
 
 The API limits its response to 100 results per response, via pagination. However, there is a flag for `auto_paginate` that will continuously fetch for any limit you set.

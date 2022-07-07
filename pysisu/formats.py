@@ -14,14 +14,29 @@
 # limitations under the License.
 #
 
-import os
-from pysisu import PySisu
 
-API_KEY = os.environ.get('SISU_API_KEY')
-ANALYSIS_ID = 15245
+from dataclasses import dataclass
+from enum import Enum, auto
+from typing import List, Type
 
-sisu = PySisu(API_KEY)
-table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
-print(','.join([x.column_name for x in table.header]))
-for row in table.rows:
-    print(row)
+
+@dataclass
+class Table:
+    header: List["HeaderColumn"]
+    rows: List["Row"]
+
+
+@dataclass
+class Row:
+    pass
+
+
+@dataclass
+class HeaderColumn:
+    column_name: str
+    column_type: Type
+
+
+class LatestAnalysisResultsFormats(Enum):
+    TABLE = auto()
+    PROTO = auto()
