@@ -2,3 +2,5 @@
 pysisu.egg-info/
 *.pyc
 build/
+dist/
+env/

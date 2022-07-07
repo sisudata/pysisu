@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple, Type
 import requests
 import urllib
+from pysisu.query_helpers import build_url, pathjoin
 from pysisu.sisu.v1.api import Factor, FactorValue, KeyDriverAnalysisResultGroupComparison, KeyDriverAnalysisResultSubgroup, KeyDriverAnalysisResultTimeComparison, LatestAnalysisResultResponse
 import datetime
 
@@ -90,13 +91,6 @@ class GroupCompareRow(Row):
 class GeneralPerformanceRow(Row):
     size: float
     value: float
-
-
-def build_url(base_url, path, args_dict):
-    url_parts = list(urllib.parse.urlparse(base_url))
-    url_parts[2] = path
-    url_parts[4] = urllib.parse.urlencode(args_dict)
-    return urllib.parse.urlunparse(url_parts)
 
 
 def get_factor_value(factor: Factor) -> str:
@@ -239,21 +233,17 @@ def get_table_general_performance(
     )
 
 
-def pathjoin(*args) -> str:
-    return '/'.join(s.strip('/') for s in args)
-
-
 def _get_table(url: str, static_analysis_id: int, auth_key: str, params: dict = {}) -> Table:
     path = ['api/v1/analyses/', str(static_analysis_id), 'runs/latest']
 
     url_path = build_url(url,  pathjoin(*path), params)
-    
+
     headers = headers = {"Authorization": auth_key}
 
     r = requests.get(url_path, headers=headers)
     if(r.status_code != 200):
         raise Exception("Result did not complete", r)
-    
+
     latest_analysis_response: LatestAnalysisResultResponse = LatestAnalysisResultResponse().from_dict(r.json())
     key_driver_analysis_result = latest_analysis_response.analysis_result.key_driver_analysis_result
 
@@ -279,7 +269,8 @@ def get_results(analysis_id: int, auth_key: str, params: dict = {}, auto_paginat
             return table
         params['starting_after'] = table.rows[-1].subgroup_id
 
-        rest_of_table = get_results(analysis_id, auth_key, params, auto_paginate, url)
+        rest_of_table = get_results(
+            analysis_id, auth_key, params, auto_paginate, url)
 
         table.rows = table.rows + rest_of_table.rows
         return table

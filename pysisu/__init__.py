@@ -15,3 +15,4 @@
 #
 
 from .query_wrapper import get_results
+from .pysisu import PySisu
