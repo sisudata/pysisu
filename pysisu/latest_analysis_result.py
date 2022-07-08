@@ -15,11 +15,12 @@
 #
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 from pysisu.formats import HeaderColumn, Row as FormatRow, Table
 from pysisu.sisu.v1.api import LatestAnalysisResultResponse
 from pysisu.sisu.v1.api import Factor, FactorValue, KeyDriverAnalysisResultGroupComparison, KeyDriverAnalysisResultSubgroup, KeyDriverAnalysisResultTimeComparison, LatestAnalysisResultResponse
 import datetime
+import betterproto
 
 
 @dataclass
@@ -85,16 +86,9 @@ class safelist(list):
             return default
 
 
-def get_factor_value(factor: Factor) -> str:
-    value: FactorValue = factor.value
-    val = (
-        value.boolean_value or
-        value.float_value or
-        value.integer_value or
-        value.string_value or
-        value.timestamp_value
-    )
-    return str(val)
+def get_factor_value(factor_value: FactorValue) -> Union[str, int, float, bool, datetime.datetime]:
+    _val_type, value = betterproto.which_one_of(factor_value, "value_type")
+    return value
 
 
 @dataclass
@@ -104,11 +98,12 @@ class FactorDimVal:
 
 
 def get_factor(dimension: str, factor: Factor) -> FactorDimVal:
-    if factor.bin:
+    factor_type, _factor_data = betterproto.which_one_of(factor, "factor_type")
+    if factor_type == "value":
+        return FactorDimVal(dimension, get_factor_value(factor.value))
+    elif factor_type == "bin":
         return FactorDimVal(dimension, f'{factor.bin.lower_bound_percentile} to {factor.bin.upper_bound_percentile}')
-    elif bool(factor.value):
-        return FactorDimVal(dimension, get_factor_value(factor))
-    elif factor.keyword:
+    elif factor_type == "keyword":
         return FactorDimVal(dimension, factor.keyword.keyword)
     else:
         raise ValueError("invalid factor")
