@@ -123,7 +123,7 @@ def build_header_from_row(rows: List[Row]) -> List[HeaderColumn]:
     row = rows[0]
     return [HeaderColumn(
             var,
-            type(getattr(row, var))
+            str if getattr(row, var) is None else type(getattr(row, var))
             ) for var in vars(row).keys()]
 
 
