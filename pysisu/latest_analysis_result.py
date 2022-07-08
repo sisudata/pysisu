@@ -33,11 +33,11 @@ class Row(FormatRow):
     subgroup_id: int
     is_top_driver: bool
     factor_0_dimension: str
-    factor_0_value: str
+    factor_0_value: any
     factor_1_dimension: str
-    factor_1_value: str
+    factor_1_value: any
     factor_2_dimension: str
-    factor_2_value: str
+    factor_2_value: any
 
     def __str__(self):
         variables = []
@@ -127,10 +127,10 @@ def build_header_from_row(rows: List[Row]) -> List[HeaderColumn]:
             ) for var in vars(row).keys()]
 
 
-def get_table_time_comparision(
+def get_rows_time_comparision(
     subgroups: List[KeyDriverAnalysisResultSubgroup],
     time_comparision: KeyDriverAnalysisResultTimeComparison
-) -> LatestAnalysisResultTable:
+) -> List[Row]:
     rows = []
     for subgroup in subgroups:
         factor_0, factor_1, factor_2 = get_factors(subgroup.factors)
@@ -155,16 +155,13 @@ def get_table_time_comparision(
         )
         rows.append(r)
 
-    return LatestAnalysisResultTable(
-        build_header_from_row(rows),
-        rows
-    )
+    return rows
 
 
-def get_table_group_comparision(
+def get_rows_group_comparision(
     subgroups: List[KeyDriverAnalysisResultSubgroup],
     group_comparision: KeyDriverAnalysisResultGroupComparison
-) -> LatestAnalysisResultTable:
+) -> List[Row]:
     rows = []
     for subgroup in subgroups:
         factor_0, factor_1, factor_2 = get_factors(subgroup.factors)
@@ -187,15 +184,12 @@ def get_table_group_comparision(
         )
         rows.append(r)
 
-    return LatestAnalysisResultTable(
-        build_header_from_row(rows),
-        rows
-    )
+    return rows
 
 
-def get_table_general_performance(
+def get_rows_general_performance(
     subgroups: List[KeyDriverAnalysisResultSubgroup]
-) -> LatestAnalysisResultTable:
+) -> List[Row]:
     rows = []
     for subgroup in subgroups:
         factor_0, factor_1, factor_2 = get_factors(subgroup.factors)
@@ -214,21 +208,32 @@ def get_table_general_performance(
         )
         rows.append(r)
 
-    return LatestAnalysisResultTable(
-        build_header_from_row(rows),
-        rows
-    )
+    return rows
 
 
-def to_table(result: LatestAnalysisResultResponse) -> LatestAnalysisResultTable:
+def _get_rows(result: LatestAnalysisResultResponse) -> LatestAnalysisResultTable:
     key_driver_analysis_result = result.analysis_result.key_driver_analysis_result
 
     subgroups = key_driver_analysis_result.subgroups
     if key_driver_analysis_result.time_comparison:
-        return get_table_time_comparision(subgroups, key_driver_analysis_result.time_comparison)
+        return get_rows_time_comparision(subgroups, key_driver_analysis_result.time_comparison)
     elif key_driver_analysis_result.group_comparison:
-        return get_table_group_comparision(subgroups, key_driver_analysis_result.group_comparison)
+        return get_rows_group_comparision(subgroups, key_driver_analysis_result.group_comparison)
     elif key_driver_analysis_result.general_performance._serialized_on_wire:
-        return get_table_general_performance(subgroups)
+        return get_rows_general_performance(subgroups)
     else:
         raise ValueError("Invalid analysis_result")
+
+
+def to_table(result: LatestAnalysisResultResponse, force_factor_value_to_str: bool = True) -> LatestAnalysisResultTable:
+    rows = _get_rows(result)
+    if force_factor_value_to_str:
+        for i, row in enumerate(rows):
+            row: Row = row
+            rows[i].factor_0_value = str(row.factor_0_value)
+            rows[i].factor_1_value = str(row.factor_1_value)
+            rows[i].factor_2_value = str(row.factor_2_value)
+    return LatestAnalysisResultTable(
+        build_header_from_row(rows),
+        rows
+    )

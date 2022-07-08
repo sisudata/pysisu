@@ -18,7 +18,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pysisu',
-    version='0.0.9',
+    version='0.0.12',
     packages=find_packages(include=['pysisu', 'pysisu.*']),
     install_requires=[
         'betterproto>=2.0.0b4',
