@@ -15,4 +15,3 @@
 #
 
 from .pysisu_class import PySisu
-import formats
