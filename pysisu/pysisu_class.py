@@ -58,6 +58,8 @@ class PySisu:
 
         MUTATES: result
         '''
+        if not result.pagination_hints.has_more:
+            return result
         if params.get('limit', MAX_LIMIT) >= MAX_LIMIT:
             params['limit'] = MAX_LIMIT
 
