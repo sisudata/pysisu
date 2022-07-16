@@ -1,5 +1,3 @@
-
-
 # pysisu
 
 `pysisu` is a Python package that will query the [Sisu API](https://docs.sisudata.com/docs/api/) and convert results into a tabular format.
