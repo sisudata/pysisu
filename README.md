@@ -39,7 +39,7 @@ protoc -I . --python_betterproto_out=. api.proto
 
 # Local development
 
-```
+```bash
 python -m pip install -e .
 export SISU_API_KEY=<key>
 ```
