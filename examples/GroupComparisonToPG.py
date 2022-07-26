@@ -33,8 +33,8 @@ sql_stmt = """INSERT INTO """ + FACT_TABLE_NAME + """ (subgroup_id, is_top_drive
 print(', '.join([x.column_name for x in sisu_table.header]))
 
 for fact_row in sisu_table.rows:
-    pg_row = (fact_row.subgroup_id, fact_row.is_top_driver, fact_row.factor_0_dimension, fact_row.factor_0_value, fact_row.factor_1_dimension, fact_row.factor_1_value, fact_row.factor_2_dimension, fact_row.factor_2_value, fact_row.group_a_size, fact_row.group_b_size, fact_row.group_a_value, fact_row.group_b_value, fact_row.group_a_name, fact_row.group_b_name
-)
+    pg_row = (fact_row.subgroup_id, fact_row.is_top_driver, fact_row.factor_0_dimension, fact_row.factor_0_value, fact_row.factor_1_dimension, fact_row.factor_1_value, fact_row.factor_2_dimension, fact_row.factor_2_value, fact_row.group_a_size, fact_row.group_b_size, fact_row.group_a_value, fact_row.group_b_value, fact_row.group_a_name, fact_row.group_b_name)
+
     print(pg_row)
     pg_rs = pg_cur.execute(sql_stmt, (pg_row))
     print("Record inserted successfully into table")
