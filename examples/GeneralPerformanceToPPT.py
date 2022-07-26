@@ -24,8 +24,8 @@ sisu_table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
 print("Facts loaded")
 
 # Get general information from analysis
-ANALYSIS_NAME = 'My Sisu Analysis' ##### TO-DO: Add the analysis name here
-METRIC_NAME = 'My Metric' ##### TO-DO: Add the metric name here
+ANALYSIS_NAME = 'My Sisu Analysis'  # TO-DO: Add the analysis name here
+METRIC_NAME = 'My Metric'  # TO-DO: Add the metric name here
 
 # Create the presentation
 p = Presentation()
@@ -39,10 +39,10 @@ sl = p.slide_layouts[LAYOUT_COMPARISON]
 s = p.slides.add_slide(sl)
 s.shapes.title.text = ANALYSIS_NAME
 
-##### TO-DO: add group name for period
+# TO-DO: add group name for period
 s.shapes[1].text = METRIC_NAME
 
-##### TO-DO: add metric value, min, max, median, average, sum, rows
+# TO-DO: add metric value, min, max, median, average, sum, rows
 s.shapes[2].text = '<summary data>'
 
 # Print facts to the terminal and insert into the presentation deck
@@ -71,16 +71,16 @@ for fact_row in sisu_table.rows:
     else:
         factor_change_dir = 'increased'
 
-    ##### TO-DO: Add impact score change when supported by the API
+    # TO-DO: Add impact score change when supported by the API
     s.shapes[1].text = s.shapes[1].text + ', the average ' + METRIC_NAME + ' ' + factor_change_dir + ' ' + str(abs(factor_change_pct)) + '% (from ' + str(round(fact_row.group_a_value, 1)) + ' to ' + str(round(fact_row.group_b_value, 1)) + '.) This ' + factor_change_dir + ' the overall average ' + METRIC_NAME + ' between groups by ' + '<impact score change>.'
 
     cd = ChartData()
     cd.categories = [METRIC_NAME]
-    cd.add_series(fact_row.group_a_name, [round(fact_row.group_a_value,1)])
-    cd.add_series(fact_row.group_b_name, [round(fact_row.group_b_value,1)])
+    cd.add_series(fact_row.group_a_name, [round(fact_row.group_a_value, 1)])
+    cd.add_series(fact_row.group_b_name, [round(fact_row.group_b_value, 1)])
 
-    x,y,w,h=Inches(5.5),Inches(1.5),Inches(3.5),Inches(5)
-    c=s.shapes.add_chart(XL_CHART_TYPE.COLUMN_CLUSTERED,x,y,w,h,cd).chart
+    x, y, w, h = Inches(5.5), Inches(1.5), Inches(3.5), Inches(5)
+    c = s.shapes.add_chart(XL_CHART_TYPE.COLUMN_CLUSTERED, x, y, w, h, cd).chart
     c.has_legend = True
     c.value_axis.minimum_scale = 0
     c.plots[0].has_data_labels = True
