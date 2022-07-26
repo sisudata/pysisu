@@ -6,6 +6,8 @@ from pptx.util import Inches
 from pptx.dml.color import RGBColor
 import os
 
+from pysisu.latest_analysis_result import TimeCompareRow
+
 # Sisu variables
 API_KEY = os.environ.get('SISU_API_KEY')
 ANALYSIS_ID = 165576
@@ -51,30 +53,32 @@ s.shapes[4].text = '<group b summary data>'
 print(', '.join([x.column_name for x in sisu_table.header]))
 
 for fact_row in sisu_table.rows:
-    pg_row = (fact_row.subgroup_id, fact_row.is_top_driver, fact_row.factor_0_dimension, fact_row.factor_0_value, fact_row.factor_1_dimension, fact_row.factor_1_value, fact_row.factor_2_dimension, fact_row.factor_2_value, fact_row.group_a_size, fact_row.group_b_size, fact_row.group_a_value, fact_row.group_b_value, fact_row.group_a_name, fact_row.group_b_name)
-    print(pg_row)
+    # add type hints (only for debugging purposes)
+    fact_row: TimeCompareRow = fact_row
+
+    print(fact_row)
 
     sl = p.slide_layouts[LAYOUT_TWO_CONTENT]
     s = p.slides.add_slide(sl)
     s.shapes.title.text = fact_row.factor_0_dimension
-    s.shapes[1].text = 'Where ' + fact_row.factor_0_dimension + ' is \'' + fact_row.factor_0_value + '\''
+    s.shapes[1].text = f"Where {fact_row.factor_0_dimension} is '{fact_row.factor_0_value}'"
 
     if fact_row.factor_1_dimension:
-        s.shapes[1].text = s.shapes[1].text + ' and ' + fact_row.factor_1_dimension + ' is \'' + fact_row.factor_1_value + '\''
+        s.shapes[1].text = f"{s.shapes[1].text} and {fact_row.factor_1_dimension} is '{fact_row.factor_1_value}'"
 
     if fact_row.factor_2_dimension:
-        s.shapes[1].text = s.shapes[1].text + ' and ' + fact_row.factor_2_dimension + ' is \'' + fact_row.factor_2_value + '\''
+        s.shapes[1].text = f"{s.shapes[1].text} and {fact_row.factor_2_dimension} is '{fact_row.factor_2_value}'"
 
-    factor_change_val = round(fact_row.group_b_value - fact_row.group_a_value, 1)
-    factor_change_pct = round(((fact_row.group_b_value - fact_row.group_a_value) / fact_row.group_b_value) * 100, 1)
+    factor_change_val = round(fact_row.recent_period_value - fact_row.previous_period_value, 1)  # noqa
+    factor_change_pct = round(((fact_row.recent_period_value - fact_row.previous_period_value) / fact_row.recent_period_value) * 100, 1)  # noqa
 
     if factor_change_pct < 0:
         factor_change_dir = 'decreased'
     else:
         factor_change_dir = 'increased'
 
-    # TO-DO: Add impact score change when supported by the API
-    s.shapes[1].text = s.shapes[1].text + ', Sisu found that the average ' + METRIC_NAME + ' ' + factor_change_dir + ' ' + str(abs(factor_change_pct)) + '% (from ' + str(round(fact_row.group_a_value, 1)) + ' to ' + str(round(fact_row.group_b_value, 1)) + '.) This ' + factor_change_dir + ' the overall average ' + METRIC_NAME + ' between groups by ' + '<impact score change>.'
+    # TODO: Add impact score change when supported by the API
+    s.shapes[1].text = f"{s.shapes[1].text}, Sisu found that the average {METRIC_NAME } {factor_change_dir} {abs(factor_change_pct)} % (from {round(fact_row.previous_period_value, 1)} to {round(fact_row.recent_period_value, 1)}.) This {factor_change_dir} the overall average {METRIC_NAME} over the same period by < impact score change > ."
 
     cd = ChartData()
     cd.categories = [METRIC_NAME]
@@ -82,7 +86,7 @@ for fact_row in sisu_table.rows:
     cd.add_series(fact_row.group_b_name, [round(fact_row.group_b_value, 1)])
 
     x, y, w, h = Inches(5.5), Inches(1.5), Inches(3.5), Inches(5)
-    c = s.shapes.add_chart(XL_CHART_TYPE.COLUMN_CLUSTERED, x, y, w, h, cd).chart
+    c = s.shapes.add_chart(XL_CHART_TYPE.COLUMN_CLUSTERED, x, y, w, h, cd).chart  # noqa
     c.has_legend = True
     c.value_axis.minimum_scale = 0
     c.plots[0].has_data_labels = True
