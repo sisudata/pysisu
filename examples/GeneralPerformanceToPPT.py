@@ -6,7 +6,7 @@ from pptx.util import Inches
 from pptx.dml.color import RGBColor
 import os
 
-from pysisu.latest_analysis_result import TimeCompareRow
+from pysisu.latest_analysis_result import GeneralPerformanceRow
 
 # Sisu variables
 API_KEY = os.environ.get('SISU_API_KEY')
@@ -52,7 +52,7 @@ print(', '.join([x.column_name for x in sisu_table.header]))
 
 for fact_row in sisu_table.rows:
     # add type hints (only for debugging purposes)
-    fact_row: TimeCompareRow = fact_row
+    fact_row: GeneralPerformanceRow = fact_row
 
     print(fact_row)
 
