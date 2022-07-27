@@ -17,8 +17,8 @@
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple, Union
 from pysisu.formats import HeaderColumn, Row as FormatRow, Table
-from pysisu.sisu.v1.api import LatestAnalysisResultResponse
-from pysisu.sisu.v1.api import Factor, FactorValue, KeyDriverAnalysisResultGroupComparison, KeyDriverAnalysisResultSubgroup, KeyDriverAnalysisResultTimeComparison, LatestAnalysisResultResponse
+from pysisu.sisu.v1.api import AnalysisRunResultsResponse
+from pysisu.sisu.v1.api import Factor, FactorValue, KeyDriverAnalysisResultGroupComparison, KeyDriverAnalysisResultSubgroup, KeyDriverAnalysisResultTimeComparison
 import datetime
 import betterproto
 
@@ -211,7 +211,7 @@ def get_rows_general_performance(
     return rows
 
 
-def _get_rows(result: LatestAnalysisResultResponse) -> LatestAnalysisResultTable:
+def _get_rows(result: AnalysisRunResultsResponse) -> LatestAnalysisResultTable:
     key_driver_analysis_result = result.analysis_result.key_driver_analysis_result
 
     subgroups = key_driver_analysis_result.subgroups
@@ -225,7 +225,7 @@ def _get_rows(result: LatestAnalysisResultResponse) -> LatestAnalysisResultTable
         raise ValueError("Invalid analysis_result")
 
 
-def to_table(result: LatestAnalysisResultResponse, force_factor_value_to_str: bool = True) -> LatestAnalysisResultTable:
+def to_table(result: AnalysisRunResultsResponse, force_factor_value_to_str: bool = True) -> LatestAnalysisResultTable:
     rows = _get_rows(result)
     if force_factor_value_to_str:
         for i, row in enumerate(rows):

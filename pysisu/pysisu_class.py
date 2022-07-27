@@ -20,7 +20,7 @@ import requests
 from pysisu.formats import LatestAnalysisResultsFormats, Table
 from pysisu.latest_analysis_result import to_table
 from pysisu.query_helpers import build_url, pathjoin
-from pysisu.sisu.v1.api import LatestAnalysisResultResponse
+from pysisu.sisu.v1.api import AnalysisRunResultsResponse
 
 RECURSION_MAX = 1000
 RESPONSE_MAX = 100
@@ -51,7 +51,7 @@ class PySisu:
         self,
         analysis_id: int,
         params: dict,
-        result: LatestAnalysisResultResponse,
+        result: AnalysisRunResultsResponse,
     ) -> None:
         '''
         Appends the rest of the subgroups to `result`. 
@@ -83,7 +83,7 @@ class PySisu:
         params: dict = {"top_drivers": "True"},
         auto_paginate: bool = True,
         format: LatestAnalysisResultsFormats = LatestAnalysisResultsFormats.TABLE,
-    ) -> Union[LatestAnalysisResultResponse, Table]:
+    ) -> Union[AnalysisRunResultsResponse, Table]:
         path = ['api/v1/analyses/', str(analysis_id), 'runs/latest']
 
         url_path = build_url(self._url,  pathjoin(*path), params)
@@ -94,7 +94,7 @@ class PySisu:
         if(r.status_code != 200):
             raise Exception("Result did not complete", r)
 
-        result = LatestAnalysisResultResponse().from_dict(r.json())
+        result = AnalysisRunResultsResponse().from_dict(r.json())
         if auto_paginate:
             result = self.auto_paginate(analysis_id, params, result)
 
