@@ -30,7 +30,7 @@ idx = 1
 
 for x in sisu_table.header:
     ws.update_cell(1, idx, x.column_name)
-    idx = idx+1 
+    idx = idx+1
 
 idx = 2
 
