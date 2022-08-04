@@ -1,0 +1,48 @@
+
+{
+  "analysisResult": {
+    "id": "1",
+    "runStatus": "RUN_STATUS_COMPLETED",
+    "requestedAt": "2020-01-01T00:00:00Z",
+    "completedAt": "2020-01-01T00:00:00Z",
+    "runType": "RUN_TYPE_MANUAL",
+    "keyDriverAnalysisResult": {
+      "subgroups": [
+        {
+          "id": "2",
+          "isTopDriver": false,
+          "factors": {
+            "location": {
+              "value": {
+                "stringValue": "CANADA"
+              }
+            }
+          },
+          "impact": 0.31338519014163024,
+          "generalPerformance": {
+            "size": 0.17006802721088435,
+            "value": 3.23
+          }
+        },
+        {
+          "id": "1",
+          "isTopDriver": false,
+          "factors": {
+            "location": {
+              "value": {
+                "stringValue": "USA"
+              }
+            }
+          },
+          "impact": 0.02380679100908656,
+          "generalPerformance": {
+            "size": 0.19607843137254902,
+            "value": 1.078
+          }
+        }
+      ],
+      "generalPerformance": {}
+    }
+  },
+  "paginationHints": {}
+}

@@ -22,6 +22,4 @@ ANALYSIS_ID = 15245
 
 sisu = PySisu(API_KEY)
 table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
-print(','.join([x.column_name for x in table.header]))
-for row in table.rows:
-    print(row)
+print(table.to_csv())

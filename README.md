@@ -20,7 +20,7 @@ for row in table.rows:
 
 ```
 
-The API limits its response to 100 results per response, via pagination. However, there is a flag for `auto_paginate` that will continuously fetch for any limit you set.
+The API limits its response to 10000 results per response, via pagination. However, there is a flag for `auto_paginate` that will continuously fetch for any limit you set.
 
 # Contributing to protos
 
@@ -42,4 +42,13 @@ protoc -I . --python_betterproto_out=. api.proto
 ```bash
 python -m pip install -e .
 export SISU_API_KEY=<key>
+```
+
+# Testing
+
+There are example api responses in `tests/input_snapshots` and there are the expected parsing responses in `tests/output_snapshots`.
+
+To updated the output snapshots whenever the input snapshots get updated, just run
+```
+pytest . --snapshot-update
 ```

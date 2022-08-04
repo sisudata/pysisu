@@ -20,7 +20,7 @@ import requests
 from pysisu.formats import LatestAnalysisResultsFormats, Table
 from pysisu.latest_analysis_result import to_table
 from pysisu.query_helpers import build_url, pathjoin
-from pysisu.sisu.v1.api import AnalysisRunResultsResponse
+from pysisu.proto.sisu.v1.api import AnalysisRunResultsResponse
 
 RECURSION_MAX = 1000
 RESPONSE_MAX = 100
@@ -77,24 +77,30 @@ class PySisu:
             next_page.analysis_result.key_driver_analysis_result.subgroups
         return result
 
-    def get_results(
+    def fetch_sisu_api(
         self,
         analysis_id: int,
-        params: dict = {"top_drivers": "True"},
-        auto_paginate: bool = True,
-        format: LatestAnalysisResultsFormats = LatestAnalysisResultsFormats.TABLE,
-    ) -> Union[AnalysisRunResultsResponse, Table]:
+        params: dict,
+    ) -> dict:
         path = ['api/v1/analyses/', str(analysis_id), 'runs/latest']
 
-        url_path = build_url(self._url,  pathjoin(*path), params)
+        url_path = build_url(self._url, pathjoin(*path), params)
 
         headers = headers = {"Authorization": self._api_key}
 
         r = requests.get(url_path, headers=headers)
         if(r.status_code != 200):
             raise Exception("Result did not complete", r)
+        return r.json()
 
-        result = AnalysisRunResultsResponse().from_dict(r.json())
+    def get_results(
+        self,
+        analysis_id: int,
+        params: dict = {"top_drivers": "False"},
+        auto_paginate: bool = True,
+        format: LatestAnalysisResultsFormats = LatestAnalysisResultsFormats.TABLE,
+    ) -> Union[AnalysisRunResultsResponse, Table]:
+        result = AnalysisRunResultsResponse().from_dict(self.fetch_sisu_api(analysis_id, params))
         if auto_paginate:
             result = self.auto_paginate(analysis_id, params, result)
 

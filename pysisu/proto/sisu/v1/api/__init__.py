@@ -244,6 +244,11 @@ class KeyDriverAnalysisResultSubgroup(betterproto.Message):
     general_performance: "KeyDriverAnalysisResultSubgroupGeneralPerformance" = (
         betterproto.message_field(6, group="details")
     )
+    # How much this subgroup contributes to the overall value of the metic
+    # calculation.
+    impact: Optional[float] = betterproto.message_field(
+        7, wraps=betterproto.TYPE_DOUBLE
+    )
 
 
 @dataclass(eq=False, repr=False)
@@ -350,6 +355,11 @@ class TrendAnalysisResultSubgroup(betterproto.Message):
     )
     # Trends for the subgroup.
     trends: List["TrendAnalysisResultTrend"] = betterproto.message_field(4)
+    # How much this subgroup contributes to the overall value of the metic
+    # calculation.
+    impact: Optional[float] = betterproto.message_field(
+        5, wraps=betterproto.TYPE_DOUBLE
+    )
 
 
 @dataclass(eq=False, repr=False)

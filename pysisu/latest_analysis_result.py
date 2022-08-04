@@ -17,8 +17,8 @@
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple, Union
 from pysisu.formats import HeaderColumn, Row as FormatRow, Table
-from pysisu.sisu.v1.api import AnalysisRunResultsResponse
-from pysisu.sisu.v1.api import Factor, FactorValue, KeyDriverAnalysisResultGroupComparison, KeyDriverAnalysisResultSubgroup, KeyDriverAnalysisResultTimeComparison
+from pysisu.proto.sisu.v1.api import AnalysisRunResultsResponse
+from pysisu.proto.sisu.v1.api import Factor, FactorValue, KeyDriverAnalysisResultGroupComparison, KeyDriverAnalysisResultSubgroup, KeyDriverAnalysisResultTimeComparison
 import datetime
 import betterproto
 
@@ -38,15 +38,7 @@ class Row(FormatRow):
     factor_1_value: any
     factor_2_dimension: str
     factor_2_value: any
-
-    def __str__(self):
-        variables = []
-        for x in vars(self).values():
-            if isinstance(x, (int, float)):
-                variables.append(x)
-            else:
-                variables.append(f"'{x}'")
-        return ','.join([str(x) for x in variables])
+    impact: float
 
 
 @dataclass
@@ -152,6 +144,7 @@ def get_rows_time_comparision(
             previous_period_end=time_comparision.previous_period.end,
             recent_period_start=time_comparision.recent_period.start,
             recent_period_end=time_comparision.recent_period.end,
+            impact=subgroup.impact,
         )
         rows.append(r)
 
@@ -181,6 +174,7 @@ def get_rows_group_comparision(
             group_b_value=subgroup.group_comparison.group_b_value,
             group_a_name=group_comparision.group_a.name,
             group_b_name=group_comparision.group_b.name,
+            impact=subgroup.impact,
         )
         rows.append(r)
 
@@ -205,6 +199,7 @@ def get_rows_general_performance(
             factor_2_value=factor_2.value,
             size=subgroup.general_performance.size,
             value=subgroup.general_performance.value,
+            impact=subgroup.impact,
         )
         rows.append(r)
 
