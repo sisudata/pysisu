@@ -40,7 +40,7 @@ class Row:
                 variables.append(x)
             else:
                 variables.append(f"'{x}'")
-        return ','.join([str(x) for x in variables])
+        return ','.join([str(x).replace('\n', ' ') for x in variables])
 
 
 @dataclass

@@ -14,28 +14,40 @@
 # limitations under the License.
 #
 
-from io import UnsupportedOperation
 from typing import Union
 import requests
 from pysisu.formats import LatestAnalysisResultsFormats, Table
 from pysisu.latest_analysis_result import to_table
 from pysisu.query_helpers import build_url, pathjoin
-from pysisu.proto.sisu.v1.api import AnalysisRunResultsResponse
+from pysisu.proto.sisu.v1.api import (
+    AnalysesListResponse,
+    AnalysisRunResultsResponse,
+)
 
-RECURSION_MAX = 1000
-RESPONSE_MAX = 100
-MAX_LIMIT = RECURSION_MAX * RESPONSE_MAX
+
+class PySisuBaseException(Exception):
+    pass
+
+
+class PySisuInvalidReturnedPaginationHintsFromServer(PySisuBaseException):
+    pass
+
+
+class PySisuInvalidResponseFromServer(PySisuBaseException):
+    pass
 
 
 class PySisu:
-    '''
+    """
     Allows the ability to fetch/send commands to the sisu_api.
-    '''
+    """
 
     _url: str
     _api_key: str
 
-    def __init__(self, api_key: str, url: str = 'https://vip.sisudata.com') -> None:
+    def __init__(
+        self, api_key: str, url: str = "https://vip.sisudata.com"
+    ) -> None:
         self._url = url
         self._api_key = api_key
 
@@ -47,51 +59,73 @@ class PySisu:
         self._api_key = api_key
         return self
 
-    def auto_paginate(
+    def _auto_paginate(
         self,
         analysis_id: int,
         params: dict,
         result: AnalysisRunResultsResponse,
-    ) -> None:
-        '''
-        Appends the rest of the subgroups to `result`. 
+    ) -> AnalysisRunResultsResponse:
+        """
+        Fetches the rest of the results if there is more results to fetch.
 
-        MUTATES: result
-        '''
+        Respects the limit parameter and only fetches a maximum of params['limit'] that is left.
+        """
         if not result.pagination_hints.has_more:
             return result
-        if params.get('limit', MAX_LIMIT) >= MAX_LIMIT:
-            params['limit'] = MAX_LIMIT
 
         kda_result = result.analysis_result.key_driver_analysis_result
         subgroups = kda_result.subgroups
-        if params.get('limit'):
-            params['limit'] -= len(subgroups)
 
-        if params.get('limit', 1) <= 0 or len(subgroups) == 0:
+        if params.get("limit"):
+            params["limit"] -= len(subgroups)
+
+        if params.get("limit", 1) <= 0 or len(subgroups) == 0:
             return result
 
+        next_cursor = int(subgroups[-1].id)
+        if result.pagination_hints.has_more:
+            if result.pagination_hints.next_starting_cursor is None:
+                raise PySisuInvalidReturnedPaginationHintsFromServer(
+                    "There is more to fetch, however the next_starting cursor is none."
+                )
+
+        params["starting_after"] = next_cursor
+
         next_page = self.get_results(
-            analysis_id, params, True, format=LatestAnalysisResultsFormats.PROTO)
-        kda_result.subgroups = subgroups + \
-            next_page.analysis_result.key_driver_analysis_result.subgroups
+            analysis_id,
+            params,
+            True,
+            format=LatestAnalysisResultsFormats.PROTO,
+        )
+        kda_result.subgroups = (
+            subgroups
+            + next_page.analysis_result.key_driver_analysis_result.subgroups
+        )
         return result
 
-    def fetch_sisu_api(
-        self,
-        analysis_id: int,
-        params: dict,
-    ) -> dict:
-        path = ['api/v1/analyses/', str(analysis_id), 'runs/latest']
-
-        url_path = build_url(self._url, pathjoin(*path), params)
-
+    def _call_sisu_api(self, url_path: int, request_method="get") -> dict:
         headers = headers = {"Authorization": self._api_key}
-
-        r = requests.get(url_path, headers=headers)
-        if(r.status_code != 200):
-            raise Exception("Result did not complete", r)
+        r = requests.request(request_method, url_path, headers=headers)
+        if r.status_code != 200:
+            raise PySisuInvalidResponseFromServer(
+                "Result did not complete", r.content
+            )
         return r.json()
+
+    def fetch_sisu_api(self, analysis_id: int, params: dict) -> dict:
+        path = ["api/v1/analyses/", str(analysis_id), "runs/latest"]
+        url_path = build_url(self._url, pathjoin(*path), params)
+        return self._call_sisu_api(url_path)
+
+    def run(self, analysis_id: int):
+        path = ["api/v1/analyses/", str(analysis_id), "run"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        self._call_sisu_api(url_path, request_method="post")
+
+    def analyses(self) -> AnalysesListResponse:
+        path = ["api/v1/analyses"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return AnalysesListResponse().from_dict(self._call_sisu_api(url_path))
 
     def get_results(
         self,
@@ -100,9 +134,11 @@ class PySisu:
         auto_paginate: bool = True,
         format: LatestAnalysisResultsFormats = LatestAnalysisResultsFormats.TABLE,
     ) -> Union[AnalysisRunResultsResponse, Table]:
-        result = AnalysisRunResultsResponse().from_dict(self.fetch_sisu_api(analysis_id, params))
+        result = AnalysisRunResultsResponse().from_dict(
+            self.fetch_sisu_api(analysis_id, params)
+        )
         if auto_paginate:
-            result = self.auto_paginate(analysis_id, params, result)
+            result = self._auto_paginate(analysis_id, params, result)
 
         if format == LatestAnalysisResultsFormats.TABLE:
             return to_table(result)

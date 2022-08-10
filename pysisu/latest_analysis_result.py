@@ -18,7 +18,13 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple, Union
 from pysisu.formats import HeaderColumn, Row as FormatRow, Table
 from pysisu.proto.sisu.v1.api import AnalysisRunResultsResponse
-from pysisu.proto.sisu.v1.api import Factor, FactorValue, KeyDriverAnalysisResultGroupComparison, KeyDriverAnalysisResultSubgroup, KeyDriverAnalysisResultTimeComparison
+from pysisu.proto.sisu.v1.api import (
+    Factor,
+    Value,
+    KeyDriverAnalysisResultGroupComparison,
+    KeyDriverAnalysisResultSubgroup,
+    KeyDriverAnalysisResultTimeComparison,
+)
 import datetime
 import betterproto
 
@@ -78,7 +84,9 @@ class safelist(list):
             return default
 
 
-def get_factor_value(factor_value: FactorValue) -> Union[str, int, float, bool, datetime.datetime]:
+def get_factor_value(
+    factor_value: Value,
+) -> Union[str, int, float, bool, datetime.datetime]:
     _val_type, value = betterproto.which_one_of(factor_value, "value_type")
     return value
 
@@ -94,34 +102,46 @@ def get_factor(dimension: str, factor: Factor) -> FactorDimVal:
     if factor_type == "value":
         return FactorDimVal(dimension, get_factor_value(factor.value))
     elif factor_type == "bin":
-        return FactorDimVal(dimension, f'{factor.bin.lower_bound_percentile} to {factor.bin.upper_bound_percentile}')
+        return FactorDimVal(
+            dimension,
+            f"{factor.bin.lower_bound_percentile} to {factor.bin.upper_bound_percentile}",
+        )
     elif factor_type == "keyword":
         return FactorDimVal(dimension, factor.keyword.keyword)
     else:
         raise ValueError("invalid factor")
 
 
-def get_factors(factors: Dict[str, Factor]) -> Tuple[FactorDimVal, FactorDimVal, FactorDimVal]:
-    converted_factors = safelist([get_factor(dim, fact)
-                                  for dim, fact in factors.items()])
+def get_factors(
+    factors: Dict[str, Factor]
+) -> Tuple[FactorDimVal, FactorDimVal, FactorDimVal]:
+    converted_factors = safelist(
+        [get_factor(dim, fact) for dim, fact in factors.items()]
+    )
 
     empty_factor = FactorDimVal(None, None)
-    return converted_factors.get(0), converted_factors.get(1, empty_factor), converted_factors.get(2, empty_factor)
+    return (
+        converted_factors.get(0),
+        converted_factors.get(1, empty_factor),
+        converted_factors.get(2, empty_factor),
+    )
 
 
 def build_header_from_row(rows: List[Row]) -> List[HeaderColumn]:
     if not rows:
         return []
     row = rows[0]
-    return [HeaderColumn(
-            var,
-            str if getattr(row, var) is None else type(getattr(row, var))
-            ) for var in vars(row).keys()]
+    return [
+        HeaderColumn(
+            var, str if getattr(row, var) is None else type(getattr(row, var))
+        )
+        for var in vars(row).keys()
+    ]
 
 
 def get_rows_time_comparision(
     subgroups: List[KeyDriverAnalysisResultSubgroup],
-    time_comparision: KeyDriverAnalysisResultTimeComparison
+    time_comparision: KeyDriverAnalysisResultTimeComparison,
 ) -> List[Row]:
     rows = []
     for subgroup in subgroups:
@@ -153,7 +173,7 @@ def get_rows_time_comparision(
 
 def get_rows_group_comparision(
     subgroups: List[KeyDriverAnalysisResultSubgroup],
-    group_comparision: KeyDriverAnalysisResultGroupComparison
+    group_comparision: KeyDriverAnalysisResultGroupComparison,
 ) -> List[Row]:
     rows = []
     for subgroup in subgroups:
@@ -182,7 +202,7 @@ def get_rows_group_comparision(
 
 
 def get_rows_general_performance(
-    subgroups: List[KeyDriverAnalysisResultSubgroup]
+    subgroups: List[KeyDriverAnalysisResultSubgroup],
 ) -> List[Row]:
     rows = []
     for subgroup in subgroups:
@@ -207,20 +227,28 @@ def get_rows_general_performance(
 
 
 def _get_rows(result: AnalysisRunResultsResponse) -> LatestAnalysisResultTable:
-    key_driver_analysis_result = result.analysis_result.key_driver_analysis_result
+    key_driver_analysis_result = (
+        result.analysis_result.key_driver_analysis_result
+    )
 
     subgroups = key_driver_analysis_result.subgroups
     if key_driver_analysis_result.time_comparison:
-        return get_rows_time_comparision(subgroups, key_driver_analysis_result.time_comparison)
+        return get_rows_time_comparision(
+            subgroups, key_driver_analysis_result.time_comparison
+        )
     elif key_driver_analysis_result.group_comparison:
-        return get_rows_group_comparision(subgroups, key_driver_analysis_result.group_comparison)
+        return get_rows_group_comparision(
+            subgroups, key_driver_analysis_result.group_comparison
+        )
     elif key_driver_analysis_result.general_performance._serialized_on_wire:
         return get_rows_general_performance(subgroups)
     else:
         raise ValueError("Invalid analysis_result")
 
 
-def to_table(result: AnalysisRunResultsResponse, force_factor_value_to_str: bool = True) -> LatestAnalysisResultTable:
+def to_table(
+    result: AnalysisRunResultsResponse, force_factor_value_to_str: bool = True
+) -> LatestAnalysisResultTable:
     rows = _get_rows(result)
     if force_factor_value_to_str:
         for i, row in enumerate(rows):
@@ -228,7 +256,4 @@ def to_table(result: AnalysisRunResultsResponse, force_factor_value_to_str: bool
             rows[i].factor_0_value = str(row.factor_0_value)
             rows[i].factor_1_value = str(row.factor_1_value)
             rows[i].factor_2_value = str(row.factor_2_value)
-    return LatestAnalysisResultTable(
-        build_header_from_row(rows),
-        rows
-    )
+    return LatestAnalysisResultTable(build_header_from_row(rows), rows)

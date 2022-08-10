@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from typing import List
 
 import betterproto
-from betterproto.grpc.grpclib_server import ServiceBase
 
 
 @dataclass(eq=False, repr=False)
@@ -16,14 +15,19 @@ class Http(betterproto.Message):
     method to one or more HTTP REST API methods.
     """
 
-    # A list of HTTP configuration rules that apply to individual API methods.
-    # **NOTE:** All service configuration rules follow "last one wins" order.
     rules: List["HttpRule"] = betterproto.message_field(1)
-    # When set to true, URL path parameters will be fully URI-decoded except in
-    # cases of single segment matches in reserved expansion, where "%2F" will be
-    # left encoded. The default behavior is to not decode RFC 6570 reserved
-    # characters in multi segment matches.
+    """
+    A list of HTTP configuration rules that apply to individual API methods.
+    **NOTE:** All service configuration rules follow "last one wins" order.
+    """
+
     fully_decode_reserved_expansion: bool = betterproto.bool_field(2)
+    """
+    When set to true, URL path parameters will be fully URI-decoded except in
+    cases of single segment matches in reserved expansion, where "%2F" will be
+    left encoded. The default behavior is to not decode RFC 6570 reserved
+    characters in multi segment matches.
+    """
 
 
 @dataclass(eq=False, repr=False)
@@ -179,46 +183,70 @@ class HttpRule(betterproto.Message):
     support this feature.
     """
 
-    # Selects a method to which this rule applies. Refer to
-    # [selector][google.api.DocumentationRule.selector] for syntax details.
     selector: str = betterproto.string_field(1)
-    # Maps to HTTP GET. Used for listing and getting information about resources.
+    """
+    Selects a method to which this rule applies. Refer to
+    [selector][google.api.DocumentationRule.selector] for syntax details.
+    """
+
     get: str = betterproto.string_field(2, group="pattern")
-    # Maps to HTTP PUT. Used for replacing a resource.
+    """
+    Maps to HTTP GET. Used for listing and getting information about resources.
+    """
+
     put: str = betterproto.string_field(3, group="pattern")
-    # Maps to HTTP POST. Used for creating a resource or performing an action.
+    """Maps to HTTP PUT. Used for replacing a resource."""
+
     post: str = betterproto.string_field(4, group="pattern")
-    # Maps to HTTP DELETE. Used for deleting a resource.
+    """
+    Maps to HTTP POST. Used for creating a resource or performing an action.
+    """
+
     delete: str = betterproto.string_field(5, group="pattern")
-    # Maps to HTTP PATCH. Used for updating a resource.
+    """Maps to HTTP DELETE. Used for deleting a resource."""
+
     patch: str = betterproto.string_field(6, group="pattern")
-    # The custom pattern is used for specifying an HTTP method that is not
-    # included in the `pattern` field, such as HEAD, or "*" to leave the HTTP
-    # method unspecified for this rule. The wild-card rule is useful for services
-    # that provide content to Web (HTML) clients.
+    """Maps to HTTP PATCH. Used for updating a resource."""
+
     custom: "CustomHttpPattern" = betterproto.message_field(8, group="pattern")
-    # The name of the request field whose value is mapped to the HTTP request
-    # body, or `*` for mapping all request fields not captured by the path
-    # pattern to the HTTP body, or omitted for not having any HTTP request body.
-    # NOTE: the referred field must be present at the top-level of the request
-    # message type.
+    """
+    The custom pattern is used for specifying an HTTP method that is not
+    included in the `pattern` field, such as HEAD, or "*" to leave the HTTP
+    method unspecified for this rule. The wild-card rule is useful for services
+    that provide content to Web (HTML) clients.
+    """
+
     body: str = betterproto.string_field(7)
-    # Optional. The name of the response field whose value is mapped to the HTTP
-    # response body. When omitted, the entire response message will be used as
-    # the HTTP response body. NOTE: The referred field must be present at the
-    # top-level of the response message type.
+    """
+    The name of the request field whose value is mapped to the HTTP request
+    body, or `*` for mapping all request fields not captured by the path
+    pattern to the HTTP body, or omitted for not having any HTTP request body.
+    NOTE: the referred field must be present at the top-level of the request
+    message type.
+    """
+
     response_body: str = betterproto.string_field(12)
-    # Additional HTTP bindings for the selector. Nested bindings must not contain
-    # an `additional_bindings` field themselves (that is, the nesting may only be
-    # one level deep).
+    """
+    Optional. The name of the response field whose value is mapped to the HTTP
+    response body. When omitted, the entire response message will be used as
+    the HTTP response body. NOTE: The referred field must be present at the
+    top-level of the response message type.
+    """
+
     additional_bindings: List["HttpRule"] = betterproto.message_field(11)
+    """
+    Additional HTTP bindings for the selector. Nested bindings must not contain
+    an `additional_bindings` field themselves (that is, the nesting may only be
+    one level deep).
+    """
 
 
 @dataclass(eq=False, repr=False)
 class CustomHttpPattern(betterproto.Message):
     """A custom pattern is used for defining custom HTTP verb."""
 
-    # The name of this custom HTTP verb.
     kind: str = betterproto.string_field(1)
-    # The path matched by this custom verb.
+    """The name of this custom HTTP verb."""
+
     path: str = betterproto.string_field(2)
+    """The path matched by this custom verb."""

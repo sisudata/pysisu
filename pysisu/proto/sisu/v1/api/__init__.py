@@ -3,11 +3,22 @@
 # plugin: python-betterproto
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    List,
+    Optional,
+)
 
 import betterproto
-from betterproto.grpc.grpclib_server import ServiceBase
 import grpclib
+from betterproto.grpc.grpclib_server import ServiceBase
+
+
+if TYPE_CHECKING:
+    import grpclib.server
+    from betterproto.grpc.grpclib_client import MetadataLike
+    from grpclib.metadata import Deadline
 
 
 class AnalysisType(betterproto.Enum):
@@ -19,65 +30,144 @@ class AnalysisType(betterproto.Enum):
 
 
 class AnalysisResultRunStatus(betterproto.Enum):
+    """Status of running an analysis."""
+
     RUN_STATUS_UNKNOWN = 0
     RUN_STATUS_IN_FLIGHT = 1
+    """Analysis is currently running."""
+
     RUN_STATUS_FAILED = 2
+    """Analysis finished running but had errors."""
+
     RUN_STATUS_COMPLETED = 3
+    """Analysis ran successfully."""
 
 
 class AnalysisResultRunType(betterproto.Enum):
+    """Either SCHEDULED or MANUAL."""
+
     RUN_TYPE_UNKNOWN = 0
     RUN_TYPE_SCHEDULED = 1
     RUN_TYPE_MANUAL = 2
+
+
+class MetricDesiredDirection(betterproto.Enum):
+    """Type of metric direction."""
+
+    DESIRED_DIRECTION_UNKNOWN = 0
+    DESIRED_DIRECTION_INCREASE = 1
+    DESIRED_DIRECTION_DECREASE = 2
+
+
+class MetricMetricType(betterproto.Enum):
+    """
+    Type of metric calculation that is used to evaluate the metric's dimension.
+    """
+
+    METRIC_TYPE_UNKNOWN = 0
+    METRIC_TYPE_AVERAGE = 1
+    """Average of a single metric column(e.g., average order value)."""
+
+    METRIC_TYPE_SUM = 2
+    """Sum of a single metric column(e.g., total revenue)."""
+
+    METRIC_TYPE_WEIGHTED_SUM = 3
+    """
+    Sum of a metric column weighted by a weight column(e.g., price per share).
+    """
+
+    METRIC_TYPE_WEIGHTED_AVERAGE = 4
+    """
+    Average of a metric column weighted by a weight column(e.g., price per
+    share).
+    """
+
+    METRIC_TYPE_CATEGORICAL_COUNT = 5
+    """
+    Count of a matching condition in a metric column(e.g., number of churns).
+    """
+
+    METRIC_TYPE_CATEGORICAL_RATE = 6
+    """Rate of a matching condition in a metric column(e.g., churn rate)."""
+
+    METRIC_TYPE_COUNT_DISTINCT = 7
+    """
+    Count of a matching condition in a metric column(e.g., number of churns).
+    """
+
+    METRIC_TYPE_NUMERICAL_COUNT = 8
+    """Count of the rows of a single metric column(e.g., number of orders)."""
+
+    METRIC_TYPE_NUMERICAL_RATE = 9
+    """
+    A metric column divided by a denominator column(e.g., lead conversion
+    rate).
+    """
 
 
 @dataclass(eq=False, repr=False)
 class AnalysisRunResultsRequest(betterproto.Message):
     """Request parameters for get analysis results."""
 
-    # A limit on the number of objects to be returned, between 1 and 10000.
-    # Default value is 100.
     limit: Optional[int] = betterproto.message_field(1, wraps=betterproto.TYPE_UINT64)
-    # starting_after is an object ID that defines your place in the list. For
-    # instance, if you make a analysis list request and receive 100, ending with
-    # id = 89, your subsequent call can include starting_after=89 in order to
-    # fetch the next page of the list.
+    """
+    A limit on the number of objects to be returned, between 1 and 10000.
+    Default value is 100.
+    """
+
     starting_after: Optional[int] = betterproto.message_field(
         2, wraps=betterproto.TYPE_INT64
     )
-    # filter by only top driver results.
+    """
+    starting_after is an object ID that defines your place in the list. For
+    instance, if you make a analysis list request and receive 100, ending with
+    id = 89, your subsequent call can include starting_after=89 in order to
+    fetch the next page of the list.
+    """
+
     top_drivers: Optional[str] = betterproto.message_field(
         3, wraps=betterproto.TYPE_STRING
     )
-    # Analysis Id.
+    """filter by only top driver results."""
+
     id: Optional[int] = betterproto.message_field(4, wraps=betterproto.TYPE_INT64)
+    """Analysis Id."""
 
 
 @dataclass(eq=False, repr=False)
 class AnalysesListRequest(betterproto.Message):
     """Request parameters for get analysis list."""
 
-    # What type of analyses to include in the results. If not set all types will
-    # be returned.
     analysis_type: "AnalysisType" = betterproto.enum_field(1)
-    # A limit on the number of objects to be returned, between 1 and 10000.
-    # Default value is 100.
+    """
+    What type of analyses to include in the results. If not set all types will
+    be returned.
+    """
+
     limit: Optional[int] = betterproto.message_field(2, wraps=betterproto.TYPE_UINT64)
-    # starting_after is an object ID that defines your place in the list. For
-    # instance, if you make a analysis list request and receive 100, ending with
-    # id = 89, your subsequent call can include starting_after=89 in order to
-    # fetch the next page of the list.
+    """
+    A limit on the number of objects to be returned, between 1 and 10000.
+    Default value is 100.
+    """
+
     starting_after: Optional[int] = betterproto.message_field(
         3, wraps=betterproto.TYPE_INT64
     )
+    """
+    starting_after is an object ID that defines your place in the list. For
+    instance, if you make a analysis list request and receive 100, ending with
+    id = 89, your subsequent call can include starting_after=89 in order to
+    fetch the next page of the list.
+    """
 
 
 @dataclass(eq=False, repr=False)
 class AnalysesListResponse(betterproto.Message):
     """AnalysesListResponse provides list of Analyses."""
 
-    # List of analyses.
     analyses: List["Analysis"] = betterproto.message_field(1)
+    """List of analyses."""
+
     pagination_hints: "PaginationHints" = betterproto.message_field(2)
 
 
@@ -85,22 +175,25 @@ class AnalysesListResponse(betterproto.Message):
 class Analysis(betterproto.Message):
     """Provides detailed information about an analysis."""
 
-    # Analysis id.
     id: int = betterproto.int64_field(1)
-    # Analysis name.
+    """Analysis id."""
+
     name: str = betterproto.string_field(2)
-    # Type of Analysis eg. TYPE_KEY_DRIVER.
+    """Analysis name."""
+
     type: "AnalysisType" = betterproto.enum_field(3)
-    # Timestamp when the analysis was created.
+    """Type of Analysis eg. TYPE_KEY_DRIVER."""
+
     created_at: datetime = betterproto.message_field(4)
+    """Timestamp when the analysis was created."""
 
 
 @dataclass(eq=False, repr=False)
 class RunAnalysisRequest(betterproto.Message):
     """Request payload for execute analysis workflow."""
 
-    # Analysis id.
     id: int = betterproto.int64_field(1)
+    """Analysis id."""
 
 
 @dataclass(eq=False, repr=False)
@@ -128,8 +221,9 @@ class PaginationHints(betterproto.Message):
 class AnalysisRunResultsResponse(betterproto.Message):
     """Response payload for get LatestAnalysisResult."""
 
-    # Analysis Result.
     analysis_result: "AnalysisResult" = betterproto.message_field(1)
+    """Analysis Result."""
+
     pagination_hints: "PaginationHints" = betterproto.message_field(2)
 
 
@@ -137,15 +231,21 @@ class AnalysisRunResultsResponse(betterproto.Message):
 class AnalysisResult(betterproto.Message):
     """Provides details of an analysis run."""
 
-    # The run ID Analysis run. Run ID's are unique across analyses. example:
-    # 102940
     id: int = betterproto.int64_field(1)
-    # Indicates if analysis run completed successfully or not.
+    """
+    The run ID Analysis run. Run ID's are unique across analyses. example:
+    102940
+    """
+
     run_status: "AnalysisResultRunStatus" = betterproto.enum_field(2)
-    # Time at which run was kicked off.
+    """Indicates if analysis run completed successfully or not."""
+
     requested_at: datetime = betterproto.message_field(3)
-    # Time at which analysis run completed.
+    """Time at which run was kicked off."""
+
     completed_at: datetime = betterproto.message_field(4)
+    """Time at which analysis run completed."""
+
     run_type: "AnalysisResultRunType" = betterproto.enum_field(5)
     key_driver_analysis_result: "KeyDriverAnalysisResult" = betterproto.message_field(
         6, group="run_result"
@@ -159,22 +259,29 @@ class AnalysisResult(betterproto.Message):
 class KeyDriverAnalysisResult(betterproto.Message):
     """Provides details of a key driver analysis run."""
 
-    # If subtype is TIME_COMPARISON, metadata about the time periods that are
-    # compared.
     time_comparison: "KeyDriverAnalysisResultTimeComparison" = (
         betterproto.message_field(6, group="comparison")
     )
-    # If subtype is GROUP_COMPARISON metadata about the groups that are being
-    # compared.
+    """
+    If subtype is TIME_COMPARISON, metadata about the time periods that are
+    compared.
+    """
+
     group_comparison: "KeyDriverAnalysisResultGroupComparison" = (
         betterproto.message_field(7, group="comparison")
     )
-    # If the subtype is General_Performance.
+    """
+    If subtype is GROUP_COMPARISON metadata about the groups that are being
+    compared.
+    """
+
     general_performance: "KeyDriverAnalysisResultGeneralPerformance" = (
         betterproto.message_field(8, group="comparison")
     )
-    # Array of the subgroups selected by the key driver algorithm.
+    """If the subtype is General_Performance."""
+
     subgroups: List["KeyDriverAnalysisResultSubgroup"] = betterproto.message_field(9)
+    """Array of the subgroups selected by the key driver algorithm."""
 
 
 @dataclass(eq=False, repr=False)
@@ -184,10 +291,11 @@ class KeyDriverAnalysisResultTimeComparison(betterproto.Message):
     compared.
     """
 
-    # The earlier of the two periods being compared.
     previous_period: "TimeRange" = betterproto.message_field(1)
-    # The more recent of the two periods being compared.
+    """The earlier of the two periods being compared."""
+
     recent_period: "TimeRange" = betterproto.message_field(2)
+    """The more recent of the two periods being compared."""
 
 
 @dataclass(eq=False, repr=False)
@@ -197,20 +305,21 @@ class KeyDriverAnalysisResultGroupComparison(betterproto.Message):
     compared.
     """
 
-    # The first group.
     group_a: "KeyDriverAnalysisResultGroupComparisonGroupDescription" = (
         betterproto.message_field(1)
     )
-    # The second group.
+    """The first group."""
+
     group_b: "KeyDriverAnalysisResultGroupComparisonGroupDescription" = (
         betterproto.message_field(2)
     )
+    """The second group."""
 
 
 @dataclass(eq=False, repr=False)
 class KeyDriverAnalysisResultGroupComparisonGroupDescription(betterproto.Message):
-    # The user-defined name corresponding to the first group.
     name: str = betterproto.string_field(1)
+    """The user-defined name corresponding to the first group."""
 
 
 @dataclass(eq=False, repr=False)
@@ -224,17 +333,22 @@ class KeyDriverAnalysisResultGeneralPerformance(betterproto.Message):
 class KeyDriverAnalysisResultSubgroup(betterproto.Message):
     """Subgroup of a key driver analysis run."""
 
-    # Unique ID corresponding to each subgroup, unique per analysis run.
     id: int = betterproto.int64_field(1)
-    # Is top driver for this subgroup.
+    """Unique ID corresponding to each subgroup, unique per analysis run."""
+
     is_top_driver: Optional[bool] = betterproto.message_field(
         2, wraps=betterproto.TYPE_BOOL
     )
-    # The factors that define this subgroup, represented as a map of Dimension to
-    # Value.
+    """Is top driver for this subgroup."""
+
     factors: Dict[str, "Factor"] = betterproto.map_field(
         3, betterproto.TYPE_STRING, betterproto.TYPE_MESSAGE
     )
+    """
+    The factors that define this subgroup, represented as a map of Dimension to
+    Value.
+    """
+
     group_comparison: "KeyDriverAnalysisResultSubgroupGroupComparisonPerformance" = (
         betterproto.message_field(4, group="details")
     )
@@ -244,11 +358,13 @@ class KeyDriverAnalysisResultSubgroup(betterproto.Message):
     general_performance: "KeyDriverAnalysisResultSubgroupGeneralPerformance" = (
         betterproto.message_field(6, group="details")
     )
-    # How much this subgroup contributes to the overall value of the metic
-    # calculation.
     impact: Optional[float] = betterproto.message_field(
         7, wraps=betterproto.TYPE_DOUBLE
     )
+    """
+    How much this subgroup contributes to the overall value of the metric
+    calculation.
+    """
 
 
 @dataclass(eq=False, repr=False)
@@ -258,22 +374,29 @@ class KeyDriverAnalysisResultSubgroupGroupComparisonPerformance(betterproto.Mess
     compared subgroups.
     """
 
-    # The size of this subgroup in the first group.
     group_a_size: Optional[float] = betterproto.message_field(
         1, wraps=betterproto.TYPE_DOUBLE
     )
-    # The size of this subgroup in the second group.
+    """The size of this subgroup in the first group."""
+
     group_b_size: Optional[float] = betterproto.message_field(
         2, wraps=betterproto.TYPE_DOUBLE
     )
-    # The value of the metric for this of this subgroup in the first group.
+    """The size of this subgroup in the second group."""
+
     group_a_value: Optional[float] = betterproto.message_field(
         3, wraps=betterproto.TYPE_DOUBLE
     )
-    # The value of the metric for this of this subgroup in the second group.
+    """
+    The value of the metric for this of this subgroup in the first group.
+    """
+
     group_b_value: Optional[float] = betterproto.message_field(
         4, wraps=betterproto.TYPE_DOUBLE
     )
+    """
+    The value of the metric for this of this subgroup in the second group.
+    """
 
 
 @dataclass(eq=False, repr=False)
@@ -283,24 +406,33 @@ class KeyDriverAnalysisResultSubgroupTimeComparisonPerformance(betterproto.Messa
     compared subgroups.
     """
 
-    # The size of this subgroup in the earlier of the compared periods.
     previous_period_size: Optional[float] = betterproto.message_field(
         1, wraps=betterproto.TYPE_DOUBLE
     )
-    # The size of this subgroup in the more recent of the compared periods.
+    """The size of this subgroup in the earlier of the compared periods."""
+
     recent_period_size: Optional[float] = betterproto.message_field(
         2, wraps=betterproto.TYPE_DOUBLE
     )
-    # The value of the metric for this of this subgroup in the earlier of the
-    # compared periods.
+    """
+    The size of this subgroup in the more recent of the compared periods.
+    """
+
     previous_period_value: Optional[float] = betterproto.message_field(
         3, wraps=betterproto.TYPE_DOUBLE
     )
-    # The value of the metric for this of this subgroup in the more recent of the
-    # compared periods.
+    """
+    The value of the metric for this of this subgroup in the earlier of the
+    compared periods.
+    """
+
     recent_period_value: Optional[float] = betterproto.message_field(
         4, wraps=betterproto.TYPE_DOUBLE
     )
+    """
+    The value of the metric for this of this subgroup in the more recent of the
+    compared periods.
+    """
 
 
 @dataclass(eq=False, repr=False)
@@ -310,56 +442,72 @@ class KeyDriverAnalysisResultSubgroupGeneralPerformance(betterproto.Message):
     subgroup.
     """
 
-    # The size (in percent) of this subgroup relative to the overall population.
     size: Optional[float] = betterproto.message_field(1, wraps=betterproto.TYPE_DOUBLE)
-    # The metric value corresponding to this subgroup.
+    """
+    The size (in percent) of this subgroup relative to the overall population.
+    """
+
     value: Optional[float] = betterproto.message_field(2, wraps=betterproto.TYPE_DOUBLE)
+    """The metric value corresponding to this subgroup."""
 
 
 @dataclass(eq=False, repr=False)
 class TrendAnalysisResult(betterproto.Message):
     """Provides details of a Trend Analysis result."""
 
-    # Metric level trends.
     overall_trends: List["TrendAnalysisResultTrend"] = betterproto.message_field(1)
-    # Array of the subgroups in the trend.
+    """Metric level trends."""
+
     subgroups: List["TrendAnalysisResultSubgroup"] = betterproto.message_field(2)
+    """Array of the subgroups in the trend."""
 
 
 @dataclass(eq=False, repr=False)
 class TrendAnalysisResultTrend(betterproto.Message):
     """Provides fields that describes the trend."""
 
-    # Inclusive start and exclusive end time range.
     time_range: "TimeRange" = betterproto.message_field(1)
-    # Y-intersept of the trend.
+    """Inclusive start and exclusive end time range."""
+
     intercept: Optional[float] = betterproto.double_field(
         2, optional=True, group="_intercept"
     )
-    # Steepness of trend.
+    """Y-intersept of the trend."""
+
     slope: Optional[float] = betterproto.double_field(3, optional=True, group="_slope")
-    # The size (in percent) of this trend relative to the overall population.
+    """Steepness of trend."""
+
     size: Optional[float] = betterproto.double_field(4, optional=True, group="_size")
+    """
+    The size (in percent) of this trend relative to the overall population.
+    """
 
 
 @dataclass(eq=False, repr=False)
 class TrendAnalysisResultSubgroup(betterproto.Message):
     """Subgroup of an trend analysis run."""
 
-    # Unique ID corresponding to each subgroup, unique per analysis run.
     id: int = betterproto.int64_field(1)
-    # The factors that define this subgroup, represented as a map of Dimension to
-    # Value.
+    """Unique ID corresponding to each subgroup, unique per analysis run."""
+
     factors: Dict[str, "Factor"] = betterproto.map_field(
         2, betterproto.TYPE_STRING, betterproto.TYPE_MESSAGE
     )
-    # Trends for the subgroup.
+    """
+    The factors that define this subgroup, represented as a map of Dimension to
+    Value.
+    """
+
     trends: List["TrendAnalysisResultTrend"] = betterproto.message_field(4)
-    # How much this subgroup contributes to the overall value of the metic
-    # calculation.
+    """Trends for the subgroup."""
+
     impact: Optional[float] = betterproto.message_field(
         5, wraps=betterproto.TYPE_DOUBLE
     )
+    """
+    How much this subgroup contributes to the overall value of the metric
+    calculation.
+    """
 
 
 @dataclass(eq=False, repr=False)
@@ -373,26 +521,28 @@ class TimeRange(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
-class Factor(betterproto.Message):
-    """(Dimension, Value) pairs that define a subgroup."""
-
-    # Value, it is either string, int, boolean, float or timestamp type.
-    value: "FactorValue" = betterproto.message_field(1, group="factor_type")
-    # Keyword in a text dimension.
-    keyword: "FactorKeyword" = betterproto.message_field(2, group="factor_type")
-    # bin of a numerical dimension.
-    bin: "FactorBin" = betterproto.message_field(3, group="factor_type")
-
-
-@dataclass(eq=False, repr=False)
-class FactorValue(betterproto.Message):
-    """Value FactorType."""
+class Value(betterproto.Message):
+    """Represent different possible primitive data types."""
 
     boolean_value: bool = betterproto.bool_field(1, group="value_type")
     integer_value: int = betterproto.int64_field(2, group="value_type")
     string_value: str = betterproto.string_field(3, group="value_type")
     float_value: float = betterproto.double_field(4, group="value_type")
     timestamp_value: datetime = betterproto.message_field(5, group="value_type")
+
+
+@dataclass(eq=False, repr=False)
+class Factor(betterproto.Message):
+    """(Dimension, Value) pairs that define a subgroup."""
+
+    value: "Value" = betterproto.message_field(1, group="factor_type")
+    """Value, it is either string, int, boolean, float or timestamp type."""
+
+    keyword: "FactorKeyword" = betterproto.message_field(2, group="factor_type")
+    """Keyword in a text dimension."""
+
+    bin: "FactorBin" = betterproto.message_field(3, group="factor_type")
+    """bin of a numerical dimension."""
 
 
 @dataclass(eq=False, repr=False)
@@ -406,133 +556,198 @@ class FactorKeyword(betterproto.Message):
 class FactorBin(betterproto.Message):
     """Bin FactorType."""
 
-    # The inclusive lower bound of the bin.
     lower_bound: Optional[float] = betterproto.message_field(
         1, wraps=betterproto.TYPE_DOUBLE
     )
-    # The exclusive upper bound of the bin.
+    """The inclusive lower bound of the bin."""
+
     upper_bound: Optional[float] = betterproto.message_field(
         2, wraps=betterproto.TYPE_DOUBLE
     )
-    # The percentile of `lower_bound` within the factor's dimension.
+    """The exclusive upper bound of the bin."""
+
     lower_bound_percentile: Optional[float] = betterproto.message_field(
         3, wraps=betterproto.TYPE_DOUBLE
     )
-    # The percentile of `upper_bound` within the factor's dimension.
+    """The percentile of `lower_bound` within the factor's dimension."""
+
     upper_bound_percentile: Optional[float] = betterproto.message_field(
         4, wraps=betterproto.TYPE_DOUBLE
     )
+    """The percentile of `upper_bound` within the factor's dimension."""
+
+
+@dataclass(eq=False, repr=False)
+class MetricsListRequest(betterproto.Message):
+    """Request payload for get metrics."""
+
+    pass
+
+
+@dataclass(eq=False, repr=False)
+class MetricsListResponse(betterproto.Message):
+    """ListMetricsResponse provides list of Metrics."""
+
+    metrics: List["Metric"] = betterproto.message_field(1)
+
+
+@dataclass(eq=False, repr=False)
+class Metric(betterproto.Message):
+    """Detailed information about a metric."""
+
+    id: int = betterproto.uint64_field(1)
+    """Metric id."""
+
+    name: str = betterproto.string_field(2)
+    """Metric name."""
+
+    weight_dimension_name: str = betterproto.string_field(3)
+    """
+    The name of the weight dimension. A weight dimension is used to increases
+    the importance of a given row in an analysis.
+    """
+
+    time_dimension_name: str = betterproto.string_field(4)
+    """
+    The name of metric's time dimension which represnts the date range of the
+    metric.
+    """
+
+    desired_direction: "MetricDesiredDirection" = betterproto.enum_field(5)
+    """
+    Specifies whether the metric's goal is to increase or decrease the kpi
+    value.
+    """
+
+    metric_dimension: "MetricMetricDimension" = betterproto.message_field(6)
+    """The dimension which defines the metric's goal."""
+
+    type: "MetricMetricType" = betterproto.enum_field(8)
+    """Type of metric calculation."""
+
+    created_at: datetime = betterproto.message_field(9)
+    """Timestamp when the metric was created."""
+
+
+@dataclass(eq=False, repr=False)
+class MetricMetricDimension(betterproto.Message):
+    """A dimension in a metric."""
+
+    name: str = betterproto.string_field(1)
+    """The name of the dimension."""
+
+    value: "Value" = betterproto.message_field(2)
+    """Value, it is either string, int, boolean, float or timestamp type."""
 
 
 class AnalysesServiceStub(betterproto.ServiceStub):
     async def analyses_list(
         self,
+        analyses_list_request: "AnalysesListRequest",
         *,
-        analysis_type: "AnalysisType" = 0,
-        limit: Optional[int] = None,
-        starting_after: Optional[int] = None
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
     ) -> "AnalysesListResponse":
-
-        request = AnalysesListRequest()
-        request.analysis_type = analysis_type
-        if limit is not None:
-            request.limit = limit
-        if starting_after is not None:
-            request.starting_after = starting_after
-
         return await self._unary_unary(
-            "/sisu.v1.api.AnalysesService/AnalysesList", request, AnalysesListResponse
+            "/sisu.v1.api.AnalysesService/AnalysesList",
+            analyses_list_request,
+            AnalysesListResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
         )
 
-    async def run_analysis(self, *, id: int = 0) -> "RunAnalysisResponse":
-
-        request = RunAnalysisRequest()
-        request.id = id
-
+    async def run_analysis(
+        self,
+        run_analysis_request: "RunAnalysisRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "RunAnalysisResponse":
         return await self._unary_unary(
-            "/sisu.v1.api.AnalysesService/RunAnalysis", request, RunAnalysisResponse
+            "/sisu.v1.api.AnalysesService/RunAnalysis",
+            run_analysis_request,
+            RunAnalysisResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
         )
 
     async def analysis_run_results(
         self,
+        analysis_run_results_request: "AnalysisRunResultsRequest",
         *,
-        limit: Optional[int] = None,
-        starting_after: Optional[int] = None,
-        top_drivers: Optional[str] = None,
-        id: Optional[int] = None
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
     ) -> "AnalysisRunResultsResponse":
-
-        request = AnalysisRunResultsRequest()
-        if limit is not None:
-            request.limit = limit
-        if starting_after is not None:
-            request.starting_after = starting_after
-        if top_drivers is not None:
-            request.top_drivers = top_drivers
-        if id is not None:
-            request.id = id
-
         return await self._unary_unary(
             "/sisu.v1.api.AnalysesService/AnalysisRunResults",
-            request,
+            analysis_run_results_request,
             AnalysisRunResultsResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+
+class MetricServiceStub(betterproto.ServiceStub):
+    async def metrics_list(
+        self,
+        metrics_list_request: "MetricsListRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "MetricsListResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.MetricService/MetricsList",
+            metrics_list_request,
+            MetricsListResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
         )
 
 
 class AnalysesServiceBase(ServiceBase):
     async def analyses_list(
-        self,
-        analysis_type: "AnalysisType",
-        limit: Optional[int],
-        starting_after: Optional[int],
+        self, analyses_list_request: "AnalysesListRequest"
     ) -> "AnalysesListResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
-    async def run_analysis(self, id: int) -> "RunAnalysisResponse":
+    async def run_analysis(
+        self, run_analysis_request: "RunAnalysisRequest"
+    ) -> "RunAnalysisResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def analysis_run_results(
-        self,
-        limit: Optional[int],
-        starting_after: Optional[int],
-        top_drivers: Optional[str],
-        id: Optional[int],
+        self, analysis_run_results_request: "AnalysisRunResultsRequest"
     ) -> "AnalysisRunResultsResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
-    async def __rpc_analyses_list(self, stream: grpclib.server.Stream) -> None:
+    async def __rpc_analyses_list(
+        self, stream: "grpclib.server.Stream[AnalysesListRequest, AnalysesListResponse]"
+    ) -> None:
         request = await stream.recv_message()
-
-        request_kwargs = {
-            "analysis_type": request.analysis_type,
-            "limit": request.limit,
-            "starting_after": request.starting_after,
-        }
-
-        response = await self.analyses_list(**request_kwargs)
+        response = await self.analyses_list(request)
         await stream.send_message(response)
 
-    async def __rpc_run_analysis(self, stream: grpclib.server.Stream) -> None:
+    async def __rpc_run_analysis(
+        self, stream: "grpclib.server.Stream[RunAnalysisRequest, RunAnalysisResponse]"
+    ) -> None:
         request = await stream.recv_message()
-
-        request_kwargs = {
-            "id": request.id,
-        }
-
-        response = await self.run_analysis(**request_kwargs)
+        response = await self.run_analysis(request)
         await stream.send_message(response)
 
-    async def __rpc_analysis_run_results(self, stream: grpclib.server.Stream) -> None:
+    async def __rpc_analysis_run_results(
+        self,
+        stream: "grpclib.server.Stream[AnalysisRunResultsRequest, AnalysisRunResultsResponse]",
+    ) -> None:
         request = await stream.recv_message()
-
-        request_kwargs = {
-            "limit": request.limit,
-            "starting_after": request.starting_after,
-            "top_drivers": request.top_drivers,
-            "id": request.id,
-        }
-
-        response = await self.analysis_run_results(**request_kwargs)
+        response = await self.analysis_run_results(request)
         await stream.send_message(response)
 
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
@@ -554,5 +769,29 @@ class AnalysesServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 AnalysisRunResultsRequest,
                 AnalysisRunResultsResponse,
+            ),
+        }
+
+
+class MetricServiceBase(ServiceBase):
+    async def metrics_list(
+        self, metrics_list_request: "MetricsListRequest"
+    ) -> "MetricsListResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def __rpc_metrics_list(
+        self, stream: "grpclib.server.Stream[MetricsListRequest, MetricsListResponse]"
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.metrics_list(request)
+        await stream.send_message(response)
+
+    def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
+        return {
+            "/sisu.v1.api.MetricService/MetricsList": grpclib.const.Handler(
+                self.__rpc_metrics_list,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                MetricsListRequest,
+                MetricsListResponse,
             ),
         }
