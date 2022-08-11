@@ -628,6 +628,9 @@ class Metric(betterproto.Message):
     created_at: datetime = betterproto.message_field(9)
     """Timestamp when the metric was created."""
 
+    dataset_id: int = betterproto.uint64_field(10)
+    """Id of the metric data set."""
+
 
 @dataclass(eq=False, repr=False)
 class MetricMetricDimension(betterproto.Message):
