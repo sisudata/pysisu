@@ -105,6 +105,20 @@ class MetricMetricType(betterproto.Enum):
     """
 
 
+class DataSourceDataSourceType(betterproto.Enum):
+    DATA_SOURCE_TYPE_UNKNOWN = 0
+    DATA_SOURCE_TYPE_REDSHIFT = 1
+    DATA_SOURCE_TYPE_POSTGRESQL = 2
+    DATA_SOURCE_TYPE_SNOWFLAKE = 3
+    DATA_SOURCE_TYPE_SQLSERVER = 4
+    DATA_SOURCE_TYPE_BIGQUERY = 5
+    DATA_SOURCE_TYPE_VERTICA = 6
+    DATA_SOURCE_TYPE_AWSATHENA = 7
+    DATA_SOURCE_TYPE_SPARK = 8
+    DATA_SOURCE_TYPE_DATABRICKS = 9
+    DATA_SOURCE_TYPE_SAP = 10
+
+
 @dataclass(eq=False, repr=False)
 class AnalysisRunResultsRequest(betterproto.Message):
     """Request parameters for get analysis results."""
@@ -643,6 +657,41 @@ class MetricMetricDimension(betterproto.Message):
     """Value, it is either string, int, boolean, float or timestamp type."""
 
 
+@dataclass(eq=False, repr=False)
+class DataSourcesListRequest(betterproto.Message):
+    """Request payload for get datasources."""
+
+    pass
+
+
+@dataclass(eq=False, repr=False)
+class DataSourcesListResponse(betterproto.Message):
+    """Response payload for get datasources."""
+
+    data_sources: List["DataSource"] = betterproto.message_field(1)
+
+
+@dataclass(eq=False, repr=False)
+class DataSource(betterproto.Message):
+    id: int = betterproto.uint64_field(1)
+    """Id of a given data source."""
+
+    name: str = betterproto.string_field(2)
+    """Represents the table or query name of a data source."""
+
+    data_source_type: "DataSourceDataSourceType" = betterproto.enum_field(3)
+    """Type of the data source."""
+
+    created_at: datetime = betterproto.message_field(4)
+    """Time when the data source was created."""
+
+    created_by: str = betterproto.string_field(5)
+    """Data source creator's user email info."""
+
+    connection_uri: str = betterproto.string_field(6)
+    """JDBC connection URI to the data source location."""
+
+
 class AnalysesServiceStub(betterproto.ServiceStub):
     async def analyses_list(
         self,
@@ -709,6 +758,25 @@ class MetricServiceStub(betterproto.ServiceStub):
             "/sisu.v1.api.MetricService/MetricsList",
             metrics_list_request,
             MetricsListResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+
+class DataSourceServiceStub(betterproto.ServiceStub):
+    async def data_sources_list(
+        self,
+        data_sources_list_request: "DataSourcesListRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "DataSourcesListResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.DataSourceService/DataSourcesList",
+            data_sources_list_request,
+            DataSourcesListResponse,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -796,5 +864,30 @@ class MetricServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 MetricsListRequest,
                 MetricsListResponse,
+            ),
+        }
+
+
+class DataSourceServiceBase(ServiceBase):
+    async def data_sources_list(
+        self, data_sources_list_request: "DataSourcesListRequest"
+    ) -> "DataSourcesListResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def __rpc_data_sources_list(
+        self,
+        stream: "grpclib.server.Stream[DataSourcesListRequest, DataSourcesListResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.data_sources_list(request)
+        await stream.send_message(response)
+
+    def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
+        return {
+            "/sisu.v1.api.DataSourceService/DataSourcesList": grpclib.const.Handler(
+                self.__rpc_data_sources_list,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                DataSourcesListRequest,
+                DataSourcesListResponse,
             ),
         }
