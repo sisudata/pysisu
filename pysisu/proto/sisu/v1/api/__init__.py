@@ -29,6 +29,17 @@ class AnalysisType(betterproto.Enum):
     ANALYSIS_TYPE_TREND = 2
 
 
+class SqlDataType(betterproto.Enum):
+    """Represents a datatype of a specific column."""
+
+    SQL_DATA_TYPE_UNKOWN = 0
+    SQL_DATA_TYPE_STRING = 1
+    SQL_DATA_TYPE_FLOAT = 2
+    SQL_DATA_TYPE_TIMESTAMP = 3
+    SQL_DATA_TYPE_INT = 4
+    SQL_DATA_TYPE_BOOLEAN = 5
+
+
 class AnalysisResultRunStatus(betterproto.Enum):
     """Status of running an analysis."""
 
@@ -658,6 +669,71 @@ class MetricMetricDimension(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class AnalysisDimensionsListRequest(betterproto.Message):
+    """Request for a list of dimensions for a given `analysis_id`."""
+
+    analysis_id: int = betterproto.int64_field(1)
+    """Unique ID corresponding to the datasource containing the dimensions."""
+
+    is_selected: Optional[bool] = betterproto.message_field(
+        2, wraps=betterproto.TYPE_BOOL
+    )
+    """
+    Will return only active or non active dimensions for a given analysis.
+    """
+
+
+@dataclass(eq=False, repr=False)
+class DataSourceDimensionsListRequest(betterproto.Message):
+    """Request for a list of dimensions for a given `dimension_id`."""
+
+    data_source_id: int = betterproto.int64_field(1)
+    """Unique ID corresponding to the datasource containing the dimensions."""
+
+
+@dataclass(eq=False, repr=False)
+class Dimension(betterproto.Message):
+    """Represents a dimension (column) within a specfic `Dataset`."""
+
+    name: str = betterproto.string_field(1)
+    """
+    A string literal corresponding to a column selected in the dataset. It is
+    either a column name or a column alias for a computed SQL function over a
+    column ( for example, `upper(email) as 'UPPER_EMAIL'` ex: `red` in `SELECT
+    roja as red`.
+    """
+
+    dataset_id: int = betterproto.uint64_field(2)
+    """Refers to the dataset that this dimension is associated with."""
+
+    dimension_type: "SqlDataType" = betterproto.enum_field(3)
+    """
+    Refers to the column type of this dimension as it exists within the data
+    warehouse
+    """
+
+
+@dataclass(eq=False, repr=False)
+class DataSourceDimensionsListResponse(betterproto.Message):
+    """
+    DataSourceDimensionsListResponse provides list of Dimensions for a given
+    data_source.
+    """
+
+    dimensions: List["Dimension"] = betterproto.message_field(1)
+
+
+@dataclass(eq=False, repr=False)
+class AnalysisDimensionsListResponse(betterproto.Message):
+    """
+    AnalysisDimensionsListResponse provides list of Dimensions for a given
+    analysis.
+    """
+
+    dimensions: List["Dimension"] = betterproto.message_field(1)
+
+
+@dataclass(eq=False, repr=False)
 class DataSourcesListRequest(betterproto.Message):
     """Request payload for get datasources."""
 
@@ -783,6 +859,42 @@ class DataSourceServiceStub(betterproto.ServiceStub):
         )
 
 
+class DimensionServiceStub(betterproto.ServiceStub):
+    async def analysis_dimensions_list(
+        self,
+        analysis_dimensions_list_request: "AnalysisDimensionsListRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "AnalysisDimensionsListResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.DimensionService/AnalysisDimensionsList",
+            analysis_dimensions_list_request,
+            AnalysisDimensionsListResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+    async def data_source_dimensions_list(
+        self,
+        data_source_dimensions_list_request: "DataSourceDimensionsListRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "DataSourceDimensionsListResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.DimensionService/DataSourceDimensionsList",
+            data_source_dimensions_list_request,
+            DataSourceDimensionsListResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+
 class AnalysesServiceBase(ServiceBase):
     async def analyses_list(
         self, analyses_list_request: "AnalysesListRequest"
@@ -889,5 +1001,49 @@ class DataSourceServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DataSourcesListRequest,
                 DataSourcesListResponse,
+            ),
+        }
+
+
+class DimensionServiceBase(ServiceBase):
+    async def analysis_dimensions_list(
+        self, analysis_dimensions_list_request: "AnalysisDimensionsListRequest"
+    ) -> "AnalysisDimensionsListResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def data_source_dimensions_list(
+        self, data_source_dimensions_list_request: "DataSourceDimensionsListRequest"
+    ) -> "DataSourceDimensionsListResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def __rpc_analysis_dimensions_list(
+        self,
+        stream: "grpclib.server.Stream[AnalysisDimensionsListRequest, AnalysisDimensionsListResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.analysis_dimensions_list(request)
+        await stream.send_message(response)
+
+    async def __rpc_data_source_dimensions_list(
+        self,
+        stream: "grpclib.server.Stream[DataSourceDimensionsListRequest, DataSourceDimensionsListResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.data_source_dimensions_list(request)
+        await stream.send_message(response)
+
+    def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
+        return {
+            "/sisu.v1.api.DimensionService/AnalysisDimensionsList": grpclib.const.Handler(
+                self.__rpc_analysis_dimensions_list,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                AnalysisDimensionsListRequest,
+                AnalysisDimensionsListResponse,
+            ),
+            "/sisu.v1.api.DimensionService/DataSourceDimensionsList": grpclib.const.Handler(
+                self.__rpc_data_source_dimensions_list,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                DataSourceDimensionsListRequest,
+                DataSourceDimensionsListResponse,
             ),
         }
