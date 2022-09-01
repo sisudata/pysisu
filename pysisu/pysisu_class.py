@@ -22,6 +22,9 @@ from pysisu.query_helpers import build_url, pathjoin
 from pysisu.proto.sisu.v1.api import (
     AnalysesListResponse,
     AnalysisRunResultsResponse,
+    MetricsListResponse,
+    DataSourceListResponse,
+    DataSetsResponse,
 )
 
 
@@ -144,3 +147,18 @@ class PySisu:
             return to_table(result)
         else:
             return result
+
+    def metrics(self) -> MetricsListResponse:
+        path = ["api/v1/metrics"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return MetricsListResponse().from_dict(self._call_sisu_api(url_path))
+
+    def data_sources(self) -> DataSourceListResponse:
+        path = ["api/v1/data_sources"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return DataSourceListResponse().from_dict(self._call_sisu_api(url_path))
+
+    def datasets(self) -> DataSetsResponse:
+        path = ["api/v1/datasets"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return DataSetsResponse().from_dict(self._call_sisu_api(url_path))

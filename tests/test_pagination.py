@@ -126,4 +126,3 @@ def test_pagination_results_using_customer_facing_functions(
             -1
         ].id
     )
-
