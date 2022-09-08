@@ -13,7 +13,7 @@ DATABASE_USER = 'tyoung'
 FACT_TABLE_NAME = 'sisu_facts'
 
 # Get facts from Sisu
-sisu_table = sisu.get_results(ANALYSIS_ID)
+sisu_table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
 print("Facts loaded")
 
 # Connect to PG
@@ -26,14 +26,14 @@ sql_stmt = """TRUNCATE TABLE """ + FACT_TABLE_NAME + """;"""
 pg_cur.execute(sql_stmt)
 
 # Insert the facts
-sql_stmt = """INSERT INTO """ + FACT_TABLE_NAME + """ (subgroup_id, is_top_driver, factor_0_dimension, factor_0_value, factor_1_dimension, factor_1_value, factor_2_dimension, factor_2_value, group_a_size, group_b_size, group_a_value, group_b_value, group_a_name, group_b_name
-) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+sql_stmt = """INSERT INTO """ + FACT_TABLE_NAME + """ (subgroup_id, is_top_driver, factor_0_dimension, factor_0_value, factor_1_dimension, factor_1_value, factor_2_dimension, factor_2_value, impact, group_a_size, group_b_size, group_a_value, group_b_value, group_a_name, group_b_name
+) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
 
 # Print facts to the terminal and insert into the database
 print(', '.join([x.column_name for x in sisu_table.header]))
 
 for fact_row in sisu_table.rows:
-    pg_row = (fact_row.subgroup_id, fact_row.is_top_driver, fact_row.factor_0_dimension, fact_row.factor_0_value, fact_row.factor_1_dimension, fact_row.factor_1_value, fact_row.factor_2_dimension, fact_row.factor_2_value, fact_row.group_a_size, fact_row.group_b_size, fact_row.group_a_value, fact_row.group_b_value, fact_row.group_a_name, fact_row.group_b_name)
+    pg_row = (fact_row.subgroup_id, fact_row.is_top_driver, fact_row.factor_0_dimension, fact_row.factor_0_value, fact_row.factor_1_dimension, fact_row.factor_1_value, fact_row.factor_2_dimension, fact_row.factor_2_value, fact_row.impact, fact_row.group_a_size, fact_row.group_b_size, fact_row.group_a_value, fact_row.group_b_value, fact_row.group_a_name, fact_row.group_b_name)
 
     print(pg_row)
     pg_rs = pg_cur.execute(sql_stmt, (pg_row))

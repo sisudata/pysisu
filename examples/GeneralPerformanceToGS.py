@@ -13,7 +13,7 @@ PATH_TO_CREDS = 'credentials.json'
 PATH_TO_TOKEN = './token.json'
 
 # Get facts from Sisu
-sisu_table = sisu.get_results(ANALYSIS_ID)
+sisu_table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
 print("Facts loaded")
 
 # Connect to Google Drive
@@ -26,28 +26,40 @@ ws = sh.get_worksheet(0)
 # Print facts to the terminal and insert into the spreadsheet
 print(', '.join([x.column_name for x in sisu_table.header]))
 
+data = []
+row = []
+
+# Add column headers to the list
+for x in sisu_table.header:
+    row.append(x.column_name)
+
+# Add the column headers to the data set
+data.append(row)
 idx = 1
 
-for x in sisu_table.header:
-    ws.update_cell(1, idx, x.column_name)
-    idx = idx+1
-
-idx = 2
-
+# Create rows for each individual fact, and add them to the data set
 for fact_row in sisu_table.rows:
     print(fact_row)
+    
+    row=[]
+    row.append(fact_row.subgroup_id)
+    row.append(fact_row.is_top_driver)
+    row.append(fact_row.factor_0_dimension)
+    row.append(fact_row.factor_0_value)
+    row.append(fact_row.factor_1_dimension)
+    row.append(fact_row.factor_1_value)
+    row.append(fact_row.factor_2_dimension)
+    row.append(fact_row.factor_2_value)
+    row.append(fact_row.impact)
+    row.append(fact_row.size)
+    row.append(fact_row.value)
 
-    ws.update_cell(idx, 1, fact_row.subgroup_id)
-    ws.update_cell(idx, 2, fact_row.is_top_driver)
-    ws.update_cell(idx, 3, fact_row.factor_0_dimension)
-    ws.update_cell(idx, 4, fact_row.factor_0_value)
-    ws.update_cell(idx, 5, fact_row.factor_1_dimension)
-    ws.update_cell(idx, 6, fact_row.factor_1_value)
-    ws.update_cell(idx, 7, fact_row.factor_2_dimension)
-    ws.update_cell(idx, 8, fact_row.factor_2_value)
-    ws.update_cell(idx, 9, fact_row.size)
-    ws.update_cell(idx, 10, fact_row.value)
+    data.append(row)
 
     print("Record inserted successfully into spreadsheet")
 
     idx = idx + 1
+
+# Write the data set into the spreadsheet
+range = 'A1:' + chr(ord('A')+len(row)) + str(idx)
+ws.update(range, data)

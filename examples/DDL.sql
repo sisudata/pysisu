@@ -7,6 +7,7 @@ create table sisu_facts (
 	factor_1_value text,
 	factor_2_dimension text,
 	factor_2_value text,
+	impact numeric,
 	previous_period_size numeric,
 	recent_period_size numeric,
 	previous_period_value numeric,
