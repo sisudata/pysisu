@@ -19,3 +19,11 @@ def test_general_perf(mock_pysisu, snapshot):
     pysisu = PySisu('API_KEY', "URL")
     snapshot.snapshot_dir = OUTPUT_SNAPSHOT_DIR
     snapshot.assert_match(pysisu.get_results(1).to_csv(), 'general_performance_table.csv')
+
+@mock.patch("pysisu.PySisu.fetch_sisu_api")
+def test_td_general_perf(mock_pysisu, snapshot):
+    mock_pysisu.return_value = load_snapshot('api__test__get_trend_analysis_simple.json')
+    pysisu = PySisu('API_KEY', "URL")
+    snapshot.snapshot_dir = OUTPUT_SNAPSHOT_DIR
+    snapshot.assert_match(pysisu.get_results(1).to_csv(), 'td_general_performance_table.csv')
+    

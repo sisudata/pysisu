@@ -16,7 +16,7 @@
 
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple, Union
-from pysisu.formats import HeaderColumn, Row as FormatRow, Table
+from pysisu.formats import HeaderColumn, Row, Table
 from pysisu.proto.sisu.v1.api import AnalysisRunResultsResponse
 from pysisu.proto.sisu.v1.api import (
     Factor,
@@ -24,6 +24,8 @@ from pysisu.proto.sisu.v1.api import (
     KeyDriverAnalysisResultGroupComparison,
     KeyDriverAnalysisResultSubgroup,
     KeyDriverAnalysisResultTimeComparison,
+    TrendAnalysisResultSubgroup,
+    TrendAnalysisResultTrend,
 )
 import datetime
 import betterproto
@@ -35,7 +37,7 @@ class LatestAnalysisResultTable(Table):
 
 
 @dataclass
-class Row(FormatRow):
+class KDARow(Row):
     subgroup_id: int
     is_top_driver: bool
     factor_0_dimension: str
@@ -48,7 +50,7 @@ class Row(FormatRow):
 
 
 @dataclass
-class TimeCompareRow(Row):
+class TimeCompareRow(KDARow):
     previous_period_size: float
     recent_period_size: float
     previous_period_value: float
@@ -60,7 +62,7 @@ class TimeCompareRow(Row):
 
 
 @dataclass
-class GroupCompareRow(Row):
+class GroupCompareRow(KDARow):
     group_a_size: float
     group_b_size: float
     group_a_value: float
@@ -70,9 +72,26 @@ class GroupCompareRow(Row):
 
 
 @dataclass
-class GeneralPerformanceRow(Row):
+class GeneralPerformanceRow(KDARow):
     size: float
     value: float
+
+
+@dataclass
+class TrendRow(Row):
+    subgroup_id: int
+    factor_0_dimension: str
+    factor_0_value: any
+    factor_1_dimension: str
+    factor_1_value: any
+    factor_2_dimension: str
+    factor_2_value: any
+    impact: float
+    start_dt: datetime.datetime
+    end_dt: datetime.datetime
+    intercept: Optional[float]
+    slope: Optional[float]
+    size: Optional[float]
 
 
 class safelist(list):
@@ -225,35 +244,99 @@ def get_rows_general_performance(
 
     return rows
 
+def get_rows_trend(
+    subgroups: List[TrendAnalysisResultSubgroup],
+    overall_trends: List[TrendAnalysisResultTrend],
+) -> List[Row]:
+    rows = []
 
-def _get_rows(result: AnalysisRunResultsResponse) -> LatestAnalysisResultTable:
-    key_driver_analysis_result = (
-        result.analysis_result.key_driver_analysis_result
-    )
+    for otrend in overall_trends:
+        r = TrendRow(
+            subgroup_id=None,
+            factor_0_dimension=None,
+            factor_0_value=None,
+            factor_1_dimension=None,
+            factor_1_value=None,
+            factor_2_dimension=None,
+            factor_2_value=None,
+            impact=otrend.slope,
+            start_dt=otrend.time_range.start,
+            end_dt=otrend.time_range.end,
+            intercept=otrend.intercept,
+            slope=otrend.slope,
+            size=otrend.size,
+        )
+        rows.append(r)
 
-    subgroups = key_driver_analysis_result.subgroups
-    if key_driver_analysis_result.time_comparison:
-        return get_rows_time_comparision(
-            subgroups, key_driver_analysis_result.time_comparison
+    for subgroup in subgroups:
+        factor_0, factor_1, factor_2 = get_factors(subgroup.factors)
+
+        if factor_1.dimension is not None:
+            if factor_2.dimension is not None:
+                factor_0, factor_1, factor_2 = sorted(
+                    (factor_0, factor_1, factor_2),
+                    key=lambda factor: factor.dimension
+                )
+            else:
+                factor_0, factor_1 = sorted(
+                    (factor_0, factor_1),
+                    key=lambda factor: factor.dimension
+                )
+                
+
+        for trend in subgroup.trends:
+            r = TrendRow(
+                subgroup_id=subgroup.id,
+                factor_0_dimension=factor_0.dimension,
+                factor_0_value=factor_0.value,
+                factor_1_dimension=factor_1.dimension,
+                factor_1_value=factor_1.value,
+                factor_2_dimension=factor_2.dimension,
+                factor_2_value=factor_2.value,
+                impact=subgroup.impact,
+                start_dt=trend.time_range.start,
+                end_dt=trend.time_range.end,
+                intercept=trend.intercept,
+                slope=trend.slope,
+                size=trend.size,
+            )
+            rows.append(r)
+
+    return rows
+
+
+def _get_rows(result: AnalysisRunResultsResponse) -> List[Row]:
+    # Under the assumption that an analysis can't be
+    # more than one of [KDA, TD]
+    if result.analysis_result.key_driver_analysis_result:
+        analysis_result = result.analysis_result.key_driver_analysis_result
+        subgroups = analysis_result.subgroups
+
+        if analysis_result.time_comparison:
+            return get_rows_time_comparision(
+                subgroups, analysis_result.time_comparison
+            )
+        elif analysis_result.group_comparison:
+            return get_rows_group_comparision(
+                subgroups, analysis_result.group_comparison
+            )
+        elif analysis_result.general_performance._serialized_on_wire:
+            return get_rows_general_performance(subgroups)
+        else:
+            raise ValueError("Invalid key_driver_analysis_result")
+
+    elif result.analysis_result.trend_analysis_result:
+        analysis_result = result.analysis_result.trend_analysis_result
+        subgroups = analysis_result.subgroups
+
+        return get_rows_trend(
+            subgroups, analysis_result.overall_trends
         )
-    elif key_driver_analysis_result.group_comparison:
-        return get_rows_group_comparision(
-            subgroups, key_driver_analysis_result.group_comparison
-        )
-    elif key_driver_analysis_result.general_performance._serialized_on_wire:
-        return get_rows_general_performance(subgroups)
+
     else:
         raise ValueError("Invalid analysis_result")
 
 
-def to_table(
-    result: AnalysisRunResultsResponse, force_factor_value_to_str: bool = True
-) -> LatestAnalysisResultTable:
+def to_table(result: AnalysisRunResultsResponse) -> LatestAnalysisResultTable:
     rows = _get_rows(result)
-    if force_factor_value_to_str:
-        for i, row in enumerate(rows):
-            row: Row = row
-            rows[i].factor_0_value = str(row.factor_0_value)
-            rows[i].factor_1_value = str(row.factor_1_value)
-            rows[i].factor_2_value = str(row.factor_2_value)
     return LatestAnalysisResultTable(build_header_from_row(rows), rows)

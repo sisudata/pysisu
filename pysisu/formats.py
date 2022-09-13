@@ -36,7 +36,9 @@ class Row:
     def __str__(self):
         variables = []
         for x in vars(self).values():
-            if isinstance(x, (int, float)):
+            if x is None:
+                variables.append('')
+            elif isinstance(x, (int, float)):
                 variables.append(x)
             else:
                 variables.append(f"'{x}'")
