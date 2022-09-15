@@ -221,6 +221,9 @@ class Analysis(betterproto.Message):
     created_at: datetime = betterproto.message_field(4)
     """Timestamp when the analysis was created."""
 
+    metric_id: int = betterproto.uint64_field(5)
+    """Metric id corresponding to the analysis."""
+
 
 @dataclass(eq=False, repr=False)
 class RunAnalysisRequest(betterproto.Message):
@@ -287,6 +290,8 @@ class AnalysisResult(betterproto.Message):
     trend_analysis_result: "TrendAnalysisResult" = betterproto.message_field(
         7, group="run_result"
     )
+    metric_id: int = betterproto.uint64_field(8)
+    """Metric ID for the analysis."""
 
 
 @dataclass(eq=False, repr=False)

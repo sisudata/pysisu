@@ -6,6 +6,7 @@
     "requestedAt": "2020-01-01T00:00:00Z",
     "completedAt": "2020-01-01T00:00:00Z",
     "runType": "RUN_TYPE_MANUAL",
+    "metricId": "1",
     "keyDriverAnalysisResult": {
       "subgroups": [
         {

@@ -3,6 +3,7 @@
   "analysisResult": {
     "completedAt": "2020-01-01T00:00:00Z",
     "id": "1",
+    "metricId": "1",
     "requestedAt": "2020-01-01T00:00:00Z",
     "runStatus": "RUN_STATUS_COMPLETED",
     "runType": "RUN_TYPE_MANUAL",

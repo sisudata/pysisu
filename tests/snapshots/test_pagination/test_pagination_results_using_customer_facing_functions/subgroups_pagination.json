@@ -73,7 +73,8 @@
                     "impact": 0.02380679100908656
                 }
             ]
-        }
+        },
+        "metricId": "1"
     },
     "paginationHints": {
         "hasMore": true,
