@@ -14,4 +14,5 @@
 # limitations under the License.
 #
 
-from .pysisu_class import PySisu
+from .pysisu_class import PySisu  # noqa
+from .version import __version__  # noqa

@@ -1,4 +1,6 @@
 from pysisu import PySisu
+from pysisu.formats import LatestAnalysisResultsFormats
+from pysisu.proto.sisu.v1.api import AnalysesListResponse
 from pptx import Presentation
 from pptx.chart.data import ChartData
 from pptx.enum.chart import XL_CHART_TYPE
@@ -21,11 +23,17 @@ FILENAME = 'Sisu Facts.pptx'
 
 # Get facts from Sisu
 sisu_table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
+sisu_summary = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"}, format = LatestAnalysisResultsFormats.PROTO)
+sisu_analyses = sisu.analyses()
 print("Facts loaded")
 
 # Get general information from analysis
 ANALYSIS_NAME = 'My Sisu Analysis'  # TO-DO: Add the analysis name here
 METRIC_NAME = 'My Metric'  # TO-DO: Add the metric name here
+
+for analysis in sisu_analyses.analyses:
+    if analysis.id == ANALYSIS_ID:
+        ANALYSIS_NAME = analysis.name
 
 # Create the presentation
 p = Presentation()
@@ -40,8 +48,8 @@ s = p.slides.add_slide(sl)
 s.shapes.title.text = ANALYSIS_NAME
 
 # TO-DO: add date ranges for period
-s.shapes[1].text = 'Previous Period' + '\n' + '<date range>'
-s.shapes[3].text = 'Recent Period' + '\n' + '<date range>'
+s.shapes[1].text = 'Previous Period' + '\n' + str(sisu_summary.analysis_result.key_driver_analysis_result.time_comparison.previous_period.start) + ' to ' + str(sisu_summary.analysis_result.key_driver_analysis_result.time_comparison.previous_period.end)
+s.shapes[3].text = 'Recent Period' + '\n' + str(sisu_summary.analysis_result.key_driver_analysis_result.time_comparison.recent_period.start) + ' to ' + str(sisu_summary.analysis_result.key_driver_analysis_result.time_comparison.recent_period.end)
 
 # TO-DO: add metric value, min, max, median, average, sum, rows
 s.shapes[2].text = '<previous period summary data>'

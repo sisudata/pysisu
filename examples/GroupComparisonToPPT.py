@@ -1,4 +1,6 @@
 from pysisu import PySisu
+from pysisu.formats import LatestAnalysisResultsFormats
+from pysisu.proto.sisu.v1.api import AnalysesListResponse
 from pptx import Presentation
 from pptx.chart.data import ChartData
 from pptx.enum.chart import XL_CHART_TYPE
@@ -21,11 +23,17 @@ FILENAME = 'Sisu Facts.pptx'
 
 # Get facts from Sisu
 sisu_table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
+sisu_summary = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"}, format = LatestAnalysisResultsFormats.PROTO)
+sisu_analyses = sisu.analyses()
 print("Facts loaded")
 
 # Get general information from analysis
 ANALYSIS_NAME = 'My Sisu Analysis'  # TO-DO: Add the analysis name here
 METRIC_NAME = 'My Metric'  # TO-DO: Add the metric name here
+
+for analysis in sisu_analyses.analyses:
+    if analysis.id == ANALYSIS_ID:
+        ANALYSIS_NAME = analysis.name
 
 # Create the presentation
 p = Presentation()
@@ -39,9 +47,8 @@ sl = p.slide_layouts[LAYOUT_COMPARISON]
 s = p.slides.add_slide(sl)
 s.shapes.title.text = ANALYSIS_NAME
 
-# TO-DO: add group name for period
-s.shapes[1].text = 'Group A' + '\n' + '<group A name>'
-s.shapes[3].text = 'Group B' + '\n' + '<group B name>'
+s.shapes[1].text = 'Group A' + '\n' + sisu_summary.analysis_result.key_driver_analysis_result.group_comparison.group_a.name
+s.shapes[3].text = 'Group B' + '\n' + sisu_summary.analysis_result.key_driver_analysis_result.group_comparison.group_b.name
 
 # TO-DO: add metric value, min, max, median, average, sum, rows
 s.shapes[2].text = '<group a summary data>'

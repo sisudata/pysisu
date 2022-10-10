@@ -21,11 +21,16 @@ FILENAME = 'Sisu Facts.pptx'
 
 # Get facts from Sisu
 sisu_table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
+sisu_analyses = sisu.analyses()
 print("Facts loaded")
 
 # Get general information from analysis
 ANALYSIS_NAME = 'My Sisu Analysis'  # TO-DO: Add the analysis name here
 METRIC_NAME = 'My Metric'  # TO-DO: Add the metric name here
+
+for analysis in sisu_analyses.analyses:
+    if analysis.id == ANALYSIS_ID:
+        ANALYSIS_NAME = analysis.name
 
 # Create the presentation
 p = Presentation()

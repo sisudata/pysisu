@@ -15,18 +15,22 @@
 #
 
 from setuptools import setup, find_packages
-
-# read the contents of your README file
 from pathlib import Path
 
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
+pkg_vars = {}
+
+# Doing versions is hard and annoying in python.
+# See https://stackoverflow.com/questions/458550/standard-way-to-embed-version-into-python-package
+with open("pysisu/version.py") as fp:
+    exec(fp.read(), pkg_vars)
 
 setup(
     name="pysisu",
-    version="0.0.21",
     packages=find_packages(include=["pysisu", "pysisu.*"]),
     install_requires=["betterproto>=2.0.0b4", "requests"],
+    version=pkg_vars['__version__'],
     long_description=long_description,
     long_description_content_type="text/markdown",
 )

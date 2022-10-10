@@ -44,6 +44,14 @@ export SISU_API_KEY=<key>
 
 # Testing
 
+Setup 
+
+```bash
+python3 -m venv env
+python -m pip install -e .
+pip install -r requirements-dev.txt
+```
+
 There are example api responses in `tests/input_snapshots` and there are the expected parsing responses in `tests/output_snapshots`.
 
 To updated the output snapshots whenever the input snapshots get updated, just run
