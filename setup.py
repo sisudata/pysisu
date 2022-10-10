@@ -24,7 +24,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="pysisu",
-    version="0.0.22",
+    version="0.0.21",
     packages=find_packages(include=["pysisu", "pysisu.*"]),
     install_requires=["betterproto>=2.0.0b4", "requests"],
     long_description=long_description,

@@ -123,7 +123,7 @@ def get_factor(dimension: str, factor: Factor) -> FactorDimVal:
     elif factor_type == "bin":
         return FactorDimVal(
             dimension,
-            f"{factor.bin.lower_bound}-{factor.bin.upper_bound} ({factor.bin.lower_bound_percentile}-{factor.bin.upper_bound_percentile} percentile)",
+            f"{factor.bin.lower_bound_percentile} to {factor.bin.upper_bound_percentile}",
         )
     elif factor_type == "keyword":
         return FactorDimVal(dimension, factor.keyword.keyword)
