@@ -15,17 +15,16 @@
 #
 
 from typing import Union
+
 import requests
+
 from pysisu.formats import LatestAnalysisResultsFormats, Table
 from pysisu.latest_analysis_result import to_table
+from pysisu.proto.sisu.v1.api import (AnalysesListResponse,
+                                      AnalysisRunResultsResponse,
+                                      DataSetsResponse, DataSourceListResponse,
+                                      Expression, MetricsListResponse)
 from pysisu.query_helpers import build_url, pathjoin
-from pysisu.proto.sisu.v1.api import (
-    AnalysesListResponse,
-    AnalysisRunResultsResponse,
-    MetricsListResponse,
-    DataSourceListResponse,
-    DataSetsResponse,
-)
 
 
 class PySisuBaseException(Exception):
@@ -106,9 +105,9 @@ class PySisu:
         )
         return result
 
-    def _call_sisu_api(self, url_path: int, request_method="get") -> dict:
+    def _call_sisu_api(self, url_path: int, request_method="get", json=None) -> dict:
         headers = headers = {"Authorization": self._api_key}
-        r = requests.request(request_method, url_path, headers=headers)
+        r = requests.request(request_method, url_path, headers=headers, json=json)
         if r.status_code != 200:
             raise PySisuInvalidResponseFromServer(
                 "Result did not complete", r.content
@@ -162,3 +161,14 @@ class PySisu:
         path = ["api/v1/datasets"]
         url_path = build_url(self._url, pathjoin(*path), {})
         return DataSetsResponse().from_dict(self._call_sisu_api(url_path))
+
+    def get_filters(self, analysis_id: int) -> Expression:
+        path = [f"api/v1/analyses/{analysis_id}/filters"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return Expression().from_dict(self._call_sisu_api(url_path))
+
+    def set_filters(self, analysis_id: int , expr: Expression):
+        path = [f"api/v1/analyses/{analysis_id}/filters"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        expr = expr.to_dict() if isinstance(expr, Expression) else expr
+        return self._call_sisu_api(url_path, request_method="put", json=expr)
