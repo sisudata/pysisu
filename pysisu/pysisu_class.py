@@ -23,7 +23,9 @@ from pysisu.latest_analysis_result import to_table
 from pysisu.proto.sisu.v1.api import (AnalysesListResponse,
                                       AnalysisRunResultsResponse,
                                       DataSetsResponse, DataSourceListResponse,
-                                      Expression, MetricsListResponse)
+                                      GetAnalysisFiltersResponse,
+                                      MetricsListResponse,
+                                      SetAnalysisFiltersRequest)
 from pysisu.query_helpers import build_url, pathjoin
 
 
@@ -76,7 +78,7 @@ class PySisu:
             return result
 
         kda_result = result.analysis_result.key_driver_analysis_result
-        subgroups = kda_result.subgroups
+        subgroups = kda_result.segments
 
         if params.get("limit"):
             params["limit"] -= len(subgroups)
@@ -99,14 +101,14 @@ class PySisu:
             True,
             format=LatestAnalysisResultsFormats.PROTO,
         )
-        kda_result.subgroups = (
+        kda_result.segments = (
             subgroups
-            + next_page.analysis_result.key_driver_analysis_result.subgroups
+            + next_page.analysis_result.key_driver_analysis_result.segments
         )
         return result
 
     def _call_sisu_api(self, url_path: int, request_method="get", json=None) -> dict:
-        headers = headers = {"Authorization": self._api_key}
+        headers = headers = {"Authorization": self._api_key, "User-Agent": "PySisu"}
         r = requests.request(request_method, url_path, headers=headers, json=json)
         if r.status_code != 200:
             raise PySisuInvalidResponseFromServer(
@@ -155,20 +157,22 @@ class PySisu:
     def data_sources(self) -> DataSourceListResponse:
         path = ["api/v1/data_sources"]
         url_path = build_url(self._url, pathjoin(*path), {})
-        return DataSourceListResponse().from_dict(self._call_sisu_api(url_path))
+        return DataSourceListResponse().from_dict(
+            self._call_sisu_api(url_path)
+        )
 
     def datasets(self) -> DataSetsResponse:
         path = ["api/v1/datasets"]
         url_path = build_url(self._url, pathjoin(*path), {})
         return DataSetsResponse().from_dict(self._call_sisu_api(url_path))
 
-    def get_filters(self, analysis_id: int) -> Expression:
+    def get_filters(self, analysis_id: int) -> GetAnalysisFiltersResponse:
         path = [f"api/v1/analyses/{analysis_id}/filters"]
         url_path = build_url(self._url, pathjoin(*path), {})
-        return Expression().from_dict(self._call_sisu_api(url_path))
+        return GetAnalysisFiltersResponse().from_dict(self._call_sisu_api(url_path))
 
-    def set_filters(self, analysis_id: int , expr: Expression):
+    def set_filters(self, analysis_id: int , expr: SetAnalysisFiltersRequest):
         path = [f"api/v1/analyses/{analysis_id}/filters"]
         url_path = build_url(self._url, pathjoin(*path), {})
-        expr = expr.to_dict() if isinstance(expr, Expression) else expr
+        expr = expr.to_dict() if isinstance(expr, SetAnalysisFiltersRequest) else expr
         return self._call_sisu_api(url_path, request_method="put", json=expr)

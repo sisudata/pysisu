@@ -21,5 +21,7 @@ API_KEY = os.environ.get('SISU_API_KEY')
 ANALYSIS_ID = 15245
 
 sisu = PySisu(API_KEY)
-table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
-print(table.to_csv())
+filters = sisu.get_filters(ANALYSIS_ID)
+print(filters)
+resp = sisu.set_filters(ANALYSIS_ID, filters.to_dict())
+print(resp)

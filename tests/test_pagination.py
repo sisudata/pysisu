@@ -58,7 +58,7 @@ def test_pagination_staring_after_gets_updated(
     # Make sure the next starting_after was marked at the correct cursor from the pagination hints
     assert (
         get_results.call_args[0][1]["starting_after"]
-        == result_has_more.analysis_result.key_driver_analysis_result.subgroups[
+        == result_has_more.analysis_result.key_driver_analysis_result.segments[
             -1
         ].id
     )
@@ -78,7 +78,7 @@ def test_pagination_limit_works(
     assert get_results.call_args[0][1]["limit"] == 98
     assert (
         get_results.call_args[0][1]["starting_after"]
-        == result_has_more.analysis_result.key_driver_analysis_result.subgroups[
+        == result_has_more.analysis_result.key_driver_analysis_result.segments[
             -1
         ].id
     )
@@ -122,7 +122,7 @@ def test_pagination_results_using_customer_facing_functions(
     assert fetch_sisu_api.call_args[0][1]["limit"] == 98
     assert (
         fetch_sisu_api.call_args[0][1]["starting_after"]
-        == result_has_more.analysis_result.key_driver_analysis_result.subgroups[
+        == result_has_more.analysis_result.key_driver_analysis_result.segments[
             -1
         ].id
     )

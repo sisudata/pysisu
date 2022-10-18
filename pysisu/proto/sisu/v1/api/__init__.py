@@ -32,7 +32,7 @@ class AnalysisType(betterproto.Enum):
 
 
 class SqlDataType(betterproto.Enum):
-    """Represents a datatype of a specific column."""
+    """Represents a datatype of a specific dimension."""
 
     SQL_DATA_TYPE_UNKNOWN = 0
     SQL_DATA_TYPE_STRING = 1
@@ -93,41 +93,48 @@ class MetricMetricType(betterproto.Enum):
 
     METRIC_TYPE_UNKNOWN = 0
     METRIC_TYPE_AVERAGE = 1
-    """Average of a single metric column(e.g., average order value)."""
+    """Average of a single metric dimension(e.g., average order value)."""
 
     METRIC_TYPE_SUM = 2
-    """Sum of a single metric column(e.g., total revenue)."""
+    """Sum of a single metric dimension(e.g., total revenue)."""
 
     METRIC_TYPE_WEIGHTED_SUM = 3
     """
-    Sum of a metric column weighted by a weight column(e.g., price per share).
+    Sum of a metric dimension weighted by a weight dimension(e.g., price per
+    share).
     """
 
     METRIC_TYPE_WEIGHTED_AVERAGE = 4
     """
-    Average of a metric column weighted by a weight column(e.g., price per
-    share).
+    Average of a metric dimension weighted by a weight dimension(e.g., price
+    per share).
     """
 
     METRIC_TYPE_CATEGORICAL_COUNT = 5
     """
-    Count of a matching condition in a metric column(e.g., number of churns).
+    Count of a matching condition in a metric dimension(e.g., number of
+    churns).
     """
 
     METRIC_TYPE_CATEGORICAL_RATE = 6
-    """Rate of a matching condition in a metric column(e.g., churn rate)."""
+    """
+    Rate of a matching condition in a metric dimension(e.g., churn rate).
+    """
 
     METRIC_TYPE_COUNT_DISTINCT = 7
     """
-    Count of a matching condition in a metric column(e.g., number of churns).
+    Count of a matching condition in a metric dimension(e.g., number of
+    churns).
     """
 
     METRIC_TYPE_NUMERICAL_COUNT = 8
-    """Count of the rows of a single metric column(e.g., number of orders)."""
+    """
+    Count of the rows of a single metric dimension(e.g., number of orders).
+    """
 
     METRIC_TYPE_NUMERICAL_RATE = 9
     """
-    A metric column divided by a denominator column(e.g., lead conversion
+    A metric dimension divided by a denominator dimension(e.g., lead conversion
     rate).
     """
 
@@ -144,6 +151,7 @@ class DataSourceDataSourceType(betterproto.Enum):
     DATA_SOURCE_TYPE_SPARK = 8
     DATA_SOURCE_TYPE_DATABRICKS = 9
     DATA_SOURCE_TYPE_SAP = 10
+    DATA_SOURCE_TYPE_CSV = 11
 
 
 class DatasetDatasetType(betterproto.Enum):
@@ -170,7 +178,7 @@ class SetAnalysisFiltersRequest(betterproto.Message):
     id: Optional[int] = betterproto.message_field(1, wraps=betterproto.TYPE_INT64)
     """Analysis id."""
 
-    filters: "Expression" = betterproto.message_field(2)
+    filter_expression: "Expression" = betterproto.message_field(2)
     """
     A filter expression must be one of 'and'/'or' [expression] with min of 2
     expressions. or a single basicCondition.
@@ -432,8 +440,8 @@ class KeyDriverAnalysisResult(betterproto.Message):
     )
     """If the subtype is General_Performance."""
 
-    subgroups: List["KeyDriverAnalysisResultSubgroup"] = betterproto.message_field(9)
-    """Array of the subgroups selected by the key driver algorithm."""
+    segments: List["KeyDriverAnalysisResultSegment"] = betterproto.message_field(9)
+    """Array of the segments selected by the key driver algorithm."""
 
 
 @dataclass(eq=False, repr=False)
@@ -482,125 +490,119 @@ class KeyDriverAnalysisResultGeneralPerformance(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
-class KeyDriverAnalysisResultSubgroup(betterproto.Message):
-    """Subgroup of a key driver analysis run."""
+class KeyDriverAnalysisResultSegment(betterproto.Message):
+    """Segment of a key driver analysis run."""
 
     id: int = betterproto.int64_field(1)
-    """Unique ID corresponding to each subgroup, unique per analysis run."""
+    """Unique ID corresponding to each segment, unique per analysis run."""
 
     is_top_driver: Optional[bool] = betterproto.message_field(
         2, wraps=betterproto.TYPE_BOOL
     )
-    """Is top driver for this subgroup."""
+    """Is top driver for this segment."""
 
     factors: Dict[str, "Factor"] = betterproto.map_field(
         3, betterproto.TYPE_STRING, betterproto.TYPE_MESSAGE
     )
     """
-    The factors that define this subgroup, represented as a map of Dimension to
+    The factors that define this segment, represented as a map of Dimension to
     Value.
     """
 
-    group_comparison: "KeyDriverAnalysisResultSubgroupGroupComparisonPerformance" = (
+    group_comparison: "KeyDriverAnalysisResultSegmentGroupComparisonPerformance" = (
         betterproto.message_field(4, group="details")
     )
-    time_comparison: "KeyDriverAnalysisResultSubgroupTimeComparisonPerformance" = (
+    time_comparison: "KeyDriverAnalysisResultSegmentTimeComparisonPerformance" = (
         betterproto.message_field(5, group="details")
     )
-    general_performance: "KeyDriverAnalysisResultSubgroupGeneralPerformance" = (
+    general_performance: "KeyDriverAnalysisResultSegmentGeneralPerformance" = (
         betterproto.message_field(6, group="details")
     )
     impact: Optional[float] = betterproto.message_field(
         7, wraps=betterproto.TYPE_DOUBLE
     )
     """
-    How much this subgroup contributes to the overall value of the metric
+    How much this segment contributes to the overall value of the metric
     calculation.
     """
 
 
 @dataclass(eq=False, repr=False)
-class KeyDriverAnalysisResultSubgroupGroupComparisonPerformance(betterproto.Message):
+class KeyDriverAnalysisResultSegmentGroupComparisonPerformance(betterproto.Message):
     """
     If analysis type is GROUP_COMPARISON the metric value and size of the
-    compared subgroups.
+    compared segments.
     """
 
     group_a_size: Optional[float] = betterproto.message_field(
         1, wraps=betterproto.TYPE_DOUBLE
     )
-    """The size of this subgroup in the first group."""
+    """The size of this segment in the first group."""
 
     group_b_size: Optional[float] = betterproto.message_field(
         2, wraps=betterproto.TYPE_DOUBLE
     )
-    """The size of this subgroup in the second group."""
+    """The size of this segment in the second group."""
 
     group_a_value: Optional[float] = betterproto.message_field(
         3, wraps=betterproto.TYPE_DOUBLE
     )
-    """
-    The value of the metric for this of this subgroup in the first group.
-    """
+    """The value of the metric for this segment in the first group."""
 
     group_b_value: Optional[float] = betterproto.message_field(
         4, wraps=betterproto.TYPE_DOUBLE
     )
-    """
-    The value of the metric for this of this subgroup in the second group.
-    """
+    """The value of the metric for this segment in the second group."""
 
 
 @dataclass(eq=False, repr=False)
-class KeyDriverAnalysisResultSubgroupTimeComparisonPerformance(betterproto.Message):
+class KeyDriverAnalysisResultSegmentTimeComparisonPerformance(betterproto.Message):
     """
     If analysis type is TIME_COMPARISON,  the metric value and size of the
-    compared subgroups.
+    compared segments.
     """
 
     previous_period_size: Optional[float] = betterproto.message_field(
         1, wraps=betterproto.TYPE_DOUBLE
     )
-    """The size of this subgroup in the earlier of the compared periods."""
+    """The size of this segment in the earlier of the compared periods."""
 
     recent_period_size: Optional[float] = betterproto.message_field(
         2, wraps=betterproto.TYPE_DOUBLE
     )
-    """
-    The size of this subgroup in the more recent of the compared periods.
-    """
+    """The size of this segment in the more recent of the compared periods."""
 
     previous_period_value: Optional[float] = betterproto.message_field(
         3, wraps=betterproto.TYPE_DOUBLE
     )
     """
-    The value of the metric for this of this subgroup in the earlier of the
-    compared periods.
+    The value of the metric for this segment in the earlier of the compared
+    periods.
     """
 
     recent_period_value: Optional[float] = betterproto.message_field(
         4, wraps=betterproto.TYPE_DOUBLE
     )
     """
-    The value of the metric for this of this subgroup in the more recent of the
-    compared periods.
+    The value of the metric for this segment in the more recent of the compared
+    periods.
     """
 
 
 @dataclass(eq=False, repr=False)
-class KeyDriverAnalysisResultSubgroupGeneralPerformance(betterproto.Message):
+class KeyDriverAnalysisResultSegmentGeneralPerformance(betterproto.Message):
     """
     If analysis type is GENERAL_PERFORMANCE the metric value and size for this
-    subgroup.
+    segment.
     """
 
     size: Optional[float] = betterproto.message_field(1, wraps=betterproto.TYPE_DOUBLE)
     """
-    The size (in percent) of this subgroup relative to the overall population.
+    The size (in percent) of this segment relative to the overall population.
     """
 
     value: Optional[float] = betterproto.message_field(2, wraps=betterproto.TYPE_DOUBLE)
-    """The metric value corresponding to this subgroup."""
+    """The metric value corresponding to this segment."""
 
 
 @dataclass(eq=False, repr=False)
@@ -610,8 +612,8 @@ class TrendAnalysisResult(betterproto.Message):
     overall_trends: List["TrendAnalysisResultTrend"] = betterproto.message_field(1)
     """Metric level trends."""
 
-    subgroups: List["TrendAnalysisResultSubgroup"] = betterproto.message_field(2)
-    """Array of the subgroups in the trend."""
+    segments: List["TrendAnalysisResultSegment"] = betterproto.message_field(2)
+    """Array of the segments in the trend."""
 
 
 @dataclass(eq=False, repr=False)
@@ -626,7 +628,7 @@ class TrendAnalysisResultTrend(betterproto.Message):
     )
     """Y-intersept of the trend."""
 
-    slope: Optional[float] = betterproto.double_field(3, optional=True, group="_slope")
+    trend: Optional[float] = betterproto.double_field(3, optional=True, group="_trend")
     """Steepness of trend."""
 
     size: Optional[float] = betterproto.double_field(4, optional=True, group="_size")
@@ -636,28 +638,28 @@ class TrendAnalysisResultTrend(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
-class TrendAnalysisResultSubgroup(betterproto.Message):
-    """Subgroup of an trend analysis run."""
+class TrendAnalysisResultSegment(betterproto.Message):
+    """Segment of an trend analysis run."""
 
     id: int = betterproto.int64_field(1)
-    """Unique ID corresponding to each subgroup, unique per analysis run."""
+    """Unique ID corresponding to each segment, unique per analysis run."""
 
     factors: Dict[str, "Factor"] = betterproto.map_field(
         2, betterproto.TYPE_STRING, betterproto.TYPE_MESSAGE
     )
     """
-    The factors that define this subgroup, represented as a map of Dimension to
+    The factors that define this segment, represented as a map of Dimension to
     Value.
     """
 
     trends: List["TrendAnalysisResultTrend"] = betterproto.message_field(4)
-    """Trends for the subgroup."""
+    """Trends for the segment."""
 
     impact: Optional[float] = betterproto.message_field(
         5, wraps=betterproto.TYPE_DOUBLE
     )
     """
-    How much this subgroup contributes to the overall value of the metric
+    How much this segment contributes to the overall value of the metric
     calculation.
     """
 
@@ -685,7 +687,7 @@ class Value(betterproto.Message):
 
 @dataclass(eq=False, repr=False)
 class Factor(betterproto.Message):
-    """(Dimension, Value) pairs that define a subgroup."""
+    """(Dimension, Value) pairs that define a segment."""
 
     value: "Value" = betterproto.message_field(1, group="factor_type")
     """Value, it is either string, int, boolean, float or timestamp type."""

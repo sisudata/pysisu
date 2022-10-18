@@ -25,8 +25,8 @@ class Table:
     header: List["HeaderColumn"]
     rows: List["Row"]
 
-    def to_csv(self) -> str:
-        header = ','.join([x.column_name for x in self.header])
+    def to_csv(self, delimiter : str = ',') -> str:
+        header = delimiter.join([x.column_name for x in self.header])
         rows = '\n'.join([str(row) for row in self.rows])
         return f'{header}\n{rows}'
 

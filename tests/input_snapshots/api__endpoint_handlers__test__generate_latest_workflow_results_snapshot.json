@@ -8,7 +8,7 @@
     "runType": "RUN_TYPE_MANUAL",
     "metricId": "1",
     "keyDriverAnalysisResult": {
-      "subgroups": [
+      "segments": [
         {
           "id": "2",
           "isTopDriver": false,

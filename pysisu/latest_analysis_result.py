@@ -22,9 +22,9 @@ from pysisu.proto.sisu.v1.api import (
     Factor,
     Value,
     KeyDriverAnalysisResultGroupComparison,
-    KeyDriverAnalysisResultSubgroup,
+    KeyDriverAnalysisResultSegment,
     KeyDriverAnalysisResultTimeComparison,
-    TrendAnalysisResultSubgroup,
+    TrendAnalysisResultSegment,
     TrendAnalysisResultTrend,
 )
 import datetime
@@ -159,7 +159,7 @@ def build_header_from_row(rows: List[Row]) -> List[HeaderColumn]:
 
 
 def get_rows_time_comparision(
-    subgroups: List[KeyDriverAnalysisResultSubgroup],
+    subgroups: List[KeyDriverAnalysisResultSegment],
     time_comparision: KeyDriverAnalysisResultTimeComparison,
 ) -> List[Row]:
     rows = []
@@ -191,7 +191,7 @@ def get_rows_time_comparision(
 
 
 def get_rows_group_comparision(
-    subgroups: List[KeyDriverAnalysisResultSubgroup],
+    subgroups: List[KeyDriverAnalysisResultSegment],
     group_comparision: KeyDriverAnalysisResultGroupComparison,
 ) -> List[Row]:
     rows = []
@@ -221,7 +221,7 @@ def get_rows_group_comparision(
 
 
 def get_rows_general_performance(
-    subgroups: List[KeyDriverAnalysisResultSubgroup],
+    subgroups: List[KeyDriverAnalysisResultSegment],
 ) -> List[Row]:
     rows = []
     for subgroup in subgroups:
@@ -244,8 +244,9 @@ def get_rows_general_performance(
 
     return rows
 
+
 def get_rows_trend(
-    subgroups: List[TrendAnalysisResultSubgroup],
+    subgroups: List[TrendAnalysisResultSegment],
     overall_trends: List[TrendAnalysisResultTrend],
 ) -> List[Row]:
     rows = []
@@ -259,11 +260,11 @@ def get_rows_trend(
             factor_1_value=None,
             factor_2_dimension=None,
             factor_2_value=None,
-            impact=otrend.slope,
+            impact=otrend.trend,
             start_dt=otrend.time_range.start,
             end_dt=otrend.time_range.end,
             intercept=otrend.intercept,
-            slope=otrend.slope,
+            slope=otrend.trend,
             size=otrend.size,
         )
         rows.append(r)
@@ -275,14 +276,12 @@ def get_rows_trend(
             if factor_2.dimension is not None:
                 factor_0, factor_1, factor_2 = sorted(
                     (factor_0, factor_1, factor_2),
-                    key=lambda factor: factor.dimension
+                    key=lambda factor: factor.dimension,
                 )
             else:
                 factor_0, factor_1 = sorted(
-                    (factor_0, factor_1),
-                    key=lambda factor: factor.dimension
+                    (factor_0, factor_1), key=lambda factor: factor.dimension
                 )
-                
 
         for trend in subgroup.trends:
             r = TrendRow(
@@ -297,7 +296,7 @@ def get_rows_trend(
                 start_dt=trend.time_range.start,
                 end_dt=trend.time_range.end,
                 intercept=trend.intercept,
-                slope=trend.slope,
+                slope=trend.trend,
                 size=trend.size,
             )
             rows.append(r)
@@ -310,7 +309,7 @@ def _get_rows(result: AnalysisRunResultsResponse) -> List[Row]:
     # more than one of [KDA, TD]
     if result.analysis_result.key_driver_analysis_result:
         analysis_result = result.analysis_result.key_driver_analysis_result
-        subgroups = analysis_result.subgroups
+        subgroups = analysis_result.segments
 
         if analysis_result.time_comparison:
             return get_rows_time_comparision(
@@ -327,11 +326,9 @@ def _get_rows(result: AnalysisRunResultsResponse) -> List[Row]:
 
     elif result.analysis_result.trend_analysis_result:
         analysis_result = result.analysis_result.trend_analysis_result
-        subgroups = analysis_result.subgroups
+        subgroups = analysis_result.segments
 
-        return get_rows_trend(
-            subgroups, analysis_result.overall_trends
-        )
+        return get_rows_trend(subgroups, analysis_result.overall_trends)
 
     else:
         raise ValueError("Invalid analysis_result")

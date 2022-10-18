@@ -7,7 +7,7 @@
         "runType": "RUN_TYPE_MANUAL",
         "keyDriverAnalysisResult": {
             "generalPerformance": {},
-            "subgroups": [
+            "segments": [
                 {
                     "id": "2",
                     "isTopDriver": false,
