@@ -23,6 +23,7 @@ from pysisu.latest_analysis_result import to_table
 from pysisu.proto.sisu.v1.api import (AnalysesListResponse,
                                       AnalysisRunResultsResponse,
                                       DataSetsResponse, DataSourceListResponse,
+                                      DuplicateAnalysisResponse,
                                       GetAnalysisFiltersResponse,
                                       MetricsListResponse,
                                       SetAnalysisFiltersRequest)
@@ -124,7 +125,7 @@ class PySisu:
     def run(self, analysis_id: int):
         path = ["api/v1/analyses/", str(analysis_id), "run"]
         url_path = build_url(self._url, pathjoin(*path), {})
-        self._call_sisu_api(url_path, request_method="post")
+        self._call_sisu_api(url_path, request_method="POST")
 
     def analyses(self) -> AnalysesListResponse:
         path = ["api/v1/analyses"]
@@ -175,4 +176,9 @@ class PySisu:
         path = [f"api/v1/analyses/{analysis_id}/filters"]
         url_path = build_url(self._url, pathjoin(*path), {})
         expr = expr.to_dict() if isinstance(expr, SetAnalysisFiltersRequest) else expr
-        return self._call_sisu_api(url_path, request_method="put", json=expr)
+        return self._call_sisu_api(url_path, request_method="PUT", json=expr)
+
+    def duplicate_analysis(self, analysis_id: int) -> DuplicateAnalysisResponse:
+        path = [f"api/v1/analyses/{analysis_id}/duplicate"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return DuplicateAnalysisResponse().from_dict(self._call_sisu_api(url_path, request_method="POST"))

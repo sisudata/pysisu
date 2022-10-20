@@ -936,6 +936,18 @@ class Dataset(betterproto.Message):
     """Data Source id of the data set."""
 
 
+@dataclass(eq=False, repr=False)
+class DuplicateAnalysisRequest(betterproto.Message):
+    id: int = betterproto.uint64_field(1)
+    """Analysis id to be duplicated"""
+
+
+@dataclass(eq=False, repr=False)
+class DuplicateAnalysisResponse(betterproto.Message):
+    id: int = betterproto.uint64_field(1)
+    """Newly created Analysis id."""
+
+
 class AnalysesServiceStub(betterproto.ServiceStub):
     async def analyses_list(
         self,
@@ -1034,6 +1046,23 @@ class AnalysesServiceStub(betterproto.ServiceStub):
             "/sisu.v1.api.AnalysesService/AnalysisDimensionsList",
             analysis_dimensions_list_request,
             AnalysisDimensionsListResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+    async def duplicate_analysis(
+        self,
+        duplicate_analysis_request: "DuplicateAnalysisRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "DuplicateAnalysisResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.AnalysesService/DuplicateAnalysis",
+            duplicate_analysis_request,
+            DuplicateAnalysisResponse,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -1145,6 +1174,11 @@ class AnalysesServiceBase(ServiceBase):
     ) -> "AnalysisDimensionsListResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def duplicate_analysis(
+        self, duplicate_analysis_request: "DuplicateAnalysisRequest"
+    ) -> "DuplicateAnalysisResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_analyses_list(
         self, stream: "grpclib.server.Stream[AnalysesListRequest, AnalysesListResponse]"
     ) -> None:
@@ -1191,6 +1225,14 @@ class AnalysesServiceBase(ServiceBase):
         response = await self.analysis_dimensions_list(request)
         await stream.send_message(response)
 
+    async def __rpc_duplicate_analysis(
+        self,
+        stream: "grpclib.server.Stream[DuplicateAnalysisRequest, DuplicateAnalysisResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.duplicate_analysis(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.AnalysesService/AnalysesList": grpclib.const.Handler(
@@ -1228,6 +1270,12 @@ class AnalysesServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 AnalysisDimensionsListRequest,
                 AnalysisDimensionsListResponse,
+            ),
+            "/sisu.v1.api.AnalysesService/DuplicateAnalysis": grpclib.const.Handler(
+                self.__rpc_duplicate_analysis,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                DuplicateAnalysisRequest,
+                DuplicateAnalysisResponse,
             ),
         }
 
