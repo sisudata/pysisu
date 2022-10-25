@@ -267,7 +267,7 @@ class AnalysisRunResultsRequest(betterproto.Message):
     limit: Optional[int] = betterproto.message_field(1, wraps=betterproto.TYPE_UINT64)
     """
     A limit on the number of objects to be returned, between 1 and 10000.
-    Default value is 100.
+    Default value is 10000.
     """
 
     starting_after: Optional[int] = betterproto.message_field(
@@ -302,7 +302,7 @@ class AnalysesListRequest(betterproto.Message):
     limit: Optional[int] = betterproto.message_field(2, wraps=betterproto.TYPE_UINT64)
     """
     A limit on the number of objects to be returned, between 1 and 10000.
-    Default value is 100.
+    Default value is 10000.
     """
 
     starting_after: Optional[int] = betterproto.message_field(
@@ -344,6 +344,12 @@ class Analysis(betterproto.Message):
 
     metric_id: int = betterproto.uint64_field(5)
     """Metric id corresponding to the analysis."""
+
+    application_url: str = betterproto.string_field(6)
+    """
+    Link to the live sisu analysis this represents. ex:
+    vip.sisudata.com/projects/{id}/analysis/{id}
+    """
 
 
 @dataclass(eq=False, repr=False)
@@ -442,6 +448,12 @@ class KeyDriverAnalysisResult(betterproto.Message):
 
     segments: List["KeyDriverAnalysisResultSegment"] = betterproto.message_field(9)
     """Array of the segments selected by the key driver algorithm."""
+
+    application_url: str = betterproto.string_field(10)
+    """
+    Link to the live sisu analysis this represents. ex:
+    vip.sisudata.com/projects/{id}/analysis/{id}
+    """
 
 
 @dataclass(eq=False, repr=False)

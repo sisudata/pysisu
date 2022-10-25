@@ -26,14 +26,14 @@ class Table:
     rows: List["Row"]
 
     def to_csv(self, delimiter : str = ',') -> str:
-        header = delimiter.join([x.column_name for x in self.header])
-        rows = '\n'.join([str(row) for row in self.rows])
+        header = delimiter.join(x.column_name for x in self.header)
+        rows = '\n'.join(row.to_tabular_str(delimiter) for row in self.rows)
         return f'{header}\n{rows}'
 
 
 @dataclass
 class Row:
-    def __str__(self):
+    def to_tabular_str(self, delimiter: str = ',') -> str:
         variables = []
         for x in vars(self).values():
             if x is None:
@@ -42,7 +42,10 @@ class Row:
                 variables.append(x)
             else:
                 variables.append(f"'{x}'")
-        return ','.join([str(x).replace('\n', ' ') for x in variables])
+        return delimiter.join([str(x).replace('\n', ' ') for x in variables])
+
+    def __str__(self):
+        return self.to_tabular_str()
 
 
 @dataclass
