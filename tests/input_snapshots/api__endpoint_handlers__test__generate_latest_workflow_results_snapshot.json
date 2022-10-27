@@ -20,6 +20,7 @@
             }
           },
           "impact": 0.31338519014163024,
+          "confidence": "CONFIDENCE_LEVEL_LOW",
           "generalPerformance": {
             "size": 0.17006802721088435,
             "value": 3.23
@@ -36,6 +37,7 @@
             }
           },
           "impact": 0.02380679100908656,
+          "confidence": "CONFIDENCE_LEVEL_LOW",
           "generalPerformance": {
             "size": 0.19607843137254902,
             "value": 1.078

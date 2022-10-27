@@ -78,6 +78,17 @@ class AnalysisResultRunType(betterproto.Enum):
     RUN_TYPE_MANUAL = 2
 
 
+class KeyDriverAnalysisResultSegmentConfidenceLevel(betterproto.Enum):
+    """
+    Reflects how interesting/valuable Sisu determines a specific segment to be.
+    """
+
+    CONFIDENCE_LEVEL_UNKNOWN = 0
+    CONFIDENCE_LEVEL_HIGH = 1
+    CONFIDENCE_LEVEL_MEDIUM = 2
+    CONFIDENCE_LEVEL_LOW = 3
+
+
 class MetricDesiredDirection(betterproto.Enum):
     """Type of metric direction."""
 
@@ -537,6 +548,10 @@ class KeyDriverAnalysisResultSegment(betterproto.Message):
     How much this segment contributes to the overall value of the metric
     calculation.
     """
+
+    confidence: "KeyDriverAnalysisResultSegmentConfidenceLevel" = (
+        betterproto.enum_field(8)
+    )
 
 
 @dataclass(eq=False, repr=False)

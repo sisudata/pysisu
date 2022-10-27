@@ -22,7 +22,8 @@
                         "size": 0.17006802721088435,
                         "value": 3.23
                     },
-                    "impact": 0.31338519014163024
+                    "impact": 0.31338519014163024,
+                    "confidence": "CONFIDENCE_LEVEL_LOW"
                 },
                 {
                     "id": "1",
@@ -38,7 +39,8 @@
                         "size": 0.19607843137254902,
                         "value": 1.078
                     },
-                    "impact": 0.02380679100908656
+                    "impact": 0.02380679100908656,
+                    "confidence": "CONFIDENCE_LEVEL_LOW"
                 },
                 {
                     "id": "2",
@@ -54,7 +56,8 @@
                         "size": 0.17006802721088435,
                         "value": 3.23
                     },
-                    "impact": 0.31338519014163024
+                    "impact": 0.31338519014163024,
+                    "confidence": "CONFIDENCE_LEVEL_LOW"
                 },
                 {
                     "id": "1",
@@ -70,7 +73,8 @@
                         "size": 0.19607843137254902,
                         "value": 1.078
                     },
-                    "impact": 0.02380679100908656
+                    "impact": 0.02380679100908656,
+                    "confidence": "CONFIDENCE_LEVEL_LOW"
                 }
             ],
             "applicationUrl": "https://vip.sisu.ai/projects/1/analyses/1"
