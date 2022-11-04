@@ -28,6 +28,7 @@ from pysisu.proto.sisu.v1.api import (AnalysesListResponse,
                                       MetricsListResponse,
                                       SetAnalysisFiltersRequest)
 from pysisu.query_helpers import build_url, pathjoin
+from pysisu.version import __version__ as PYSISU_VERSION
 
 
 class PySisuBaseException(Exception):
@@ -69,6 +70,7 @@ class PySisu:
         analysis_id: int,
         params: dict,
         result: AnalysisRunResultsResponse,
+        **kwargs
     ) -> AnalysisRunResultsResponse:
         """
         Fetches the rest of the results if there is more results to fetch.
@@ -81,10 +83,11 @@ class PySisu:
         kda_result = result.analysis_result.key_driver_analysis_result
         subgroups = kda_result.segments
 
-        if params.get("limit"):
-            params["limit"] -= len(subgroups)
+        kwargs = {**params, **kwargs}  # fold together so we just use 1 dict
+        if kwargs.get("limit"):
+            kwargs["limit"] -= len(subgroups)
 
-        if params.get("limit", 1) <= 0 or len(subgroups) == 0:
+        if kwargs.get("limit", 1) <= 0 or len(subgroups) == 0:
             return result
 
         next_cursor = int(subgroups[-1].id)
@@ -94,13 +97,12 @@ class PySisu:
                     "There is more to fetch, however the next_starting cursor is none."
                 )
 
-        params["starting_after"] = next_cursor
+        kwargs["starting_after"] = next_cursor
 
         next_page = self.get_results(
             analysis_id,
-            params,
-            True,
             format=LatestAnalysisResultsFormats.PROTO,
+            **kwargs
         )
         kda_result.segments = (
             subgroups
@@ -109,7 +111,10 @@ class PySisu:
         return result
 
     def _call_sisu_api(self, url_path: int, request_method="get", json=None) -> dict:
-        headers = headers = {"Authorization": self._api_key, "User-Agent": "PySisu"}
+        headers = {
+            "Authorization": self._api_key,
+            "User-Agent": f"PySisu/{PYSISU_VERSION}",
+        }
         r = requests.request(request_method, url_path, headers=headers, json=json)
         if r.status_code != 200:
             raise PySisuInvalidResponseFromServer(
@@ -117,19 +122,19 @@ class PySisu:
             )
         return r.json()
 
-    def fetch_sisu_api(self, analysis_id: int, params: dict) -> dict:
+    def fetch_sisu_api(self, analysis_id: int, params: dict = {}, **kwargs) -> dict:
         path = ["api/v1/analyses/", str(analysis_id), "runs/latest"]
-        url_path = build_url(self._url, pathjoin(*path), params)
+        url_path = build_url(self._url, pathjoin(*path), {**params, **kwargs})
         return self._call_sisu_api(url_path)
 
-    def run(self, analysis_id: int):
+    def run(self, analysis_id: int, **kwargs):
         path = ["api/v1/analyses/", str(analysis_id), "run"]
-        url_path = build_url(self._url, pathjoin(*path), {})
+        url_path = build_url(self._url, pathjoin(*path), kwargs)
         self._call_sisu_api(url_path, request_method="POST")
 
-    def analyses(self) -> AnalysesListResponse:
+    def analyses(self, **kwargs) -> AnalysesListResponse:
         path = ["api/v1/analyses"]
-        url_path = build_url(self._url, pathjoin(*path), {})
+        url_path = build_url(self._url, pathjoin(*path), kwargs)
         return AnalysesListResponse().from_dict(self._call_sisu_api(url_path))
 
     def get_results(
@@ -138,47 +143,52 @@ class PySisu:
         params: dict = {"top_drivers": "False"},
         auto_paginate: bool = True,
         format: LatestAnalysisResultsFormats = LatestAnalysisResultsFormats.TABLE,
+        **kwargs
     ) -> Union[AnalysisRunResultsResponse, Table]:
+        assert type(params) is dict
+        assert type(kwargs) is dict
+        kwargs = {**params, **kwargs}
+
         result = AnalysisRunResultsResponse().from_dict(
-            self.fetch_sisu_api(analysis_id, params)
+            self.fetch_sisu_api(analysis_id, **kwargs)
         )
         if auto_paginate:
-            result = self._auto_paginate(analysis_id, params, result)
+            result = self._auto_paginate(analysis_id, kwargs, result)
 
         if format == LatestAnalysisResultsFormats.TABLE:
             return to_table(result)
         else:
             return result
 
-    def metrics(self) -> MetricsListResponse:
+    def metrics(self, **kwargs) -> MetricsListResponse:
         path = ["api/v1/metrics"]
-        url_path = build_url(self._url, pathjoin(*path), {})
+        url_path = build_url(self._url, pathjoin(*path), kwargs)
         return MetricsListResponse().from_dict(self._call_sisu_api(url_path))
 
-    def data_sources(self) -> DataSourceListResponse:
+    def data_sources(self, **kwargs) -> DataSourceListResponse:
         path = ["api/v1/data_sources"]
-        url_path = build_url(self._url, pathjoin(*path), {})
+        url_path = build_url(self._url, pathjoin(*path), kwargs)
         return DataSourceListResponse().from_dict(
             self._call_sisu_api(url_path)
         )
 
-    def datasets(self) -> DataSetsResponse:
+    def datasets(self, **kwargs) -> DataSetsResponse:
         path = ["api/v1/datasets"]
-        url_path = build_url(self._url, pathjoin(*path), {})
+        url_path = build_url(self._url, pathjoin(*path), kwargs)
         return DataSetsResponse().from_dict(self._call_sisu_api(url_path))
 
-    def get_filters(self, analysis_id: int) -> GetAnalysisFiltersResponse:
+    def get_filters(self, analysis_id: int, **kwargs) -> GetAnalysisFiltersResponse:
         path = [f"api/v1/analyses/{analysis_id}/filters"]
-        url_path = build_url(self._url, pathjoin(*path), {})
+        url_path = build_url(self._url, pathjoin(*path), kwargs)
         return GetAnalysisFiltersResponse().from_dict(self._call_sisu_api(url_path))
 
-    def set_filters(self, analysis_id: int , expr: SetAnalysisFiltersRequest):
+    def set_filters(self, analysis_id: int, expr: SetAnalysisFiltersRequest, **kwargs):
         path = [f"api/v1/analyses/{analysis_id}/filters"]
-        url_path = build_url(self._url, pathjoin(*path), {})
+        url_path = build_url(self._url, pathjoin(*path), kwargs)
         expr = expr.to_dict() if isinstance(expr, SetAnalysisFiltersRequest) else expr
         return self._call_sisu_api(url_path, request_method="PUT", json=expr)
 
-    def duplicate_analysis(self, analysis_id: int) -> DuplicateAnalysisResponse:
+    def duplicate_analysis(self, analysis_id: int, **kwargs) -> DuplicateAnalysisResponse:
         path = [f"api/v1/analyses/{analysis_id}/duplicate"]
-        url_path = build_url(self._url, pathjoin(*path), {})
+        url_path = build_url(self._url, pathjoin(*path), kwargs)
         return DuplicateAnalysisResponse().from_dict(self._call_sisu_api(url_path, request_method="POST"))

@@ -53,11 +53,11 @@ def test_pagination_staring_after_gets_updated(
     pysisu._auto_paginate(1, {}, result_has_more)
 
     # Make sure limit is truncated at MAX_LIMIT
-    assert "limit" not in get_results.call_args[0][1].keys()
+    assert "limit" not in get_results.call_args.kwargs
 
     # Make sure the next starting_after was marked at the correct cursor from the pagination hints
     assert (
-        get_results.call_args[0][1]["starting_after"]
+        get_results.call_args.kwargs["starting_after"]
         == result_has_more.analysis_result.key_driver_analysis_result.segments[
             -1
         ].id
@@ -75,9 +75,9 @@ def test_pagination_limit_works(
     pysisu._auto_paginate(1, {"limit": 100}, result_has_more)
 
     # 98 comes from the 100 - len(result_has_more.subgroups)
-    assert get_results.call_args[0][1]["limit"] == 98
+    assert get_results.call_args.kwargs["limit"] == 98
     assert (
-        get_results.call_args[0][1]["starting_after"]
+        get_results.call_args.kwargs["starting_after"]
         == result_has_more.analysis_result.key_driver_analysis_result.segments[
             -1
         ].id
@@ -119,9 +119,9 @@ def test_pagination_results_using_customer_facing_functions(
     )
 
     # 98 comes from the 100 - len(result_has_more.subgroups)
-    assert fetch_sisu_api.call_args[0][1]["limit"] == 98
+    assert fetch_sisu_api.call_args.kwargs["limit"] == 98
     assert (
-        fetch_sisu_api.call_args[0][1]["starting_after"]
+        fetch_sisu_api.call_args.kwargs["starting_after"]
         == result_has_more.analysis_result.key_driver_analysis_result.segments[
             -1
         ].id
