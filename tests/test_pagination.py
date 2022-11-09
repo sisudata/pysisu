@@ -1,13 +1,12 @@
-import os
 import json
+import os
 from unittest import mock
-from pysisu.formats import LatestAnalysisResultsFormats
-from pytest import fixture
+
 from pysisu import PySisu
-from pysisu.proto.sisu.v1.api import (
-    AnalysisRunResultsResponse,
-    PaginationHints,
-)
+from pysisu.formats import LatestAnalysisResultsFormats
+from pysisu.proto.sisu.v1.api import (AnalysisRunResultsResponse,
+                                      PaginationHints)
+from pytest import fixture
 
 CURR_PATH = os.path.dirname(os.path.abspath(__file__))
 INPUT_SNAPSHOT_DIR = os.path.join(CURR_PATH, "input_snapshots")

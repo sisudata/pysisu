@@ -14,8 +14,9 @@
 # limitations under the License.
 #
 
-from setuptools import setup, find_packages
 from pathlib import Path
+
+from setuptools import find_packages, setup
 
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
@@ -29,7 +30,7 @@ with open("pysisu/version.py") as fp:
 setup(
     name="pysisu",
     packages=find_packages(include=["pysisu", "pysisu.*"]),
-    install_requires=["betterproto>=2.0.0b4", "requests"],
+    install_requires=["betterproto>=2.0.0b4", "requests-cache", "requests"],
     version=pkg_vars['__version__'],
     long_description=long_description,
     long_description_content_type="text/markdown",

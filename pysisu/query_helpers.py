@@ -14,7 +14,9 @@
 # limitations under the License.
 #
 
+import re
 import urllib
+from typing import Tuple
 
 
 def pathjoin(*args) -> str:
@@ -26,3 +28,13 @@ def build_url(base_url, path, args_dict):
     url_parts[2] = path
     url_parts[4] = urllib.parse.urlencode(args_dict)
     return urllib.parse.urlunparse(url_parts)
+
+
+def semver_parse(version: str) -> Tuple[int, int, int]:
+    pattern = r"([1-9]\d*|0)\.([1-9]\d*|0)\.([1-9]\d*|0)"
+    match = re.compile(pattern).match(version)
+    if match is None:
+        raise SyntaxError(
+            f"{version} is not a valid semantic version"
+        )
+    return tuple(int(x) for x in match.groups())

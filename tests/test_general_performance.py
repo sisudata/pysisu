@@ -1,6 +1,7 @@
-import os
 import json
+import os
 from unittest import mock
+
 from pysisu import PySisu
 
 CURR_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -13,6 +14,7 @@ def load_snapshot(snapshot_file_name: str) -> dict:
     with open(snapshot, 'r') as file:
         return json.loads(file.read())
 
+
 @mock.patch("pysisu.PySisu.fetch_sisu_api")
 def test_general_perf(mock_pysisu, snapshot):
     mock_pysisu.return_value = load_snapshot('api__endpoint_handlers__test__generate_latest_workflow_results_snapshot.json')
@@ -20,10 +22,10 @@ def test_general_perf(mock_pysisu, snapshot):
     snapshot.snapshot_dir = OUTPUT_SNAPSHOT_DIR
     snapshot.assert_match(pysisu.get_results(1).to_csv(), 'general_performance_table.csv')
 
+
 @mock.patch("pysisu.PySisu.fetch_sisu_api")
 def test_td_general_perf(mock_pysisu, snapshot):
     mock_pysisu.return_value = load_snapshot('api__test__get_trend_analysis_simple.json')
     pysisu = PySisu('API_KEY', "URL")
     snapshot.snapshot_dir = OUTPUT_SNAPSHOT_DIR
     snapshot.assert_match(pysisu.get_results(1).to_csv(), 'td_general_performance_table.csv')
-    

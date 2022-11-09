@@ -14,9 +14,13 @@
 # limitations under the License.
 #
 
+import warnings
+from datetime import timedelta
+from http import HTTPStatus
 from typing import Union
 
 import requests
+import requests_cache
 
 from pysisu.formats import LatestAnalysisResultsFormats, Table
 from pysisu.latest_analysis_result import to_table
@@ -27,7 +31,7 @@ from pysisu.proto.sisu.v1.api import (AnalysesListResponse,
                                       GetAnalysisFiltersResponse,
                                       MetricsListResponse,
                                       SetAnalysisFiltersRequest)
-from pysisu.query_helpers import build_url, pathjoin
+from pysisu.query_helpers import build_url, pathjoin, semver_parse
 from pysisu.version import __version__ as PYSISU_VERSION
 
 
@@ -43,6 +47,10 @@ class PySisuInvalidResponseFromServer(PySisuBaseException):
     pass
 
 
+class PySisuDeprecatedVersionException(PySisuBaseException):
+    pass
+
+
 class PySisu:
     """
     Allows the ability to fetch/send commands to the sisu_api.
@@ -54,6 +62,12 @@ class PySisu:
     def __init__(
         self, api_key: str, url: str = "https://vip.sisudata.com"
     ) -> None:
+        self.session = requests_cache.CachedSession(
+            cache_name="pysisu_cache",
+            use_cache_dir=True,
+            expire_after=timedelta(days=1),
+        )
+        self._check_compatibility()
         self._url = url
         self._api_key = api_key
 
@@ -115,12 +129,45 @@ class PySisu:
             "Authorization": self._api_key,
             "User-Agent": f"PySisu/{PYSISU_VERSION}",
         }
-        r = requests.request(request_method, url_path, headers=headers, json=json)
-        if r.status_code != 200:
+        # don't cache API responses, we don't want to return stale responses
+        # or cache in-flight status
+        with self.session.cache_disabled():
+            r = self.session.request(
+                request_method, url_path, headers=headers, json=json
+            )
+        if r.status_code != HTTPStatus.OK:
             raise PySisuInvalidResponseFromServer(
                 "Result did not complete", r.content
             )
         return r.json()
+
+    def _check_compatibility(self):
+        r = self.session.get("https://pypi.python.org/pypi/pysisu/json")
+        try:
+            latest_version = r.json()["info"]["version"]
+        except (requests.RequestException, KeyError):
+            warnings.warn(
+                "Unable to verify current pysisu version with PyPI; get "
+                "latest version with 'pip install -U pysisu'"
+            )
+            return
+
+        local_major, local_minor, local_patch = semver_parse(PYSISU_VERSION)
+        latest_major, latest_minor, latest_patch = semver_parse(latest_version)
+
+        if (local_major < latest_major
+                or (local_major == 0 and local_minor < latest_minor)):
+            raise PySisuDeprecatedVersionException(
+                "Pysisu has been updated with breaking changes from "
+                f"{PYSISU_VERSION} to {latest_version}; get latest version "
+                "with 'pip install -U pysisu'"
+            )
+        if (local_minor, local_patch) < (latest_minor, latest_patch):
+            warnings.warn(
+                f"Pysisu has been updated from {PYSISU_VERSION} to "
+                f"{latest_version}; get latest version with 'pip install -U "
+                "pysisu'"
+            )
 
     def fetch_sisu_api(self, analysis_id: int, params: dict = {}, **kwargs) -> dict:
         path = ["api/v1/analyses/", str(analysis_id), "runs/latest"]
