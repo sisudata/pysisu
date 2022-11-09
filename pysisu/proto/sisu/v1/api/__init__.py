@@ -968,6 +968,9 @@ class DuplicateAnalysisRequest(betterproto.Message):
     id: int = betterproto.uint64_field(1)
     """Analysis id to be duplicated"""
 
+    name: str = betterproto.string_field(2)
+    """optinal name for the new analysis"""
+
 
 @dataclass(eq=False, repr=False)
 class DuplicateAnalysisResponse(betterproto.Message):
