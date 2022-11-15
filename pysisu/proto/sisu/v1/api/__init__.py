@@ -978,6 +978,18 @@ class DuplicateAnalysisResponse(betterproto.Message):
     """Newly created Analysis id."""
 
 
+@dataclass(eq=False, repr=False)
+class GetSegmentDataRequest(betterproto.Message):
+    id: int = betterproto.uint64_field(1)
+    """Segment id to get data for."""
+
+
+@dataclass(eq=False, repr=False)
+class GetSegmentDataResponse(betterproto.Message):
+    query_string: str = betterproto.string_field(1)
+    """query string that would resutl in the segment data."""
+
+
 class AnalysesServiceStub(betterproto.ServiceStub):
     async def analyses_list(
         self,
@@ -1167,6 +1179,25 @@ class DataSourcesServiceStub(betterproto.ServiceStub):
             "/sisu.v1.api.DataSourcesService/DataSourceList",
             data_source_list_request,
             DataSourceListResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+
+class SegmentsServiceStub(betterproto.ServiceStub):
+    async def get_segment_data(
+        self,
+        get_segment_data_request: "GetSegmentDataRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "GetSegmentDataResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.SegmentsService/GetSegmentData",
+            get_segment_data_request,
+            GetSegmentDataResponse,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -1398,5 +1429,30 @@ class DataSourcesServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DataSourceListRequest,
                 DataSourceListResponse,
+            ),
+        }
+
+
+class SegmentsServiceBase(ServiceBase):
+    async def get_segment_data(
+        self, get_segment_data_request: "GetSegmentDataRequest"
+    ) -> "GetSegmentDataResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def __rpc_get_segment_data(
+        self,
+        stream: "grpclib.server.Stream[GetSegmentDataRequest, GetSegmentDataResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.get_segment_data(request)
+        await stream.send_message(response)
+
+    def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
+        return {
+            "/sisu.v1.api.SegmentsService/GetSegmentData": grpclib.const.Handler(
+                self.__rpc_get_segment_data,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                GetSegmentDataRequest,
+                GetSegmentDataResponse,
             ),
         }

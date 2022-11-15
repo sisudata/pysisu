@@ -30,7 +30,10 @@ from pysisu.proto.sisu.v1.api import (AnalysesListResponse,
                                       DuplicateAnalysisResponse,
                                       GetAnalysisFiltersResponse,
                                       MetricsListResponse,
+                                      SetAnalysisFiltersRequest,
+                                      GetSegmentDataResponse,
                                       SetAnalysisFiltersRequest)
+from pysisu.query_helpers import build_url, pathjoin
 from pysisu.query_helpers import build_url, pathjoin, semver_parse
 from pysisu.version import __version__ as PYSISU_VERSION
 
@@ -239,3 +242,8 @@ class PySisu:
         path = [f"api/v1/analyses/{analysis_id}/duplicate"]
         url_path = build_url(self._url, pathjoin(*path), kwargs)
         return DuplicateAnalysisResponse().from_dict(self._call_sisu_api(url_path, request_method="POST"))
+
+    def get_factor_data(self, segment_id: int) -> GetSegmentDataResponse:
+        path = [f"api/v1/segments/{segment_id}/data_query"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return GetSegmentDataResponse().from_dict(self._call_sisu_api(url_path, request_method="GET"))
