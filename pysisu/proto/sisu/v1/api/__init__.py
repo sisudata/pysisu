@@ -782,13 +782,17 @@ class Metric(betterproto.Message):
     name: str = betterproto.string_field(2)
     """Metric name."""
 
-    weight_dimension_name: str = betterproto.string_field(3)
+    weight_dimension_name: Optional[str] = betterproto.message_field(
+        3, wraps=betterproto.TYPE_STRING
+    )
     """
     The name of the weight dimension. A weight dimension is used to increases
     the importance of a given row in an analysis.
     """
 
-    time_dimension_name: str = betterproto.string_field(4)
+    time_dimension_name: Optional[str] = betterproto.message_field(
+        4, wraps=betterproto.TYPE_STRING
+    )
     """
     The name of metric's time dimension which represnts the date range of the
     metric.
