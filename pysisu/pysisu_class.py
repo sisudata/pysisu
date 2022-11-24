@@ -17,7 +17,7 @@
 import warnings
 from datetime import timedelta
 from http import HTTPStatus
-from typing import Union
+from typing import Optional, Union
 
 import requests
 import requests_cache
@@ -32,8 +32,7 @@ from pysisu.proto.sisu.v1.api import (AnalysesListResponse,
                                       MetricsListResponse,
                                       SetAnalysisFiltersRequest,
                                       GetSegmentDataResponse,
-                                      SetAnalysisFiltersRequest)
-from pysisu.query_helpers import build_url, pathjoin
+                                      )
 from pysisu.query_helpers import build_url, pathjoin, semver_parse
 from pysisu.version import __version__ as PYSISU_VERSION
 
@@ -238,10 +237,18 @@ class PySisu:
         expr = expr.to_dict() if isinstance(expr, SetAnalysisFiltersRequest) else expr
         return self._call_sisu_api(url_path, request_method="PUT", json=expr)
 
-    def duplicate_analysis(self, analysis_id: int, **kwargs) -> DuplicateAnalysisResponse:
+    def duplicate_analysis(
+        self,
+        analysis_id: int,
+        name: Optional[str] = None,
+        **kwargs
+    ) -> DuplicateAnalysisResponse:
         path = [f"api/v1/analyses/{analysis_id}/duplicate"]
         url_path = build_url(self._url, pathjoin(*path), kwargs)
-        return DuplicateAnalysisResponse().from_dict(self._call_sisu_api(url_path, request_method="POST"))
+        json = {"name": name} if name else None
+        return DuplicateAnalysisResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="POST", json=json)
+        )
 
     def get_factor_data(self, segment_id: int) -> GetSegmentDataResponse:
         path = [f"api/v1/segments/{segment_id}/data_query"]
