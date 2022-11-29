@@ -10,7 +10,6 @@
             "segments": [
                 {
                     "id": "2",
-                    "isTopDriver": false,
                     "factors": {
                         "location": {
                             "value": {
@@ -27,7 +26,6 @@
                 },
                 {
                     "id": "1",
-                    "isTopDriver": false,
                     "factors": {
                         "location": {
                             "value": {
@@ -44,7 +42,6 @@
                 },
                 {
                     "id": "2",
-                    "isTopDriver": false,
                     "factors": {
                         "location": {
                             "value": {
@@ -61,7 +58,6 @@
                 },
                 {
                     "id": "1",
-                    "isTopDriver": false,
                     "factors": {
                         "location": {
                             "value": {
@@ -76,10 +72,10 @@
                     "impact": 0.02380679100908656,
                     "confidence": "CONFIDENCE_LEVEL_LOW"
                 }
-            ],
-            "applicationUrl": "https://vip.sisu.ai/projects/1/analyses/1"
+            ]
         },
-        "metricId": "1"
+        "metricId": "1",
+        "applicationUrl": "https://vip.sisu.ai/projects/1/analyses/1"
     },
     "paginationHints": {
         "hasMore": true,

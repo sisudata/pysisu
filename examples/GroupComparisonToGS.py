@@ -13,7 +13,7 @@ PATH_TO_CREDS = 'credentials.json'
 PATH_TO_TOKEN = './token.json'
 
 # Get facts from Sisu
-sisu_table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
+sisu_table = sisu.get_results(ANALYSIS_ID, {"confidence_gte": "HIGH"})
 print("Facts loaded")
 
 # Connect to Google Drive
@@ -43,7 +43,7 @@ for fact_row in sisu_table.rows:
     
     row=[]
     row.append(fact_row.subgroup_id)
-    row.append(fact_row.is_top_driver)
+    row.append(fact_row.confidence)
     row.append(fact_row.factor_0_dimension)
     row.append(fact_row.factor_0_value)
     row.append(fact_row.factor_1_dimension)

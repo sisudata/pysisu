@@ -291,10 +291,12 @@ class AnalysisRunResultsRequest(betterproto.Message):
     fetch the next page of the list.
     """
 
-    top_drivers: Optional[str] = betterproto.message_field(
+    confidence_gte: Optional[str] = betterproto.message_field(
         3, wraps=betterproto.TYPE_STRING
     )
-    """filter by only top driver results."""
+    """
+    filter by confidence levels of greater than equal to HIGH, MEDIUM or LOW
+    """
 
     id: Optional[int] = betterproto.message_field(4, wraps=betterproto.TYPE_INT64)
     """Analysis Id."""
@@ -403,6 +405,184 @@ class AnalysisRunResultsResponse(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class KdaSummaryCard(betterproto.Message):
+    """Information specific to a single card in a summary."""
+
+    card_label: str = betterproto.string_field(1)
+    """Summary card label (bolded in UI)."""
+
+    category_filter: Optional[str] = betterproto.message_field(
+        2, wraps=betterproto.TYPE_STRING
+    )
+    """
+    String representation of the filter that produces the metric category.
+    """
+
+    summary_value: Optional[float] = betterproto.double_field(
+        4, optional=True, group="_summary_value"
+    )
+    """Value of the metric for the specified subgroup."""
+
+    match_size: Optional[float] = betterproto.double_field(
+        5, optional=True, group="_match_size"
+    )
+    """
+    Number of rows matching the filter expression in the specified subgroup.
+    """
+
+    total_size: Optional[float] = betterproto.double_field(
+        6, optional=True, group="_total_size"
+    )
+    """Number of total rows in the specified subgroup."""
+
+    min: Optional[float] = betterproto.double_field(7, optional=True, group="_min")
+    """Minimum of metric dimension column in the specified subgroup."""
+
+    max: Optional[float] = betterproto.double_field(8, optional=True, group="_max")
+    """Maximum of metric dimension column in the specified subgroup."""
+
+    median: Optional[float] = betterproto.double_field(
+        9, optional=True, group="_median"
+    )
+    """Median of metric dimension column in the specified subgroup."""
+
+    average: Optional[float] = betterproto.double_field(
+        10, optional=True, group="_average"
+    )
+    """Average of metric dimension column in the specified subgroup."""
+
+    weighted_average: Optional[float] = betterproto.double_field(
+        11, optional=True, group="_weighted_average"
+    )
+    """
+    Weighted average of metric dimension column against specified weight column
+    in the specified subgroup.
+    """
+
+    sum: Optional[float] = betterproto.double_field(12, optional=True, group="_sum")
+    """Sum of metric dimension column in the specified subgroup."""
+
+    weighted_sum: Optional[float] = betterproto.double_field(
+        13, optional=True, group="_weighted_sum"
+    )
+    """
+    Weighted sum of metric dimension column against specified weight column in
+    the specified subgroup.
+    """
+
+    weight: Optional[float] = betterproto.double_field(
+        14, optional=True, group="_weight"
+    )
+    """Sum of weight dimension column in the specified subgroup."""
+
+    total_numerator: Optional[float] = betterproto.double_field(
+        15, optional=True, group="_total_numerator"
+    )
+    """Sum of numerator dimension column in the specified subgroup."""
+
+    total_denominator: Optional[float] = betterproto.double_field(
+        16, optional=True, group="_total_denominator"
+    )
+    """Sum of denominator dimension column in the specified subgroup."""
+
+
+@dataclass(eq=False, repr=False)
+class GroupComparisonSummaryCard(betterproto.Message):
+    """Summary card details specific to a group comparison."""
+
+    group_a_card: "KdaSummaryCard" = betterproto.message_field(1)
+    """Summary card for group A."""
+
+    group_b_card: "KdaSummaryCard" = betterproto.message_field(2)
+    """Summary card for group B."""
+
+    group_a_filter: str = betterproto.string_field(3)
+    """Filter that produces group A."""
+
+    group_b_filter: str = betterproto.string_field(4)
+    """Filter that produces group B."""
+
+    percent_change: float = betterproto.double_field(5)
+    """Percent change of metric value from group A to group B."""
+
+
+@dataclass(eq=False, repr=False)
+class TimeComparisonSummaryCard(betterproto.Message):
+    """Summary card details specific to a time comparison."""
+
+    current_period_card: "KdaSummaryCard" = betterproto.message_field(1)
+    """Summary card for current period."""
+
+    previous_period_card: "KdaSummaryCard" = betterproto.message_field(2)
+    """Summary card for previous period."""
+
+    current_period: "TimeRange" = betterproto.message_field(3)
+    """Current period start (inclusive) and end (exclusive) datetimes."""
+
+    previous_period: "TimeRange" = betterproto.message_field(4)
+    """Previous period start (inclusive) and end (exclusive) datetimes."""
+
+    percent_change: float = betterproto.double_field(5)
+    """
+    Percent change of metric value from previous period to current period.
+    """
+
+
+@dataclass(eq=False, repr=False)
+class TrendSummaryCard(betterproto.Message):
+    """Summary card details of an individual overall trend."""
+
+    card_label: str = betterproto.string_field(1)
+    """Summary card label (bolded in UI)."""
+
+    slope: float = betterproto.double_field(2)
+    """Slope of the metric over the trend period."""
+
+    percent_change: float = betterproto.double_field(11)
+    """
+    Percent increase or decrease of metric dimension column in the first time
+    unit of a trend.
+    """
+
+    denominator_label: str = betterproto.string_field(12)
+    """Analysis summary period; visible for trend detection analyses."""
+
+
+@dataclass(eq=False, repr=False)
+class TrendSummaryCardInfo(betterproto.Message):
+    """Summary card details specific to a trend detection."""
+
+    current_period: "TrendSummaryCard" = betterproto.message_field(1)
+    """Most-recent overall trend summary card."""
+
+    previous_period: "TrendSummaryCard" = betterproto.message_field(2)
+    """Second-most-recent overall trend summary card."""
+
+
+@dataclass(eq=False, repr=False)
+class KdaSummaryCardInfo(betterproto.Message):
+    """Summary card details of a KDA result."""
+
+    metric_type_label: str = betterproto.string_field(1)
+    """Metric label present for KDAs; example: "Numerical Count"""
+
+    general_performance_card: "KdaSummaryCard" = betterproto.message_field(
+        2, group="card_type"
+    )
+    """General performance KDA summary card."""
+
+    group_comparison_card: "GroupComparisonSummaryCard" = betterproto.message_field(
+        3, group="card_type"
+    )
+    """Group comparison KDA summary card."""
+
+    time_comparison_card: "TimeComparisonSummaryCard" = betterproto.message_field(
+        4, group="card_type"
+    )
+    """Time comparison KDA summary card."""
+
+
+@dataclass(eq=False, repr=False)
 class AnalysisResult(betterproto.Message):
     """Provides details of an analysis run."""
 
@@ -431,10 +611,19 @@ class AnalysisResult(betterproto.Message):
     metric_id: int = betterproto.uint64_field(8)
     """Metric ID for the analysis."""
 
+    application_url: str = betterproto.string_field(9)
+    """
+    Link to the live sisu analysis this represents. ex:
+    vip.sisudata.com/projects/{id}/analysis/{id}
+    """
+
 
 @dataclass(eq=False, repr=False)
 class KeyDriverAnalysisResult(betterproto.Message):
     """Provides details of a key driver analysis run."""
+
+    summary_card: "KdaSummaryCardInfo" = betterproto.message_field(1)
+    """Summary information for the key driver analysis."""
 
     time_comparison: "KeyDriverAnalysisResultTimeComparison" = (
         betterproto.message_field(6, group="comparison")
@@ -459,12 +648,6 @@ class KeyDriverAnalysisResult(betterproto.Message):
 
     segments: List["KeyDriverAnalysisResultSegment"] = betterproto.message_field(9)
     """Array of the segments selected by the key driver algorithm."""
-
-    application_url: str = betterproto.string_field(10)
-    """
-    Link to the live sisu analysis this represents. ex:
-    vip.sisudata.com/projects/{id}/analysis/{id}
-    """
 
 
 @dataclass(eq=False, repr=False)
@@ -519,11 +702,6 @@ class KeyDriverAnalysisResultSegment(betterproto.Message):
     id: int = betterproto.int64_field(1)
     """Unique ID corresponding to each segment, unique per analysis run."""
 
-    is_top_driver: Optional[bool] = betterproto.message_field(
-        2, wraps=betterproto.TYPE_BOOL
-    )
-    """Is top driver for this segment."""
-
     factors: Dict[str, "Factor"] = betterproto.map_field(
         3, betterproto.TYPE_STRING, betterproto.TYPE_MESSAGE
     )
@@ -552,6 +730,9 @@ class KeyDriverAnalysisResultSegment(betterproto.Message):
     confidence: "KeyDriverAnalysisResultSegmentConfidenceLevel" = (
         betterproto.enum_field(8)
     )
+    """
+    Interpretation of q-value as the confidence of the impact on the metric.
+    """
 
 
 @dataclass(eq=False, repr=False)
@@ -636,10 +817,13 @@ class KeyDriverAnalysisResultSegmentGeneralPerformance(betterproto.Message):
 class TrendAnalysisResult(betterproto.Message):
     """Provides details of a Trend Analysis result."""
 
-    overall_trends: List["TrendAnalysisResultTrend"] = betterproto.message_field(1)
+    summary_card: "TrendSummaryCardInfo" = betterproto.message_field(1)
+    """Summary information for the trend detection analysis."""
+
+    overall_trends: List["TrendAnalysisResultTrend"] = betterproto.message_field(2)
     """Metric level trends."""
 
-    segments: List["TrendAnalysisResultSegment"] = betterproto.message_field(2)
+    segments: List["TrendAnalysisResultSegment"] = betterproto.message_field(3)
     """Array of the segments in the trend."""
 
 

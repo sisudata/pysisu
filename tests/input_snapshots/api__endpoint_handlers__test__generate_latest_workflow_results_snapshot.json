@@ -7,11 +7,11 @@
     "completedAt": "2020-01-01T00:00:00Z",
     "runType": "RUN_TYPE_MANUAL",
     "metricId": "1",
+    "applicationUrl": "https://vip.sisu.ai/projects/1/analyses/1",
     "keyDriverAnalysisResult": {
       "segments": [
         {
           "id": "2",
-          "isTopDriver": false,
           "factors": {
             "location": {
               "value": {
@@ -28,7 +28,6 @@
         },
         {
           "id": "1",
-          "isTopDriver": false,
           "factors": {
             "location": {
               "value": {
@@ -44,7 +43,6 @@
           }
         }
       ],
-      "applicationUrl": "https://vip.sisu.ai/projects/1/analyses/1",
       "generalPerformance": {}
     }
   },

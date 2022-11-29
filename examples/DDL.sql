@@ -1,6 +1,6 @@
 create table sisu_facts (
 	subgroup_id bigint,
-	is_top_driver boolean,
+	confidence ENUM('CONFIDENCE_LEVEL_UNKNOWN', 'CONFIDENCE_LEVEL_HIGH', 'CONFIDENCE_LEVEL_MEDIUM', 'CONFIDENCE_LEVEL_LOW'),
 	factor_0_dimension text,
 	factor_0_value text,
 	factor_1_dimension text,

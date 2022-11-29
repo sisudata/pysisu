@@ -20,7 +20,7 @@ LAYOUT_CONTENT_AND_CAPTION = 7
 FILENAME = 'Sisu Facts.pptx'
 
 # Get facts from Sisu
-sisu_table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
+sisu_table = sisu.get_results(ANALYSIS_ID, {"confidence_gte": "HIGH"})
 sisu_analyses = sisu.analyses()
 print("Facts loaded")
 
@@ -54,7 +54,7 @@ s.shapes[2].text = '<summary data>'
 print(', '.join([x.column_name for x in sisu_table.header]))
 
 for fact_row in sisu_table.rows:
-    pg_row = (fact_row.subgroup_id, fact_row.is_top_driver, fact_row.factor_0_dimension, fact_row.factor_0_value, fact_row.factor_1_dimension, fact_row.factor_1_value, fact_row.factor_2_dimension, fact_row.factor_2_value, fact_row.impact, fact_row.size, fact_row.value)
+    pg_row = (fact_row.subgroup_id, fact_row.confidence, fact_row.factor_0_dimension, fact_row.factor_0_value, fact_row.factor_1_dimension, fact_row.factor_1_value, fact_row.factor_2_dimension, fact_row.factor_2_value, fact_row.impact, fact_row.size, fact_row.value)
     print(pg_row)
 
     sl = p.slide_layouts[LAYOUT_TWO_CONTENT]

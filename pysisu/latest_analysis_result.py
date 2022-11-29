@@ -26,6 +26,7 @@ from pysisu.proto.sisu.v1.api import (
     KeyDriverAnalysisResultTimeComparison,
     TrendAnalysisResultSegment,
     TrendAnalysisResultTrend,
+    KeyDriverAnalysisResultSegmentConfidenceLevel
 )
 import datetime
 import betterproto
@@ -39,7 +40,7 @@ class LatestAnalysisResultTable(Table):
 @dataclass
 class KDARow(Row):
     subgroup_id: int
-    is_top_driver: bool
+    confidence: str
     factor_0_dimension: str
     factor_0_value: any
     factor_1_dimension: str
@@ -168,7 +169,7 @@ def get_rows_time_comparision(
 
         r = TimeCompareRow(
             subgroup_id=subgroup.id,
-            is_top_driver=bool(subgroup.is_top_driver),
+            confidence=subgroup.confidence.name,
             factor_0_dimension=factor_0.dimension,
             factor_0_value=factor_0.value,
             factor_1_dimension=factor_1.dimension,
@@ -200,7 +201,7 @@ def get_rows_group_comparision(
 
         r = GroupCompareRow(
             subgroup_id=subgroup.id,
-            is_top_driver=bool(subgroup.is_top_driver),
+            confidence=subgroup.confidence.name,
             factor_0_dimension=factor_0.dimension,
             factor_0_value=factor_0.value,
             factor_1_dimension=factor_1.dimension,
@@ -229,7 +230,7 @@ def get_rows_general_performance(
 
         r = GeneralPerformanceRow(
             subgroup_id=subgroup.id,
-            is_top_driver=bool(subgroup.is_top_driver),
+            confidence=subgroup.confidence.name,
             factor_0_dimension=factor_0.dimension,
             factor_0_value=factor_0.value,
             factor_1_dimension=factor_1.dimension,

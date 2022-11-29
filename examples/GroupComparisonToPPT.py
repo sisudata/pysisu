@@ -22,8 +22,8 @@ LAYOUT_CONTENT_AND_CAPTION = 7
 FILENAME = 'Sisu Facts.pptx'
 
 # Get facts from Sisu
-sisu_table = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"})
-sisu_summary = sisu.get_results(ANALYSIS_ID, {"top_drivers": "True"}, format = LatestAnalysisResultsFormats.PROTO)
+sisu_table = sisu.get_results(ANALYSIS_ID, {"confidence_gte": "HIGH"})
+sisu_summary = sisu.get_results(ANALYSIS_ID, {"confidence_gte": "HIGH"}, format = LatestAnalysisResultsFormats.PROTO)
 sisu_analyses = sisu.analyses()
 print("Facts loaded")
 
@@ -58,7 +58,7 @@ s.shapes[4].text = '<group b summary data>'
 print(', '.join([x.column_name for x in sisu_table.header]))
 
 for fact_row in sisu_table.rows:
-    pg_row = (fact_row.subgroup_id, fact_row.is_top_driver, fact_row.factor_0_dimension, fact_row.factor_0_value, fact_row.factor_1_dimension, fact_row.factor_1_value, fact_row.factor_2_dimension, fact_row.factor_2_value, fact_row.impact, fact_row.group_a_size, fact_row.group_b_size, fact_row.group_a_value, fact_row.group_b_value, fact_row.group_a_name, fact_row.group_b_name)
+    pg_row = (fact_row.subgroup_id, fact_row.confidence, fact_row.factor_0_dimension, fact_row.factor_0_value, fact_row.factor_1_dimension, fact_row.factor_1_value, fact_row.factor_2_dimension, fact_row.factor_2_value, fact_row.impact, fact_row.group_a_size, fact_row.group_b_size, fact_row.group_a_value, fact_row.group_b_value, fact_row.group_a_name, fact_row.group_b_name)
     print(pg_row)
 
     sl = p.slide_layouts[LAYOUT_TWO_CONTENT]
