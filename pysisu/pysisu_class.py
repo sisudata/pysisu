@@ -24,17 +24,15 @@ import requests_cache
 
 from pysisu.formats import LatestAnalysisResultsFormats, Table
 from pysisu.latest_analysis_result import to_table
-from pysisu.proto.sisu.v1.api import (
-    AnalysesListResponse,
-    AnalysisRunResultsResponse,
-    DataSetsResponse,
-    DataSourceListResponse,
-    DuplicateAnalysisResponse,
-    GetAnalysisFiltersResponse,
-    MetricsListResponse,
-    SetAnalysisFiltersRequest,
-    GetSegmentDataResponse,
-)
+from pysisu.proto.sisu.v1.api import (AnalysesListResponse,
+                                      AnalysisRunResultsResponse,
+                                      DataSetsResponse, DataSourceListResponse,
+                                      DuplicateAnalysisResponse,
+                                      GetAnalysisFiltersResponse,
+                                      MetricsListResponse,
+                                      SetAnalysisFiltersRequest,
+                                      GetSegmentDataResponse,
+                                      )
 from pysisu.query_helpers import build_url, pathjoin, semver_parse
 from pysisu.version import __version__ as PYSISU_VERSION
 
@@ -63,7 +61,9 @@ class PySisu:
     _url: str
     _api_key: str
 
-    def __init__(self, api_key: str, url: str = "https://vip.sisu.ai") -> None:
+    def __init__(
+        self, api_key: str, url: str = "https://vip.sisudata.com"
+    ) -> None:
         self.session = requests_cache.CachedSession(
             cache_name="pysisu_cache",
             use_cache_dir=True,
@@ -86,7 +86,7 @@ class PySisu:
         analysis_id: int,
         params: dict,
         result: AnalysisRunResultsResponse,
-        **kwargs,
+        **kwargs
     ) -> AnalysisRunResultsResponse:
         """
         Fetches the rest of the results if there is more results to fetch.
@@ -116,7 +116,9 @@ class PySisu:
         kwargs["starting_after"] = next_cursor
 
         next_page = self.get_results(
-            analysis_id, format=LatestAnalysisResultsFormats.PROTO, **kwargs
+            analysis_id,
+            format=LatestAnalysisResultsFormats.PROTO,
+            **kwargs
         )
         kda_result.segments = (
             subgroups
@@ -124,9 +126,7 @@ class PySisu:
         )
         return result
 
-    def _call_sisu_api(
-        self, url_path: int, request_method="get", json=None
-    ) -> dict:
+    def _call_sisu_api(self, url_path: int, request_method="get", json=None) -> dict:
         headers = {
             "Authorization": self._api_key,
             "User-Agent": f"PySisu/{PYSISU_VERSION}",
@@ -157,9 +157,8 @@ class PySisu:
         local_major, local_minor, local_patch = semver_parse(PYSISU_VERSION)
         latest_major, latest_minor, latest_patch = semver_parse(latest_version)
 
-        if local_major < latest_major or (
-            local_major == 0 and local_minor < latest_minor
-        ):
+        if (local_major < latest_major
+                or (local_major == 0 and local_minor < latest_minor)):
             raise PySisuDeprecatedVersionException(
                 "Pysisu has been updated with breaking changes from "
                 f"{PYSISU_VERSION} to {latest_version}; get latest version "
@@ -172,9 +171,7 @@ class PySisu:
                 "pysisu'"
             )
 
-    def fetch_sisu_api(
-        self, analysis_id: int, params: dict = {}, **kwargs
-    ) -> dict:
+    def fetch_sisu_api(self, analysis_id: int, params: dict = {}, **kwargs) -> dict:
         path = ["api/v1/analyses/", str(analysis_id), "runs/latest"]
         url_path = build_url(self._url, pathjoin(*path), {**params, **kwargs})
         return self._call_sisu_api(url_path)
@@ -195,7 +192,7 @@ class PySisu:
         params: dict = {"confidence_gte": "LOW"},
         auto_paginate: bool = True,
         format: LatestAnalysisResultsFormats = LatestAnalysisResultsFormats.TABLE,
-        **kwargs,
+        **kwargs
     ) -> Union[AnalysisRunResultsResponse, Table]:
         assert type(params) is dict
         assert type(kwargs) is dict
@@ -229,29 +226,22 @@ class PySisu:
         url_path = build_url(self._url, pathjoin(*path), kwargs)
         return DataSetsResponse().from_dict(self._call_sisu_api(url_path))
 
-    def get_filters(
-        self, analysis_id: int, **kwargs
-    ) -> GetAnalysisFiltersResponse:
+    def get_filters(self, analysis_id: int, **kwargs) -> GetAnalysisFiltersResponse:
         path = [f"api/v1/analyses/{analysis_id}/filters"]
         url_path = build_url(self._url, pathjoin(*path), kwargs)
-        return GetAnalysisFiltersResponse().from_dict(
-            self._call_sisu_api(url_path)
-        )
+        return GetAnalysisFiltersResponse().from_dict(self._call_sisu_api(url_path))
 
-    def set_filters(
-        self, analysis_id: int, expr: SetAnalysisFiltersRequest, **kwargs
-    ):
+    def set_filters(self, analysis_id: int, expr: SetAnalysisFiltersRequest, **kwargs):
         path = [f"api/v1/analyses/{analysis_id}/filters"]
         url_path = build_url(self._url, pathjoin(*path), kwargs)
-        expr = (
-            expr.to_dict()
-            if isinstance(expr, SetAnalysisFiltersRequest)
-            else expr
-        )
+        expr = expr.to_dict() if isinstance(expr, SetAnalysisFiltersRequest) else expr
         return self._call_sisu_api(url_path, request_method="PUT", json=expr)
 
     def duplicate_analysis(
-        self, analysis_id: int, name: Optional[str] = None, **kwargs
+        self,
+        analysis_id: int,
+        name: Optional[str] = None,
+        **kwargs
     ) -> DuplicateAnalysisResponse:
         path = [f"api/v1/analyses/{analysis_id}/duplicate"]
         url_path = build_url(self._url, pathjoin(*path), kwargs)
@@ -263,7 +253,4 @@ class PySisu:
     def get_factor_data(self, segment_id: int) -> GetSegmentDataResponse:
         path = [f"api/v1/segments/{segment_id}/data_query"]
         url_path = build_url(self._url, pathjoin(*path), {})
-        return GetSegmentDataResponse().from_dict(
-            self._call_sisu_api(url_path, request_method="GET")
-        )
-
+        return GetSegmentDataResponse().from_dict(self._call_sisu_api(url_path, request_method="GET"))
