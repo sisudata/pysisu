@@ -31,9 +31,11 @@ from pysisu.proto.sisu.v1.api import (
     DataSourceListResponse,
     DuplicateAnalysisResponse,
     GetAnalysisFiltersResponse,
+    GetProjectsAnalysesListResponse,
+    GetProjectsListResponseListProjectResponse,
+    GetSegmentDataResponse,
     MetricsListResponse,
     SetAnalysisFiltersRequest,
-    GetSegmentDataResponse,
 )
 from pysisu.query_helpers import build_url, pathjoin, semver_parse
 from pysisu.version import __version__ as PYSISU_VERSION
@@ -267,3 +269,18 @@ class PySisu:
             self._call_sisu_api(url_path, request_method="GET")
         )
 
+    def get_projects(self) -> GetProjectsListResponseListProjectResponse:
+        path = ["api/v1/projects"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return GetProjectsListResponseListProjectResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="GET")
+        )
+
+    def get_project_analyses_list(
+        self, project_id
+    ) -> GetProjectsAnalysesListResponse:
+        path = [f"api/v1/projects/{project_id}/analyses"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return GetProjectsAnalysesListResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="GET")
+        )

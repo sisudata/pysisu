@@ -358,7 +358,10 @@ class Analysis(betterproto.Message):
     metric_id: int = betterproto.uint64_field(5)
     """Metric id corresponding to the analysis."""
 
-    application_url: str = betterproto.string_field(6)
+    project_id: int = betterproto.uint64_field(6)
+    """Project id corresponding to the analysis."""
+
+    application_url: str = betterproto.string_field(7)
     """
     Link to the live sisu analysis this represents. ex:
     vip.sisudata.com/projects/{id}/analysis/{id}
@@ -877,12 +880,10 @@ class TrendAnalysisResultSegment(betterproto.Message):
 
 @dataclass(eq=False, repr=False)
 class TimeRange(betterproto.Message):
-    """
-    TimeRange start and end details with inclusive start and exclusive end.
-    """
+    """TimeRange start and end details with inclusive start and end dates."""
 
-    start: datetime = betterproto.message_field(1)
-    end: datetime = betterproto.message_field(2)
+    start_date_inclusive: datetime = betterproto.message_field(1)
+    end_date_inclusive: datetime = betterproto.message_field(2)
 
 
 @dataclass(eq=False, repr=False)
@@ -1178,6 +1179,51 @@ class GetSegmentDataResponse(betterproto.Message):
     """query string that would resutl in the segment data."""
 
 
+@dataclass(eq=False, repr=False)
+class GetProjectsListRequest(betterproto.Message):
+    pass
+
+
+@dataclass(eq=False, repr=False)
+class GetProjectsListResponse(betterproto.Message):
+    pass
+
+
+@dataclass(eq=False, repr=False)
+class GetProjectsListResponseListProjectResponse(betterproto.Message):
+    projects: List["GetProjectsListResponseProject"] = betterproto.message_field(1)
+    """List all projects."""
+
+
+@dataclass(eq=False, repr=False)
+class GetProjectsListResponseProject(betterproto.Message):
+    """Provides detailed information about a project."""
+
+    id: int = betterproto.int64_field(1)
+    """Project id."""
+
+    name: str = betterproto.string_field(2)
+    """Project name."""
+
+    description: str = betterproto.string_field(3)
+    """Project description."""
+
+    created_at: datetime = betterproto.message_field(4)
+    """Timestamp when the Project was created."""
+
+
+@dataclass(eq=False, repr=False)
+class GetProjectsAnalysesListRequest(betterproto.Message):
+    id: int = betterproto.int64_field(1)
+    """Project id."""
+
+
+@dataclass(eq=False, repr=False)
+class GetProjectsAnalysesListResponse(betterproto.Message):
+    analyses: List["Analysis"] = betterproto.message_field(1)
+    """List of analyses associated with a project."""
+
+
 class AnalysesServiceStub(betterproto.ServiceStub):
     async def analyses_list(
         self,
@@ -1386,6 +1432,42 @@ class SegmentsServiceStub(betterproto.ServiceStub):
             "/sisu.v1.api.SegmentsService/GetSegmentData",
             get_segment_data_request,
             GetSegmentDataResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+
+class ProjectsServiceStub(betterproto.ServiceStub):
+    async def get_projects_list(
+        self,
+        get_projects_list_request: "GetProjectsListRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "GetProjectsListResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.ProjectsService/GetProjectsList",
+            get_projects_list_request,
+            GetProjectsListResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+    async def get_projects_analyses_list(
+        self,
+        get_projects_analyses_list_request: "GetProjectsAnalysesListRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "GetProjectsAnalysesListResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.ProjectsService/GetProjectsAnalysesList",
+            get_projects_analyses_list_request,
+            GetProjectsAnalysesListResponse,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -1642,5 +1724,49 @@ class SegmentsServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 GetSegmentDataRequest,
                 GetSegmentDataResponse,
+            ),
+        }
+
+
+class ProjectsServiceBase(ServiceBase):
+    async def get_projects_list(
+        self, get_projects_list_request: "GetProjectsListRequest"
+    ) -> "GetProjectsListResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def get_projects_analyses_list(
+        self, get_projects_analyses_list_request: "GetProjectsAnalysesListRequest"
+    ) -> "GetProjectsAnalysesListResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def __rpc_get_projects_list(
+        self,
+        stream: "grpclib.server.Stream[GetProjectsListRequest, GetProjectsListResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.get_projects_list(request)
+        await stream.send_message(response)
+
+    async def __rpc_get_projects_analyses_list(
+        self,
+        stream: "grpclib.server.Stream[GetProjectsAnalysesListRequest, GetProjectsAnalysesListResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.get_projects_analyses_list(request)
+        await stream.send_message(response)
+
+    def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
+        return {
+            "/sisu.v1.api.ProjectsService/GetProjectsList": grpclib.const.Handler(
+                self.__rpc_get_projects_list,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                GetProjectsListRequest,
+                GetProjectsListResponse,
+            ),
+            "/sisu.v1.api.ProjectsService/GetProjectsAnalysesList": grpclib.const.Handler(
+                self.__rpc_get_projects_analyses_list,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                GetProjectsAnalysesListRequest,
+                GetProjectsAnalysesListResponse,
             ),
         }

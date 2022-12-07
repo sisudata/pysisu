@@ -26,7 +26,6 @@ from pysisu.proto.sisu.v1.api import (
     KeyDriverAnalysisResultTimeComparison,
     TrendAnalysisResultSegment,
     TrendAnalysisResultTrend,
-    KeyDriverAnalysisResultSegmentConfidenceLevel
 )
 import datetime
 import betterproto
@@ -56,10 +55,10 @@ class TimeCompareRow(KDARow):
     recent_period_size: float
     previous_period_value: float
     recent_period_value: float
-    previous_period_start: datetime.datetime
-    previous_period_end: datetime.datetime
-    recent_period_start: datetime.datetime
-    recent_period_end: datetime.datetime
+    previous_period_start_date_inclusive: datetime.datetime
+    previous_period_end_date_inclusive: datetime.datetime
+    recent_period_start_date_inclusive: datetime.datetime
+    recent_period_end_date_inclusive: datetime.datetime
 
 
 @dataclass
@@ -88,8 +87,8 @@ class TrendRow(Row):
     factor_2_dimension: str
     factor_2_value: any
     impact: float
-    start_dt: datetime.datetime
-    end_dt: datetime.datetime
+    start_date_inclusive: datetime.datetime
+    end_date_inclusive: datetime.datetime
     intercept: Optional[float]
     slope: Optional[float]
     size: Optional[float]
@@ -180,10 +179,10 @@ def get_rows_time_comparision(
             recent_period_size=subgroup.time_comparison.recent_period_size,
             previous_period_value=subgroup.time_comparison.previous_period_value,
             recent_period_value=subgroup.time_comparison.recent_period_value,
-            previous_period_start=time_comparision.previous_period.start,
-            previous_period_end=time_comparision.previous_period.end,
-            recent_period_start=time_comparision.recent_period.start,
-            recent_period_end=time_comparision.recent_period.end,
+            previous_period_start_date_inclusive=time_comparision.previous_period.start,
+            previous_period_end_date_inclusive=time_comparision.previous_period.end,
+            recent_period_start_date_inclusive=time_comparision.recent_period.start,
+            recent_period_end_date_inclusive=time_comparision.recent_period.end,
             impact=subgroup.impact,
         )
         rows.append(r)
@@ -262,8 +261,8 @@ def get_rows_trend(
             factor_2_dimension=None,
             factor_2_value=None,
             impact=otrend.trend,
-            start_dt=otrend.time_range.start,
-            end_dt=otrend.time_range.end,
+            start_date_inclusive=otrend.time_range.start_date_inclusive,
+            end_date_inclusive=otrend.time_range.end_date_inclusive,
             intercept=otrend.intercept,
             slope=otrend.trend,
             size=otrend.size,
@@ -294,8 +293,8 @@ def get_rows_trend(
                 factor_2_dimension=factor_2.dimension,
                 factor_2_value=factor_2.value,
                 impact=subgroup.impact,
-                start_dt=trend.time_range.start,
-                end_dt=trend.time_range.end,
+                start_date_inclusive=trend.time_range.start_date_inclusive,
+                end_date_inclusive=trend.time_range.end_date_inclusive,
                 intercept=trend.intercept,
                 slope=trend.trend,
                 size=trend.size,
