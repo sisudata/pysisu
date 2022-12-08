@@ -12,8 +12,8 @@
       "overallTrends": [
         {
           "timeRange": {
-            "startDateInclusive": "2022-03-27T00:00:00Z",
-            "endDateInclusive": "2022-03-29T00:00:00Z"
+            "start": "2022-03-27T00:00:00Z",
+            "end": "2022-03-29T00:00:00Z"
           },
           "intercept": 83.4280487804878,
           "trend": -1.1219512195121952,
@@ -38,8 +38,8 @@
           "trends": [
             {
               "timeRange": {
-                "startDateInclusive": "2022-03-27T00:00:00Z",
-                "endDateInclusive": "2022-03-29T00:00:00Z"
+                "start": "2022-03-27T00:00:00Z",
+                "end": "2022-03-29T00:00:00Z"
               },
               "intercept": 20.871951219512194,
               "trend": -0.2895872420262664,
@@ -65,8 +65,8 @@
           "trends": [
             {
               "timeRange": {
-                "startDateInclusive": "2022-03-27T00:00:00Z",
-                "endDateInclusive": "2022-03-29T00:00:00Z"
+                "start": "2022-03-27T00:00:00Z",
+                "end": "2022-03-29T00:00:00Z"
               },
               "intercept": 20.871951219512194,
               "trend": -0.2895872420262664,
@@ -92,8 +92,8 @@
           "trends": [
             {
               "timeRange": {
-                "startDateInclusive": "2022-03-27T00:00:00Z",
-                "endDateInclusive": "2022-03-29T00:00:00Z"
+                "start": "2022-03-27T00:00:00Z",
+                "end": "2022-03-29T00:00:00Z"
               },
               "intercept": 20.871951219512194,
               "trend": -0.2895872420262664,
