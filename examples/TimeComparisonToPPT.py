@@ -63,22 +63,22 @@ s.shapes[1].text = (
     "Previous Period"
     + "\n"
     + str(
-        sisu_summary.analysis_result.key_driver_analysis_result.time_comparison.previous_period.start
+        sisu_summary.analysis_result.key_driver_analysis_result.time_comparison.previous_period.start_date_inclusive
     )
     + " to "
     + str(
-        sisu_summary.analysis_result.key_driver_analysis_result.time_comparison.previous_period.end
+        sisu_summary.analysis_result.key_driver_analysis_result.time_comparison.previous_period.end_date_inclusive
     )
 )
 s.shapes[3].text = (
     "Recent Period"
     + "\n"
     + str(
-        sisu_summary.analysis_result.key_driver_analysis_result.time_comparison.recent_period.start
+        sisu_summary.analysis_result.key_driver_analysis_result.time_comparison.recent_period.start_date_inclusive
     )
     + " to "
     + str(
-        sisu_summary.analysis_result.key_driver_analysis_result.time_comparison.recent_period.end
+        sisu_summary.analysis_result.key_driver_analysis_result.time_comparison.recent_period.end_date_inclusive
     )
 )
 

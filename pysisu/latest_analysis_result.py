@@ -179,10 +179,10 @@ def get_rows_time_comparision(
             recent_period_size=subgroup.time_comparison.recent_period_size,
             previous_period_value=subgroup.time_comparison.previous_period_value,
             recent_period_value=subgroup.time_comparison.recent_period_value,
-            previous_period_start_date_inclusive=time_comparision.previous_period.start,
-            previous_period_end_date_inclusive=time_comparision.previous_period.end,
-            recent_period_start_date_inclusive=time_comparision.recent_period.start,
-            recent_period_end_date_inclusive=time_comparision.recent_period.end,
+            previous_period_start_date_inclusive=time_comparision.previous_period.start_date_inclusive,
+            previous_period_end_date_inclusive=time_comparision.previous_period.end_date_inclusive,
+            recent_period_start_date_inclusive=time_comparision.recent_period.start_date_inclusive,
+            recent_period_end_date_inclusive=time_comparision.recent_period.end_date_inclusive,
             impact=subgroup.impact,
         )
         rows.append(r)
