@@ -27,8 +27,10 @@ class AnalysisType(betterproto.Enum):
     """Type of Analysis eg. KEY_DRIVER."""
 
     ANALYSIS_TYPE_UNKNOWN = 0
-    ANALYSIS_TYPE_KEY_DRIVER = 1
+    ANALYSIS_TYPE_GENERAL_PERFORMANCE = 1
     ANALYSIS_TYPE_TREND = 2
+    ANALYSIS_TYPE_TIME_COMPARE = 3
+    ANALYSIS_TYPE_GROUP_COMPARE = 4
 
 
 class SqlDataType(betterproto.Enum):
@@ -1219,7 +1221,7 @@ class GetProjectsListResponseListProjectResponse(betterproto.Message):
 class GetProjectsListResponseProject(betterproto.Message):
     """Provides detailed information about a project."""
 
-    id: int = betterproto.int64_field(1)
+    id: int = betterproto.uint64_field(1)
     """Project id."""
 
     name: str = betterproto.string_field(2)
@@ -1234,7 +1236,7 @@ class GetProjectsListResponseProject(betterproto.Message):
 
 @dataclass(eq=False, repr=False)
 class GetProjectsAnalysesListRequest(betterproto.Message):
-    id: int = betterproto.int64_field(1)
+    id: int = betterproto.uint64_field(1)
     """Project id."""
 
 
