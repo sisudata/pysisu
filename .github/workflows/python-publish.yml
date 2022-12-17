@@ -6,6 +6,8 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
+# Editing this file to update actor for this action, see: https://github.com/orgs/community/discussions/25067
+
 name: Upload Python Package
 
 on:
