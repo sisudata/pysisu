@@ -15,12 +15,10 @@
 #
 
 import warnings
-from datetime import timedelta
 from http import HTTPStatus
 from typing import Optional, Union
 
 import requests
-import requests_cache
 
 from pysisu.formats import LatestAnalysisResultsFormats, Table
 from pysisu.latest_analysis_result import to_table
@@ -67,11 +65,6 @@ class PySisu:
     _api_key: str
 
     def __init__(self, api_key: str, url: str = "https://vip.sisu.ai") -> None:
-        self.session = requests_cache.CachedSession(
-            cache_name="pysisu_cache",
-            use_cache_dir=True,
-            expire_after=timedelta(days=1),
-        )
         self._check_compatibility()
         self._url = url
         self._api_key = api_key
@@ -134,12 +127,9 @@ class PySisu:
             "Authorization": self._api_key,
             "User-Agent": f"PySisu/{PYSISU_VERSION}",
         }
-        # don't cache API responses, we don't want to return stale responses
-        # or cache in-flight status
-        with self.session.cache_disabled():
-            r = self.session.request(
-                request_method, url_path, headers=headers, json=json
-            )
+        r = requests.request(
+            request_method, url_path, headers=headers, json=json
+        )
         if r.status_code != HTTPStatus.OK:
             raise PySisuInvalidResponseFromServer(
                 "Result did not complete", r.content
@@ -147,7 +137,7 @@ class PySisu:
         return r.json()
 
     def _check_compatibility(self):
-        r = self.session.get("https://pypi.python.org/pypi/pysisu/json")
+        r = requests.get("https://pypi.python.org/pypi/pysisu/json")
         try:
             latest_version = r.json()["info"]["version"]
         except (requests.RequestException, KeyError):
