@@ -1,0 +1,62 @@
+{
+    "analysisResult": {
+        "id": "1",
+        "runStatus": "RUN_STATUS_COMPLETED",
+        "requestedAt": "2022-12-09T00:00:00Z",
+        "completedAt": "2022-12-09T00:00:00Z",
+        "runType": "RUN_TYPE_MANUAL",
+        "trendAnalysisResult": {
+            "summaryCard": {
+                "currentPeriod": {
+                    "cardLabel": "Current trend",
+                    "slope": -1.1219512195121952,
+                    "percentChange": -1.3448129686746286,
+                    "denominatorLabel": "day"
+                }
+            },
+            "overallTrends": [
+                {
+                    "timeRange": {
+                        "startDateInclusive": "2022-03-27T00:00:00Z",
+                        "endDateInclusive": "2022-03-28T00:00:00Z"
+                    },
+                    "intercept": 83.4280487804878,
+                    "trend": -1.1219512195121952,
+                    "size": 100.0
+                }
+            ],
+            "segments": [
+                {
+                    "id": "1",
+                    "factors": {
+                        "a": {
+                            "value": {
+                                "stringValue": "a1"
+                            }
+                        },
+                        "b": {
+                            "value": {
+                                "stringValue": "b1"
+                            }
+                        }
+                    },
+                    "trends": [
+                        {
+                            "timeRange": {
+                                "startDateInclusive": "2022-03-27T00:00:00Z",
+                                "endDateInclusive": "2022-03-28T00:00:00Z"
+                            },
+                            "intercept": 20.871951219512194,
+                            "trend": -0.2895872420262664,
+                            "size": 27.040816326530614
+                        }
+                    ],
+                    "impact": -0.2895872420262664
+                }
+            ]
+        },
+        "metricId": "1",
+        "applicationUrl": "https://localhost:6080/projects/1/trends/2"
+    },
+    "paginationHints": {}
+}

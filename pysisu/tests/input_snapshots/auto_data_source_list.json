@@ -1,0 +1,28 @@
+{
+    "dataSources": [
+        {
+            "id": "1",
+            "name": "Sandbox Data Sources",
+            "dataSourceType": "DATA_SOURCE_TYPE_SNOWFLAKE",
+            "createdAt": "2022-12-09T00:00:00Z",
+            "createdBy": "CUSTOMER_SANDBOX_READER",
+            "connectionUri": "jdbc:snowflake://tsa34595.snowflakecomputing.com/?user=CUSTOMER_SANDBOX_READER&db=SISU_SANDBOX_ENVIRONMENT&role=CUSTOMER_SANDBOX_READER_ROLE&warehouse=CUSTOMER_SANDBOX_WH"
+        },
+        {
+            "id": "2",
+            "name": "my_favorite_connection",
+            "dataSourceType": "DATA_SOURCE_TYPE_SNOWFLAKE",
+            "createdAt": "2022-12-09T00:00:00Z",
+            "createdBy": "user",
+            "connectionUri": "jdbc:snowflake://genius-db"
+        },
+        {
+            "id": "3",
+            "name": "my_favorite_connection",
+            "dataSourceType": "DATA_SOURCE_TYPE_CSV",
+            "createdAt": "2022-12-09T00:00:00Z",
+            "createdBy": "user",
+            "connectionUri": "jdbc:snowflake://genius-db"
+        }
+    ]
+}

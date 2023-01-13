@@ -20,10 +20,11 @@ from typing import Optional, Union
 
 import requests
 
-from pysisu.formats import LatestAnalysisResultsFormats, Table
-from pysisu.latest_analysis_result import to_table
-from pysisu.proto.sisu.v1.api import (
+from .formats import LatestAnalysisResultsFormats, Table
+from .latest_analysis_result import to_table
+from .proto.sisu.v1.api import (
     AnalysesListResponse,
+    AnalysisRequest,
     AnalysisRunResultsResponse,
     CreateDataSetRequestDataset,
     DataSetsResponse,
@@ -34,10 +35,12 @@ from pysisu.proto.sisu.v1.api import (
     GetProjectsListResponseListProjectResponse,
     GetSegmentDataResponse,
     MetricsListResponse,
+    ModifyAnalysisResponse,
     SetAnalysisFiltersRequest,
+    AnalysisDimensionsListResponse,
 )
-from pysisu.query_helpers import build_url, pathjoin, semver_parse
-from pysisu.version import __version__ as PYSISU_VERSION
+from .query_helpers import build_url, pathjoin, semver_parse
+from .version import __version__ as PYSISU_VERSION
 
 
 class PySisuBaseException(Exception):
@@ -284,5 +287,23 @@ class PySisu:
         path = [f"api/v1/projects/{project_id}/analyses"]
         url_path = build_url(self._url, pathjoin(*path), {})
         return GetProjectsAnalysesListResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="GET")
+        )
+
+    def modify_analysis(
+        self,
+        project_id: int,
+        analysis_id: int,
+        modify_analysis_req: AnalysisRequest,
+    ) -> ModifyAnalysisResponse:
+        path = [f"api/v1/projects/{project_id}/analyses/{analysis_id}"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return ModifyAnalysisResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="PATCH", json=modify_analysis_req.to_json()))
+
+    def get_analysis_dimensions_list(self, analysis_id) -> AnalysisDimensionsListResponse:
+        path = [f"api/v1/analyses/{analysis_id}/dimensions"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return AnalysisDimensionsListResponse().from_dict(
             self._call_sisu_api(url_path, request_method="GET")
         )

@@ -16,9 +16,9 @@
 
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple, Union
-from pysisu.formats import HeaderColumn, Row, Table
-from pysisu.proto.sisu.v1.api import AnalysisRunResultsResponse
-from pysisu.proto.sisu.v1.api import (
+from .formats import HeaderColumn, Row, Table
+from .proto.sisu.v1.api import (
+    AnalysisRunResultsResponse,
     Factor,
     Value,
     KeyDriverAnalysisResultGroupComparison,

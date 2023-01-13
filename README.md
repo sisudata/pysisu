@@ -59,5 +59,5 @@ There are example api responses in `tests/input_snapshots` and there are the exp
 To updated the output snapshots whenever the input snapshots get updated, just run
 
 ```bash
-pytest . --snapshot-update
+pytest -k results_output --snapshot-update
 ```

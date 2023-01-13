@@ -1,0 +1,94 @@
+{
+    "metrics": [
+        {
+            "id": "8",
+            "name": "WeightedSum",
+            "weightDimensionName": "weight column",
+            "desiredDirection": "DESIRED_DIRECTION_DECREASE",
+            "metricDimension": {
+                "name": "mymetric"
+            },
+            "type": "METRIC_TYPE_WEIGHTED_SUM",
+            "datasetId": "1"
+        },
+        {
+            "id": "7",
+            "name": "SUM",
+            "desiredDirection": "DESIRED_DIRECTION_DECREASE",
+            "metricDimension": {
+                "name": "mymetric"
+            },
+            "type": "METRIC_TYPE_SUM",
+            "datasetId": "1"
+        },
+        {
+            "id": "6",
+            "name": "WeightedAverage",
+            "weightDimensionName": "weight column",
+            "desiredDirection": "DESIRED_DIRECTION_DECREASE",
+            "metricDimension": {
+                "name": "mymetric"
+            },
+            "type": "METRIC_TYPE_WEIGHTED_AVERAGE",
+            "datasetId": "1"
+        },
+        {
+            "id": "5",
+            "name": "Average",
+            "timeDimensionName": "time column",
+            "desiredDirection": "DESIRED_DIRECTION_DECREASE",
+            "metricDimension": {
+                "name": "mymetric"
+            },
+            "type": "METRIC_TYPE_AVERAGE",
+            "datasetId": "1"
+        },
+        {
+            "id": "4",
+            "name": "NumericalRate",
+            "weightDimensionName": "weight column",
+            "desiredDirection": "DESIRED_DIRECTION_DECREASE",
+            "metricDimension": {
+                "name": "mymetric"
+            },
+            "type": "METRIC_TYPE_NUMERICAL_RATE",
+            "datasetId": "1"
+        },
+        {
+            "id": "3",
+            "name": "CategoricalCount",
+            "desiredDirection": "DESIRED_DIRECTION_DECREASE",
+            "metricDimension": {
+                "name": "mymetric",
+                "value": {
+                    "stringValue": "val"
+                }
+            },
+            "type": "METRIC_TYPE_CATEGORICAL_COUNT",
+            "datasetId": "1"
+        },
+        {
+            "id": "2",
+            "name": "CategoricalRate",
+            "desiredDirection": "DESIRED_DIRECTION_DECREASE",
+            "metricDimension": {
+                "name": "mymetric",
+                "value": {
+                    "stringValue": "val"
+                }
+            },
+            "type": "METRIC_TYPE_CATEGORICAL_RATE",
+            "datasetId": "1"
+        },
+        {
+            "id": "1",
+            "name": "NumericalCount",
+            "desiredDirection": "DESIRED_DIRECTION_DECREASE",
+            "metricDimension": {
+                "name": "mymetric"
+            },
+            "type": "METRIC_TYPE_NUMERICAL_COUNT",
+            "datasetId": "1"
+        }
+    ]
+}

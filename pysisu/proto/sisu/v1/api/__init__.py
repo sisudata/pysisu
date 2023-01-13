@@ -1061,6 +1061,28 @@ class Dimension(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class AnalysisDimension(betterproto.Message):
+    """Represents a dimension (column) within a specfic `analsyis`."""
+
+    name: str = betterproto.string_field(1)
+    """
+    A string literal corresponding to a column selected in the dataset. It is
+    either a column name or a column alias for a computed SQL function over a
+    column ( for example, `upper(email) as 'UPPER_EMAIL'` ex: `red` in `SELECT
+    roja as red`.
+    """
+
+    dimension_type: "SqlDataType" = betterproto.enum_field(2)
+    """
+    Refers to the column type of this dimension as it exists within the data
+    warehouse
+    """
+
+    is_selected: bool = betterproto.bool_field(3)
+    """Set to true if the dimension is part of the analysis."""
+
+
+@dataclass(eq=False, repr=False)
 class DataSetDimensionsListResponse(betterproto.Message):
     """
     DataSetDimensionsListResponse provides list of Dimensions for a given
@@ -1077,7 +1099,7 @@ class AnalysisDimensionsListResponse(betterproto.Message):
     analysis.
     """
 
-    dimensions: List["Dimension"] = betterproto.message_field(1)
+    dimensions: List["AnalysisDimension"] = betterproto.message_field(1)
 
 
 @dataclass(eq=False, repr=False)
@@ -1244,6 +1266,229 @@ class GetProjectsAnalysesListRequest(betterproto.Message):
 class GetProjectsAnalysesListResponse(betterproto.Message):
     analyses: List["Analysis"] = betterproto.message_field(1)
     """List of analyses associated with a project."""
+
+
+@dataclass(eq=False, repr=False)
+class TimeWindow(betterproto.Message):
+    start_date: datetime = betterproto.message_field(1)
+    """Start date inclsuvie."""
+
+    end_date: datetime = betterproto.message_field(2)
+    """End date exclusive."""
+
+
+@dataclass(eq=False, repr=False)
+class AnalysisDimensionRequest(betterproto.Message):
+    name: str = betterproto.string_field(1)
+
+
+@dataclass(eq=False, repr=False)
+class GeneralPerformance(betterproto.Message):
+    """
+    General Performance is a Key Driver Analysis in which Sisu provides an
+    “overall” analysis of your data.
+    """
+
+    name: str = betterproto.string_field(1)
+    """The name of the analysis."""
+
+    id: int = betterproto.uint64_field(2)
+    time_dimension_name: str = betterproto.string_field(3)
+    """
+    The selected on metric used by the current analysis, setting this dimension
+    would affect other analysis with the same mertic id.
+    """
+
+    filter_expression: "Expression" = betterproto.message_field(4)
+    """
+    A filter expression allows you to narrow down results based on specific
+    criteria.
+    """
+
+    metric_id: int = betterproto.uint64_field(5)
+    time_range: "TimeWindow" = betterproto.message_field(6)
+    """Time prediod to run the analysis, inclusive start and excludive end."""
+
+    dimensions: List["AnalysisDimensionRequest"] = betterproto.message_field(7)
+    """List of dimensions to run the analysis against."""
+
+
+@dataclass(eq=False, repr=False)
+class TimeCompare(betterproto.Message):
+    """
+    Time Comparison is a Key Driver Analysis in which Sisu compares two
+    timeframes that you define.
+    """
+
+    name: str = betterproto.string_field(1)
+    """The name of the analysis."""
+
+    id: int = betterproto.uint64_field(2)
+    time_dimension_name: str = betterproto.string_field(3)
+    """
+    The selected on metric used by the current analysis, setting this dimension
+    would affect other analysis with the same mertic id.
+    """
+
+    filter_expression: "Expression" = betterproto.message_field(4)
+    """
+    A filter expression allows you to narrow down results based on specific
+    criteria.
+    """
+
+    metric_id: int = betterproto.uint64_field(5)
+    recent_range: "TimeWindow" = betterproto.message_field(6)
+    """
+    Define the recent time period to be compared against the previous range.
+    """
+
+    previous_range: "TimeWindow" = betterproto.message_field(7)
+    """
+    Define the previous time period to be compared against the recent range.
+    """
+
+    dimensions: List["AnalysisDimensionRequest"] = betterproto.message_field(8)
+    """List of dimensions to run the analysis against."""
+
+
+@dataclass(eq=False, repr=False)
+class GroupCompare(betterproto.Message):
+    """
+    Group Comparison is a Key Driver Analysis in which Sisu compares two groups
+    of data that you define.
+    """
+
+    name: str = betterproto.string_field(1)
+    """The name of the analysis."""
+
+    id: int = betterproto.uint64_field(2)
+    time_dimension_name: str = betterproto.string_field(3)
+    """
+    The selected on metric used by the current analysis, setting this dimension
+    would affect other analysis with the same mertic id.
+    """
+
+    filter_expression: "Expression" = betterproto.message_field(4)
+    """
+    A filter expression allows you to narrow down results based on specific
+    criteria.
+    """
+
+    metric_id: int = betterproto.uint64_field(5)
+    time_range: "TimeWindow" = betterproto.message_field(6)
+    """Time prediod to run the analysis, inclusive start and excludive end."""
+
+    group_a_name: str = betterproto.string_field(7)
+    group_b_name: str = betterproto.string_field(8)
+    group_a_expression: "Expression" = betterproto.message_field(9)
+    """Expression that distinguished group a from other rows values."""
+
+    group_b_expression: "Expression" = betterproto.message_field(10)
+    """Expression that distinguished group b from other rows values."""
+
+    dimensions: List["AnalysisDimensionRequest"] = betterproto.message_field(11)
+    """List of dimensions to run the analysis against."""
+
+
+@dataclass(eq=False, repr=False)
+class AnalysisRequest(betterproto.Message):
+    general_performance: "GeneralPerformance" = betterproto.message_field(
+        2, group="analysis"
+    )
+    time_compare: "TimeCompare" = betterproto.message_field(3, group="analysis")
+    group_compare: "GroupCompare" = betterproto.message_field(4, group="analysis")
+
+
+@dataclass(eq=False, repr=False)
+class CreateAnalysisRequest(betterproto.Message):
+    """END-INTERNAL"""
+
+    project_id: int = betterproto.uint64_field(1)
+    """Project id corresponding to the analysis."""
+
+    analysis: "AnalysisRequest" = betterproto.message_field(2)
+
+
+@dataclass(eq=False, repr=False)
+class CreateAnalysisResponse(betterproto.Message):
+    name: str = betterproto.string_field(1)
+    """The name of the analysis."""
+
+    id: int = betterproto.uint64_field(2)
+    """Analysis id."""
+
+    time_dimension_name: Optional[str] = betterproto.message_field(
+        3, wraps=betterproto.TYPE_STRING
+    )
+    """
+    The name of metric's time dimension which represnts the date range of the
+    metric.
+    """
+
+    filter_expression: "Expression" = betterproto.message_field(4)
+    """
+    An Expression which would facilitate building a filter expression on the
+    analysis.
+    """
+
+    metric_id: int = betterproto.uint64_field(5)
+    """The metic id which the analysis depends on."""
+
+    time_range: "TimeWindow" = betterproto.message_field(6)
+    """A time window the analysis should run on."""
+
+    group_a_name: Optional[str] = betterproto.message_field(
+        7, wraps=betterproto.TYPE_STRING
+    )
+    """The Group a name in a Group compare analysis."""
+
+    group_b_name: Optional[str] = betterproto.message_field(
+        8, wraps=betterproto.TYPE_STRING
+    )
+    """The Group b name in a Group compare analysis."""
+
+    group_a_expression: "Expression" = betterproto.message_field(9)
+    """
+    A filter expression where group a is denfined in a Group compare analysis.
+    """
+
+    group_b_expression: "Expression" = betterproto.message_field(10)
+    """
+    A filter expression where group b is denfined in a Group compare analysis.
+    """
+
+    project_id: int = betterproto.uint64_field(11)
+    """Project id corresponding to the analysis."""
+
+    type: "AnalysisType" = betterproto.enum_field(12)
+    """The Type of the analysis."""
+
+    created_at: datetime = betterproto.message_field(13)
+    """Timestamp when the analysis was created."""
+
+    application_url: str = betterproto.string_field(14)
+    """
+    Link to the live sisu analysis this represents. ex:
+    vip.sisudata.com/projects/{id}/analysis/{id}
+    """
+
+    recent_range: "TimeWindow" = betterproto.message_field(15)
+    """Recent time window range used for time compare analysis."""
+
+    previous_range: "TimeWindow" = betterproto.message_field(16)
+    """Previous time window range used for time compare analysis."""
+
+
+@dataclass(eq=False, repr=False)
+class ModifyAnalysisRequest(betterproto.Message):
+    project_id: int = betterproto.uint64_field(1)
+    analysis_id: int = betterproto.uint64_field(2)
+    analysis: "AnalysisRequest" = betterproto.message_field(3)
+
+
+@dataclass(eq=False, repr=False)
+class ModifyAnalysisResponse(betterproto.Message):
+    pass
 
 
 class AnalysesServiceStub(betterproto.ServiceStub):
@@ -1507,6 +1752,23 @@ class ProjectsServiceStub(betterproto.ServiceStub):
             "/sisu.v1.api.ProjectsService/GetProjectsAnalysesList",
             get_projects_analyses_list_request,
             GetProjectsAnalysesListResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+    async def modify_analysis(
+        self,
+        modify_analysis_request: "ModifyAnalysisRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "ModifyAnalysisResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.ProjectsService/ModifyAnalysis",
+            modify_analysis_request,
+            ModifyAnalysisResponse,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -1797,6 +2059,11 @@ class ProjectsServiceBase(ServiceBase):
     ) -> "GetProjectsAnalysesListResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def modify_analysis(
+        self, modify_analysis_request: "ModifyAnalysisRequest"
+    ) -> "ModifyAnalysisResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_get_projects_list(
         self,
         stream: "grpclib.server.Stream[GetProjectsListRequest, GetProjectsListResponse]",
@@ -1813,6 +2080,14 @@ class ProjectsServiceBase(ServiceBase):
         response = await self.get_projects_analyses_list(request)
         await stream.send_message(response)
 
+    async def __rpc_modify_analysis(
+        self,
+        stream: "grpclib.server.Stream[ModifyAnalysisRequest, ModifyAnalysisResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.modify_analysis(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.ProjectsService/GetProjectsList": grpclib.const.Handler(
@@ -1826,5 +2101,11 @@ class ProjectsServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 GetProjectsAnalysesListRequest,
                 GetProjectsAnalysesListResponse,
+            ),
+            "/sisu.v1.api.ProjectsService/ModifyAnalysis": grpclib.const.Handler(
+                self.__rpc_modify_analysis,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                ModifyAnalysisRequest,
+                ModifyAnalysisResponse,
             ),
         }

@@ -1,0 +1,76 @@
+{
+    "analysisResult": {
+        "id": "1",
+        "runStatus": "RUN_STATUS_COMPLETED",
+        "requestedAt": "2022-12-09T00:00:00Z",
+        "completedAt": "2022-12-09T00:00:00Z",
+        "runType": "RUN_TYPE_MANUAL",
+        "keyDriverAnalysisResult": {
+            "summaryCard": {
+                "metricTypeLabel": "Categorical count",
+                "groupComparisonCard": {
+                    "groupACard": {
+                        "cardLabel": "this is the name of group a",
+                        "categoryFilter": "mymetric = val",
+                        "summaryValue": 10.0,
+                        "matchSize": 10.0
+                    },
+                    "groupBCard": {
+                        "cardLabel": "this is the name of group b",
+                        "categoryFilter": "mymetric = val",
+                        "summaryValue": 11.0,
+                        "matchSize": 11.0
+                    },
+                    "percentChange": 10.000000000000009
+                }
+            },
+            "groupComparison": {
+                "groupA": {
+                    "name": "this is the name of group a"
+                },
+                "groupB": {
+                    "name": "this is the name of group b"
+                }
+            },
+            "segments": [
+                {
+                    "id": "1",
+                    "factors": {
+                        "attr0": {
+                            "value": {
+                                "stringValue": "A"
+                            }
+                        },
+                        "attr1": {
+                            "value": {
+                                "stringValue": "B"
+                            }
+                        },
+                        "attr2": {
+                            "value": {
+                                "stringValue": "C"
+                            }
+                        },
+                        "attr3": {
+                            "bin": {
+                                "lowerBound": 0.1,
+                                "upperBound": 0.2
+                            }
+                        }
+                    },
+                    "groupComparison": {
+                        "groupASize": 0.8333333333333334,
+                        "groupBSize": 0.6666666666666666,
+                        "groupAValue": 0.8,
+                        "groupBValue": 0.5
+                    },
+                    "impact": 0.5,
+                    "confidence": "CONFIDENCE_LEVEL_LOW"
+                }
+            ]
+        },
+        "metricId": "1",
+        "applicationUrl": "https://localhost:6080/projects/1/analyses/1"
+    },
+    "paginationHints": {}
+}

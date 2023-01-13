@@ -1,0 +1,3 @@
+subgroup_id,factor_0_dimension,factor_0_value,factor_1_dimension,factor_1_value,factor_2_dimension,factor_2_value,impact,start_date_inclusive,end_date_inclusive,intercept,slope,size
+,,,,,,,-1.1219512195121952,'2022-03-27 00:00:00+00:00','2022-03-28 00:00:00+00:00',83.4280487804878,-1.1219512195121952,100.0
+1,'a','a1','b','b1',,,-0.2895872420262664,'2022-03-27 00:00:00+00:00','2022-03-28 00:00:00+00:00',20.871951219512194,-0.2895872420262664,27.040816326530614

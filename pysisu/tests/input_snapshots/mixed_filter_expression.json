@@ -1,0 +1,39 @@
+{
+    "filterExpression": {
+        "and": {
+            "expressions": [
+                {
+                    "basicCondition": {
+                        "operator": "OPERATOR_EQ",
+                        "dimensionName": "float_col",
+                        "literal": {
+                            "float": 2.1
+                        }
+                    }
+                },
+                {
+                    "or": {
+                        "expressions": [
+                            {
+                                "basicCondition": {
+                                    "operator": "OPERATOR_EQ",
+                                    "dimensionName": "float_col",
+                                    "nullLiteral": {}
+                                }
+                            },
+                            {
+                                "basicCondition": {
+                                    "operator": "OPERATOR_NE",
+                                    "dimensionName": "string_col",
+                                    "literal": {
+                                        "string": "night"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

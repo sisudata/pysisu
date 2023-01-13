@@ -1,0 +1,40 @@
+{
+    "analyses": [
+        {
+            "id": "4",
+            "name": "Trend Analysis #1",
+            "type": "ANALYSIS_TYPE_TREND",
+            "createdAt": "2022-12-09T00:00:00Z",
+            "metricId": "1",
+            "projectId": "1",
+            "applicationUrl": "https://localhost:6080/projects/1/trends/4"
+        },
+        {
+            "id": "3",
+            "name": "KDA Analysis #3: group comparison",
+            "type": "ANALYSIS_TYPE_GROUP_COMPARE",
+            "createdAt": "2022-12-09T00:00:00Z",
+            "metricId": "1",
+            "projectId": "1",
+            "applicationUrl": "https://localhost:6080/projects/1/trends/3"
+        },
+        {
+            "id": "2",
+            "name": "KDA Analysis #2: temporal comparison",
+            "type": "ANALYSIS_TYPE_TIME_COMPARE",
+            "createdAt": "2022-12-09T00:00:00Z",
+            "metricId": "1",
+            "projectId": "1",
+            "applicationUrl": "https://localhost:6080/projects/1/trends/2"
+        },
+        {
+            "id": "1",
+            "name": "KDA Analysis #1",
+            "type": "ANALYSIS_TYPE_GENERAL_PERFORMANCE",
+            "createdAt": "2022-12-09T00:00:00Z",
+            "metricId": "1",
+            "projectId": "1",
+            "applicationUrl": "https://localhost:6080/projects/1/analyses/1"
+        }
+    ]
+}

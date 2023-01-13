@@ -31,7 +31,7 @@ setup(
     name="pysisu",
     packages=find_packages(include=["pysisu", "pysisu.*"]),
     install_requires=["betterproto>=2.0.0b4", "requests-cache", "requests"],
-    version=pkg_vars['__version__'],
+    version=pkg_vars["__version__"],
     long_description=long_description,
     long_description_content_type="text/markdown",
 )

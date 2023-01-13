@@ -1,0 +1,203 @@
+{
+    "analysisResult": {
+        "id": "1",
+        "runStatus": "RUN_STATUS_COMPLETED",
+        "requestedAt": "2022-12-09T00:00:00Z",
+        "completedAt": "2022-12-09T00:00:00Z",
+        "runType": "RUN_TYPE_MANUAL",
+        "keyDriverAnalysisResult": {
+            "summaryCard": {
+                "metricTypeLabel": "Numerical count",
+                "timeComparisonCard": {
+                    "currentPeriodCard": {
+                        "cardLabel": "Recent period",
+                        "summaryValue": 5.0,
+                        "totalSize": 5.0
+                    },
+                    "previousPeriodCard": {
+                        "cardLabel": "Previous period",
+                        "summaryValue": 4.0,
+                        "totalSize": 4.0
+                    },
+                    "currentPeriod": {
+                        "startDateInclusive": "2001-01-02T00:00:01Z",
+                        "endDateInclusive": "2001-01-02T00:00:01Z"
+                    },
+                    "previousPeriod": {
+                        "startDateInclusive": "2001-01-01T00:00:01Z",
+                        "endDateInclusive": "2001-01-01T00:00:01Z"
+                    },
+                    "percentChange": 25.0
+                }
+            },
+            "timeComparison": {
+                "previousPeriod": {
+                    "startDateInclusive": "2001-01-01T00:00:01Z",
+                    "endDateInclusive": "2001-01-01T00:00:01Z"
+                },
+                "recentPeriod": {
+                    "startDateInclusive": "2001-01-02T00:00:01Z",
+                    "endDateInclusive": "2001-01-02T00:00:01Z"
+                }
+            },
+            "segments": [
+                {
+                    "id": "6",
+                    "factors": {
+                        "attr0": {
+                            "value": {
+                                "stringValue": "D"
+                            }
+                        },
+                        "attr1": {
+                            "value": {
+                                "stringValue": "E"
+                            }
+                        }
+                    },
+                    "timeComparison": {
+                        "previousPeriodSize": 0.3333333333333333,
+                        "recentPeriodSize": 0.16666666666666666,
+                        "previousPeriodValue": 18,
+                        "recentPeriodValue": 100
+                    },
+                    "impact": 82.0,
+                    "confidence": "CONFIDENCE_LEVEL_LOW"
+                },
+                {
+                    "id": "5",
+                    "factors": {
+                        "attr0": {
+                            "value": {
+                                "stringValue": "A"
+                            }
+                        },
+                        "attr1": {
+                            "value": {
+                                "stringValue": "B"
+                            }
+                        },
+                        "attr2": {
+                            "value": {
+                                "stringValue": "C"
+                            }
+                        }
+                    },
+                    "timeComparison": {
+                        "previousPeriodSize": 0.3333333333333333,
+                        "recentPeriodSize": 0.3333333333333333,
+                        "previousPeriodValue": 18,
+                        "recentPeriodValue": 12
+                    },
+                    "impact": -6.0,
+                    "confidence": "CONFIDENCE_LEVEL_LOW"
+                },
+                {
+                    "id": "4",
+                    "factors": {
+                        "attr0": {
+                            "value": {
+                                "stringValue": "D"
+                            }
+                        },
+                        "attr1": {
+                            "value": {
+                                "stringValue": "E"
+                            }
+                        }
+                    },
+                    "timeComparison": {
+                        "previousPeriodSize": 0.3333333333333333,
+                        "recentPeriodSize": 0.16666666666666666,
+                        "previousPeriodValue": 2,
+                        "recentPeriodValue": 5
+                    },
+                    "impact": 3.0,
+                    "confidence": "CONFIDENCE_LEVEL_LOW"
+                },
+                {
+                    "id": "3",
+                    "factors": {
+                        "attr0": {
+                            "value": {
+                                "stringValue": "A"
+                            }
+                        },
+                        "attr1": {
+                            "value": {
+                                "stringValue": "B"
+                            }
+                        },
+                        "attr2": {
+                            "value": {
+                                "stringValue": "C"
+                            }
+                        }
+                    },
+                    "timeComparison": {
+                        "previousPeriodSize": 0.3333333333333333,
+                        "recentPeriodSize": 0.3333333333333333,
+                        "previousPeriodValue": 2,
+                        "recentPeriodValue": 1
+                    },
+                    "impact": -1.0,
+                    "confidence": "CONFIDENCE_LEVEL_LOW"
+                },
+                {
+                    "id": "2",
+                    "factors": {
+                        "attr0": {
+                            "value": {
+                                "stringValue": "D"
+                            }
+                        },
+                        "attr1": {
+                            "value": {
+                                "stringValue": "E"
+                            }
+                        }
+                    },
+                    "timeComparison": {
+                        "previousPeriodSize": 0.3333333333333333,
+                        "recentPeriodSize": 0.16666666666666666,
+                        "previousPeriodValue": 9.0,
+                        "recentPeriodValue": 20.0
+                    },
+                    "impact": 1.666666666666666,
+                    "confidence": "CONFIDENCE_LEVEL_LOW"
+                },
+                {
+                    "id": "1",
+                    "factors": {
+                        "attr0": {
+                            "value": {
+                                "stringValue": "A"
+                            }
+                        },
+                        "attr1": {
+                            "value": {
+                                "stringValue": "B"
+                            }
+                        },
+                        "attr2": {
+                            "value": {
+                                "stringValue": "C"
+                            }
+                        }
+                    },
+                    "timeComparison": {
+                        "previousPeriodSize": 0.3333333333333333,
+                        "recentPeriodSize": 0.3333333333333333,
+                        "previousPeriodValue": 9.0,
+                        "recentPeriodValue": 12.0
+                    },
+                    "impact": 0.6666666666666661,
+                    "confidence": "CONFIDENCE_LEVEL_LOW"
+                }
+            ]
+        },
+        "metricId": "1",
+        "applicationUrl": "https://localhost:6080/projects/1/analyses/1"
+    },
+    "paginationHints": {}
+}

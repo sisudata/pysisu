@@ -1,0 +1,29 @@
+{
+    "datasets": [
+        {
+            "id": "1",
+            "name": "This is a custom query",
+            "datasetType": "DATASET_TYPE_QUERY",
+            "queryString": "very complicated query 1",
+            "lastModified": "2022-12-09T00:00:00Z",
+            "createdAt": "2022-12-09T00:00:00Z",
+            "dataSourceId": "1"
+        },
+        {
+            "id": "3",
+            "name": "my_schema.my_table",
+            "datasetType": "DATASET_TYPE_TABLE",
+            "lastModified": "2022-12-09T00:00:00Z",
+            "createdAt": "2022-12-09T00:00:00Z",
+            "dataSourceId": "1"
+        },
+        {
+            "id": "2",
+            "name": "This is a select query",
+            "datasetType": "DATASET_TYPE_QUERY",
+            "lastModified": "2022-12-09T00:00:00Z",
+            "createdAt": "2022-12-09T00:00:00Z",
+            "dataSourceId": "1"
+        }
+    ]
+}

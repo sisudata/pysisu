@@ -4,7 +4,9 @@ import requests
 import subprocess
 import sys
 
-PYSISU_ROOT = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir))
+PYSISU_ROOT = os.path.abspath(
+    os.path.join(__file__, os.pardir, os.pardir, os.pardir)
+)
 
 
 def main() -> int:
@@ -21,11 +23,8 @@ def main() -> int:
     pysisu_diff = subprocess.run(
         ["git", "diff", "--quiet", most_recent_common_ancestor, "./pysisu"]
     ).returncode
-    tests_diff = subprocess.run(
-        ["git", "diff", "--quiet", most_recent_common_ancestor, "./tests"]
-    ).returncode
 
-    if not (pysisu_diff or tests_diff):
+    if not pysisu_diff:
         return 0
 
     current_master_commit = (

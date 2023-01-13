@@ -1,0 +1,27 @@
+{
+    "projects": [
+        {
+            "id": "4",
+            "name": "New Project 2",
+            "description": "not cool",
+            "createdAt": "2022-12-09T00:00:00Z"
+        },
+        {
+            "id": "3",
+            "name": "New Project 1",
+            "description": "cool project",
+            "createdAt": "2022-12-09T00:00:00Z"
+        },
+        {
+            "id": "2",
+            "name": "Test1's scratchpad",
+            "description": "Only visible to you",
+            "createdAt": "2022-12-09T00:00:00Z"
+        },
+        {
+            "id": "1",
+            "name": "Default project",
+            "createdAt": "2022-12-09T00:00:00Z"
+        }
+    ]
+}
