@@ -270,7 +270,7 @@ class PySisu:
         url_path = build_url(self._url, pathjoin(*path), {})
         return GetSegmentDataResponse().from_dict(
             self._call_sisu_api(
-                url_path, request_method="POST", json=body.to_json()
+                url_path, request_method="POST", json=body.to_dict()
             )
         )
 
@@ -299,7 +299,7 @@ class PySisu:
         path = [f"api/v1/projects/{project_id}/analyses/{analysis_id}"]
         url_path = build_url(self._url, pathjoin(*path), {})
         return ModifyAnalysisResponse().from_dict(
-            self._call_sisu_api(url_path, request_method="PATCH", json=modify_analysis_req.to_json()))
+            self._call_sisu_api(url_path, request_method="PATCH", json=modify_analysis_req.to_dict()))
 
     def get_analysis_dimensions_list(self, analysis_id) -> AnalysisDimensionsListResponse:
         path = [f"api/v1/analyses/{analysis_id}/dimensions"]
