@@ -622,6 +622,14 @@ class AnalysisResult(betterproto.Message):
     vip.sisudata.com/projects/{id}/analysis/{id}
     """
 
+    result_version: Optional[str] = betterproto.string_field(
+        10, optional=True, group="_result_version"
+    )
+    """
+    result_version id is used to identify new incremental results while
+    analysis is still in flight.
+    """
+
 
 @dataclass(eq=False, repr=False)
 class KeyDriverAnalysisResult(betterproto.Message):
@@ -1353,7 +1361,7 @@ class CreateAnalysisResponse(betterproto.Message):
     name: str = betterproto.string_field(1)
     """The name of the analysis."""
 
-    id: int = betterproto.uint64_field(2)
+    id: int = betterproto.int32_field(2)
     """Analysis id."""
 
     time_dimension_name: Optional[str] = betterproto.message_field(
@@ -1370,7 +1378,7 @@ class CreateAnalysisResponse(betterproto.Message):
     analysis.
     """
 
-    metric_id: int = betterproto.uint64_field(5)
+    metric_id: int = betterproto.int32_field(5)
     """The metic id which the analysis depends on."""
 
     time_range: "TimeWindow" = betterproto.message_field(6)
@@ -1396,7 +1404,7 @@ class CreateAnalysisResponse(betterproto.Message):
     A filter expression where group b is denfined in a Group compare analysis.
     """
 
-    project_id: int = betterproto.uint64_field(11)
+    project_id: int = betterproto.int32_field(11)
     """Project id corresponding to the analysis."""
 
     type: "AnalysisType" = betterproto.enum_field(12)
@@ -1621,6 +1629,58 @@ class UpdateAnalysisResponse(betterproto.Message):
     """Previous time window range used for time compare analysis."""
 
 
+@dataclass(eq=False, repr=False)
+class WaterfallStep(betterproto.Message):
+    cumulative_impact_before_step: float = betterproto.double_field(1)
+    """The cummulative value of impact prior to the waterfall step."""
+
+    cumulative_impact_after_step: float = betterproto.double_field(2)
+    """The cummulative value of impact after to the waterfall step."""
+
+    overlapping_impact: float = betterproto.double_field(3)
+    """The value of overlapping impact."""
+
+    change_in_size: "WaterfallStepChangeInSize" = betterproto.message_field(4)
+    change_in_type: "WaterfallStepChangeInType" = betterproto.message_field(5)
+    factors: Dict[str, "Factor"] = betterproto.map_field(
+        6, betterproto.TYPE_STRING, betterproto.TYPE_MESSAGE
+    )
+    """Map of Factors for the waterfall step."""
+
+
+@dataclass(eq=False, repr=False)
+class WaterfallStepChangeInType(betterproto.Message):
+    """The subgroup change in value."""
+
+    subgroup_a: float = betterproto.double_field(1)
+    """previous_period or group_a."""
+
+    subgroup_b: float = betterproto.double_field(2)
+    """recent_period or group_b."""
+
+
+@dataclass(eq=False, repr=False)
+class WaterfallStepChangeInSize(betterproto.Message):
+    """The subgroup change in value."""
+
+    subgroup_a: float = betterproto.double_field(1)
+    """previous_period or group_a."""
+
+    subgroup_b: float = betterproto.double_field(2)
+    """recent_period or group_b."""
+
+
+@dataclass(eq=False, repr=False)
+class WaterfallAnalysisResponse(betterproto.Message):
+    waterfall: List["WaterfallStep"] = betterproto.message_field(1)
+
+
+@dataclass(eq=False, repr=False)
+class WaterfallAnalysisRequest(betterproto.Message):
+    id: int = betterproto.uint64_field(1)
+    """Analysis id"""
+
+
 class AnalysesServiceStub(betterproto.ServiceStub):
     async def analyses_list(
         self,
@@ -1685,6 +1745,23 @@ class AnalysesServiceStub(betterproto.ServiceStub):
             "/sisu.v1.api.AnalysesService/UpdateAnalysis",
             update_analysis_request,
             UpdateAnalysisResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+    async def waterfall_analysis(
+        self,
+        waterfall_analysis_request: "WaterfallAnalysisRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "WaterfallAnalysisResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.AnalysesService/WaterfallAnalysis",
+            waterfall_analysis_request,
+            WaterfallAnalysisResponse,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -1943,6 +2020,11 @@ class AnalysesServiceBase(ServiceBase):
     ) -> "UpdateAnalysisResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def waterfall_analysis(
+        self, waterfall_analysis_request: "WaterfallAnalysisRequest"
+    ) -> "WaterfallAnalysisResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def analysis_run_results(
         self, analysis_run_results_request: "AnalysisRunResultsRequest"
     ) -> "AnalysisRunResultsResponse":
@@ -1996,6 +2078,14 @@ class AnalysesServiceBase(ServiceBase):
     ) -> None:
         request = await stream.recv_message()
         response = await self.update_analysis(request)
+        await stream.send_message(response)
+
+    async def __rpc_waterfall_analysis(
+        self,
+        stream: "grpclib.server.Stream[WaterfallAnalysisRequest, WaterfallAnalysisResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.waterfall_analysis(request)
         await stream.send_message(response)
 
     async def __rpc_analysis_run_results(
@@ -2063,6 +2153,12 @@ class AnalysesServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 UpdateAnalysisRequest,
                 UpdateAnalysisResponse,
+            ),
+            "/sisu.v1.api.AnalysesService/WaterfallAnalysis": grpclib.const.Handler(
+                self.__rpc_waterfall_analysis,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                WaterfallAnalysisRequest,
+                WaterfallAnalysisResponse,
             ),
             "/sisu.v1.api.AnalysesService/AnalysisRunResults": grpclib.const.Handler(
                 self.__rpc_analysis_run_results,

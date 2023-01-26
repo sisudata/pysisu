@@ -40,6 +40,7 @@ from .proto.sisu.v1.api import (
     SetAnalysisFiltersRequest,
     UpdateAnalysisRequestAnalysis,
     UpdateAnalysisResponse,
+    WaterfallAnalysisResponse,
 )
 from .query_helpers import build_url, pathjoin, semver_parse
 from .version import __version__ as PYSISU_VERSION
@@ -193,6 +194,7 @@ class PySisu:
         params: dict = {"confidence_gte": "LOW"},
         auto_paginate: bool = True,
         format: LatestAnalysisResultsFormats = LatestAnalysisResultsFormats.TABLE,
+        round_to_decimal_place: int = 2,
         **kwargs,
     ) -> Union[AnalysisRunResultsResponse, Table]:
         assert type(params) is dict
@@ -206,7 +208,8 @@ class PySisu:
             result = self._auto_paginate(analysis_id, kwargs, result)
 
         if format == LatestAnalysisResultsFormats.TABLE:
-            return to_table(result)
+            print("here")
+            return to_table(result, round_to_decimal_place)
         else:
             return result
 
@@ -328,5 +331,11 @@ class PySisu:
         path = [f"api/v1/analyses/{analysis_id}/dimensions"]
         url_path = build_url(self._url, pathjoin(*path), {})
         return AnalysisDimensionsListResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="GET")
+        )
+    def get_analysis_waterfall(self, analysis_id) -> WaterfallAnalysisResponse:
+        path = [f"api/v1/analyses/{analysis_id}/waterfall"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return WaterfallAnalysisResponse().from_dict(
             self._call_sisu_api(url_path, request_method="GET")
         )
