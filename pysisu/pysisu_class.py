@@ -208,7 +208,6 @@ class PySisu:
             result = self._auto_paginate(analysis_id, kwargs, result)
 
         if format == LatestAnalysisResultsFormats.TABLE:
-            print("here")
             return to_table(result, round_to_decimal_place)
         else:
             return result
