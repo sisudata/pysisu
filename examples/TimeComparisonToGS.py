@@ -1,6 +1,6 @@
 from pysisu import PySisu
 import os
-import gspread
+import gspread 
 
 # Sisu variables
 API_KEY = os.environ.get("SISU_API_KEY")
@@ -57,10 +57,10 @@ for fact_row in sisu_table.rows:
     row.append(fact_row.recent_period_size)
     row.append(fact_row.previous_period_value)
     row.append(fact_row.recent_period_value)
-    row.append(str(fact_row.previous_period_start))
-    row.append(str(fact_row.previous_period_end))
-    row.append(str(fact_row.recent_period_start))
-    row.append(str(fact_row.recent_period_end))
+    row.append(str(fact_row.previous_period_start_date_inclusive))
+    row.append(str(fact_row.previous_period_end_date_inclusive))
+    row.append(str(fact_row.recent_period_start_date_inclusive))
+    row.append(str(fact_row.recent_period_end_date_inclusive))
 
     data.append(row)
 

@@ -40,10 +40,10 @@ for fact_row in sisu_table.rows:
         fact_row.recent_period_size,
         fact_row.previous_period_value,
         fact_row.recent_period_value,
-        fact_row.previous_period_start,
-        fact_row.previous_period_end,
-        fact_row.recent_period_start,
-        fact_row.recent_period_end,
+        fact_row.previous_period_start_date_inclusive,
+        fact_row.previous_period_end_date_inclusive,
+        fact_row.recent_period_start_date_inclusive,
+        fact_row.recent_period_end_date_inclusive,
     )
     print(pg_row)
     writer.writerow(pg_row)
