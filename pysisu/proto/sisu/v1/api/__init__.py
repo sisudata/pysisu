@@ -165,6 +165,7 @@ class DataSourceDataSourceType(betterproto.Enum):
     DATA_SOURCE_TYPE_DATABRICKS = 9
     DATA_SOURCE_TYPE_SAP = 10
     DATA_SOURCE_TYPE_CSV = 11
+    DATA_SOURCE_TYPE_DBTCLOUD = 12
 
 
 class DatasetDatasetType(betterproto.Enum):
