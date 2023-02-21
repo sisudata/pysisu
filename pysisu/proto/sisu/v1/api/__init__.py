@@ -91,6 +91,15 @@ class KeyDriverAnalysisResultSegmentConfidenceLevel(betterproto.Enum):
     CONFIDENCE_LEVEL_LOW = 3
 
 
+class UnitsConfigUnitType(betterproto.Enum):
+    UNIT_TYPE_UNKNOWN = 0
+    UNIT_TYPE_CUSTOM = 1
+    UNIT_TYPE_PERCENT = 2
+    UNIT_TYPE_CURRENCY = 3
+    UNIT_TYPE_BPS = 4
+    UNIT_TYPE_NUMBER = 5
+
+
 class MetricDesiredDirection(betterproto.Enum):
     """Type of metric direction."""
 
@@ -969,6 +978,20 @@ class MetricsListResponse(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class UnitsConfig(betterproto.Message):
+    type: "UnitsConfigUnitType" = betterproto.enum_field(1)
+    label: Optional[str] = betterproto.message_field(2, wraps=betterproto.TYPE_STRING)
+    scale: Optional[int] = betterproto.message_field(3, wraps=betterproto.TYPE_INT32)
+    precision: Optional[int] = betterproto.message_field(
+        4, wraps=betterproto.TYPE_INT32
+    )
+    currency: Optional[str] = betterproto.message_field(
+        5, wraps=betterproto.TYPE_STRING
+    )
+    kmb: bool = betterproto.bool_field(6)
+
+
+@dataclass(eq=False, repr=False)
 class Metric(betterproto.Message):
     """Detailed information about a metric."""
 
@@ -1002,6 +1025,11 @@ class Metric(betterproto.Message):
 
     metric_dimension: "MetricMetricDimension" = betterproto.message_field(6)
     """The dimension which defines the metric's goal."""
+
+    kpi_units_config: Optional["UnitsConfig"] = betterproto.message_field(
+        7, optional=True, group="_kpi_units_config"
+    )
+    """The unit associated with the KDA metric."""
 
     type: "MetricMetricType" = betterproto.enum_field(8)
     """Type of metric calculation."""
