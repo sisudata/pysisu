@@ -91,6 +91,27 @@ class KeyDriverAnalysisResultSegmentConfidenceLevel(betterproto.Enum):
     CONFIDENCE_LEVEL_LOW = 3
 
 
+class KeyDriverAnalysisResultSegmentCustomCalculationType(betterproto.Enum):
+    """Custom calculation types."""
+
+    CUSTOM_CALCULATION_TYPE_UNKNOWN = 0
+    CUSTOM_CALCULATION_TYPE_SUM = 1
+    CUSTOM_CALCULATION_TYPE_AVERAGE = 2
+    CUSTOM_CALCULATION_TYPE_COUNT = 3
+    CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM = 4
+    CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE = 5
+    CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT = 6
+    CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE = 7
+    CUSTOM_CALCULATION_TYPE_RATE_EFFECT = 8
+    CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT = 9
+    CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED = 10
+    CUSTOM_CALCULATION_TYPE_NET_EFFECT = 11
+    CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED = 12
+    CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE = 13
+    CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC = 14
+    CUSTOM_CALCULATION_TYPE_CHANGE_IN_WEIGHTED_CATEGORICAL_GP_IMPACT = 15
+
+
 class UnitsConfigUnitType(betterproto.Enum):
     UNIT_TYPE_UNKNOWN = 0
     UNIT_TYPE_CUSTOM = 1
@@ -669,7 +690,7 @@ class KeyDriverAnalysisResult(betterproto.Message):
     )
     """If the subtype is General_Performance."""
 
-    segments: List["KeyDriverAnalysisResultSegment"] = betterproto.message_field(9)
+    segments: List["KeyDriverAnalysisResultSegment"] = betterproto.message_field(10)
     """Array of the segments selected by the key driver algorithm."""
 
 
@@ -757,6 +778,11 @@ class KeyDriverAnalysisResultSegment(betterproto.Message):
     Interpretation of q-value as the confidence of the impact on the metric.
     """
 
+    custom_calculations: List[
+        "KeyDriverAnalysisResultSegmentCustomCalculation"
+    ] = betterproto.message_field(9)
+    """custom calculation statistics."""
+
 
 @dataclass(eq=False, repr=False)
 class KeyDriverAnalysisResultSegmentGroupComparisonPerformance(betterproto.Message):
@@ -834,6 +860,20 @@ class KeyDriverAnalysisResultSegmentGeneralPerformance(betterproto.Message):
 
     value: Optional[float] = betterproto.message_field(2, wraps=betterproto.TYPE_DOUBLE)
     """The metric value corresponding to this segment."""
+
+
+@dataclass(eq=False, repr=False)
+class KeyDriverAnalysisResultSegmentCustomCalculation(betterproto.Message):
+    calculation_type: "KeyDriverAnalysisResultSegmentCustomCalculationType" = (
+        betterproto.enum_field(1)
+    )
+    """The calculation type of the statistic."""
+
+    name: str = betterproto.string_field(2)
+    """The readable name of the statistic."""
+
+    value: Optional[float] = betterproto.message_field(3, wraps=betterproto.TYPE_DOUBLE)
+    """The value of the custom calculation statistic."""
 
 
 @dataclass(eq=False, repr=False)
