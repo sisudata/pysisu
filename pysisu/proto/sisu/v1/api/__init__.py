@@ -1018,6 +1018,18 @@ class MetricsListResponse(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class DeleteMetricRequest(betterproto.Message):
+    """Request metric deletion for a given id."""
+
+    id: int = betterproto.int64_field(1)
+
+
+@dataclass(eq=False, repr=False)
+class DeleteMetricResponse(betterproto.Message):
+    pass
+
+
+@dataclass(eq=False, repr=False)
 class UnitsConfig(betterproto.Message):
     type: "UnitsConfigUnitType" = betterproto.enum_field(1)
     label: Optional[str] = betterproto.message_field(2, wraps=betterproto.TYPE_STRING)
@@ -1940,6 +1952,23 @@ class MetricServiceStub(betterproto.ServiceStub):
             metadata=metadata,
         )
 
+    async def delete_metric(
+        self,
+        delete_metric_request: "DeleteMetricRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "DeleteMetricResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.MetricService/DeleteMetric",
+            delete_metric_request,
+            DeleteMetricResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
 
 class DatasetServiceStub(betterproto.ServiceStub):
     async def data_sets(
@@ -2268,11 +2297,23 @@ class MetricServiceBase(ServiceBase):
     ) -> "MetricsListResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def delete_metric(
+        self, delete_metric_request: "DeleteMetricRequest"
+    ) -> "DeleteMetricResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_metrics_list(
         self, stream: "grpclib.server.Stream[MetricsListRequest, MetricsListResponse]"
     ) -> None:
         request = await stream.recv_message()
         response = await self.metrics_list(request)
+        await stream.send_message(response)
+
+    async def __rpc_delete_metric(
+        self, stream: "grpclib.server.Stream[DeleteMetricRequest, DeleteMetricResponse]"
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.delete_metric(request)
         await stream.send_message(response)
 
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
@@ -2282,6 +2323,12 @@ class MetricServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 MetricsListRequest,
                 MetricsListResponse,
+            ),
+            "/sisu.v1.api.MetricService/DeleteMetric": grpclib.const.Handler(
+                self.__rpc_delete_metric,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                DeleteMetricRequest,
+                DeleteMetricResponse,
             ),
         }
 

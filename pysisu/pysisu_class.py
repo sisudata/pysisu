@@ -29,6 +29,7 @@ from .proto.sisu.v1.api import (
     CreateDataSetRequestDataset,
     DataSetsResponse,
     DataSourceListResponse,
+    DeleteMetricResponse,
     DuplicateAnalysisResponse,
     GetAnalysisFiltersResponse,
     GetProjectsAnalysesListResponse,
@@ -216,6 +217,11 @@ class PySisu:
         path = ["api/v1/metrics"]
         url_path = build_url(self._url, pathjoin(*path), kwargs)
         return MetricsListResponse().from_dict(self._call_sisu_api(url_path))
+
+    def delete_metric(self, metric_id: int) -> DeleteMetricResponse:
+        path = [f"api/v1/metrics/{metric_id}"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return DeleteMetricResponse().from_dict(self._call_sisu_api(url_path, request_method="DELETE"))
 
     def data_sources(self, **kwargs) -> DataSourceListResponse:
         path = ["api/v1/data_sources"]

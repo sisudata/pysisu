@@ -135,3 +135,11 @@ def test_create_dataset(mock_call_sisu_api, pysisu_client):
     validate_api_call(
         mock_call_sisu_api, "POST", "api/v1/data_sources/1/datasets"
     )
+
+
+@mock.patch("pysisu.pysisu_class.PySisu._call_sisu_api")
+def test_delete_metric(mock_call_sisu_api, pysisu_client):
+    pysisu_client.delete_metric(1)
+    validate_api_call(
+        mock_call_sisu_api, "DELETE", "api/v1/metrics/1"
+    )

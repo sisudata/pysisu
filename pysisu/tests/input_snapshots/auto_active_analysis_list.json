@@ -16,7 +16,7 @@
             "createdAt": "2022-12-09T00:00:00Z",
             "metricId": "1",
             "projectId": "1",
-            "applicationUrl": "https://localhost:6080/projects/1/trends/3"
+            "applicationUrl": "https://localhost:6080/projects/1/analyses/3"
         },
         {
             "id": "2",
@@ -25,7 +25,7 @@
             "createdAt": "2022-12-09T00:00:00Z",
             "metricId": "1",
             "projectId": "1",
-            "applicationUrl": "https://localhost:6080/projects/1/trends/2"
+            "applicationUrl": "https://localhost:6080/projects/1/analyses/2"
         },
         {
             "id": "1",

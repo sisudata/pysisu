@@ -1,0 +1,159 @@
+{
+ "waterfall": [
+  {
+   "changeInSize": {},
+   "changeInType": {},
+   "cumulativeImpactAfterStep": 53.254723755052076
+  },
+  {
+   "changeInSize": {
+    "subgroupA": 0.5730882803801656,
+    "subgroupB": 0.5762490528318313
+   },
+   "changeInType": {
+    "subgroupA": 51.411129524586435,
+    "subgroupB": 50.52949510040579
+   },
+   "cumulativeImpactAfterStep": 52.90918163508437,
+   "cumulativeImpactBeforeStep": 53.254723755052076,
+   "factors": {
+    "ORIGINAL_CONTENT": {
+     "value": {
+      "booleanValue": "true"
+     }
+    }
+   }
+  },
+  {
+   "changeInSize": {
+    "subgroupA": 0.20168460458586804,
+    "subgroupB": 0.203314685540168
+   },
+   "changeInType": {
+    "subgroupA": 52.26190327061668,
+    "subgroupB": 52.85386660147813
+   },
+   "cumulativeImpactAfterStep": 52.477539297178204,
+   "cumulativeImpactBeforeStep": 52.90918163508437,
+   "factors": {
+    "REGION": {
+     "value": {
+      "stringValue": "Canada"
+     }
+    }
+   },
+   "overlappingImpact": 0.6371883095284732
+  },
+  {
+   "changeInSize": {
+    "subgroupA": 0.29561260548948737,
+    "subgroupB": 0.2934689731890951
+   },
+   "changeInType": {
+    "subgroupA": 52.87244335317277,
+    "subgroupB": 52.56777364846386
+   },
+   "cumulativeImpactAfterStep": 52.57368388170085,
+   "cumulativeImpactBeforeStep": 52.477539297178204,
+   "factors": {
+    "NUM_USERS_ON_ACCOUNT": {
+     "value": {
+      "integerValue": "2"
+     }
+    }
+   },
+   "overlappingImpact": -0.2988947672979174
+  },
+  {
+   "changeInSize": {
+    "subgroupA": 0.4980717409194327,
+    "subgroupB": 0.49855707998129845
+   },
+   "changeInType": {
+    "subgroupA": 53.59054204936665,
+    "subgroupB": 52.231119709881405
+   },
+   "cumulativeImpactAfterStep": 52.33984619928471,
+   "cumulativeImpactBeforeStep": 52.57368388170085,
+   "factors": {
+    "SKIPPED_COMMERCIALS": {
+     "value": {
+      "stringValue": "occasionally"
+     }
+    }
+   },
+   "overlappingImpact": -0.41790236621584675
+  },
+  {
+   "changeInSize": {
+    "subgroupA": 0.08789311474351734,
+    "subgroupB": 0.08749415577087398
+   },
+   "changeInType": {
+    "subgroupA": 52.53686795511847,
+    "subgroupB": 52.51942233366965
+   },
+   "cumulativeImpactAfterStep": 52.41159027125257,
+   "cumulativeImpactBeforeStep": 52.33984619928471,
+   "factors": {
+    "ISP_ID": {
+     "value": {
+      "stringValue": "Comcast Xfinity"
+     }
+    }
+   },
+   "overlappingImpact": -0.0942305167536982
+  },
+  {
+   "changeInSize": {
+    "subgroupA": 0.5033966404724638,
+    "subgroupB": 0.5017331162235801
+   },
+   "changeInType": {
+    "subgroupA": 53.16727345936014,
+    "subgroupB": 51.68034070767444
+   },
+   "cumulativeImpactAfterStep": 52.25527098308005,
+   "cumulativeImpactBeforeStep": 52.41159027125257,
+   "factors": {
+    "DID_PAUSE": {
+     "value": {
+      "booleanValue": "true"
+     }
+    }
+   },
+   "overlappingImpact": -0.6781691635923357
+  },
+  {
+   "changeInSize": {
+    "subgroupA": 0.39965791554386587,
+    "subgroupB": 0.39889080561690876
+   },
+   "changeInType": {
+    "subgroupA": 53.22772718466487,
+    "subgroupB": 52.33351672429206
+   },
+   "cumulativeImpactAfterStep": 52.348679459413376,
+   "cumulativeImpactBeforeStep": 52.25527098308005,
+   "factors": {
+    "LOGGED_IN_USER_IDX": {
+     "value": {
+      "integerValue": "1"
+     }
+    }
+   },
+   "overlappingImpact": -0.4909323251752278
+  },
+  {
+   "changeInSize": {},
+   "changeInType": {},
+   "cumulativeImpactAfterStep": 52.19366817387881,
+   "cumulativeImpactBeforeStep": 52.348679459413376
+  },
+  {
+   "changeInSize": {},
+   "changeInType": {},
+   "cumulativeImpactBeforeStep": 52.19366817387881
+  }
+ ]
+}
