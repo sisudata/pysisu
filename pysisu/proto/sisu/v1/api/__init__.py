@@ -1281,6 +1281,17 @@ class DuplicateAnalysisResponse(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class DeleteAnalysisRequest(betterproto.Message):
+    id: int = betterproto.uint64_field(1)
+    """Analysis id to be deleted."""
+
+
+@dataclass(eq=False, repr=False)
+class DeleteAnalysisResponse(betterproto.Message):
+    pass
+
+
+@dataclass(eq=False, repr=False)
 class GetSegmentDataRequest(betterproto.Message):
     id: int = betterproto.uint64_field(1)
     """Segment id to get data for."""
@@ -1933,6 +1944,23 @@ class AnalysesServiceStub(betterproto.ServiceStub):
             metadata=metadata,
         )
 
+    async def delete_analysis(
+        self,
+        delete_analysis_request: "DeleteAnalysisRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "DeleteAnalysisResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.AnalysesService/DeleteAnalysis",
+            delete_analysis_request,
+            DeleteAnalysisResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
 
 class MetricServiceStub(betterproto.ServiceStub):
     async def metrics_list(
@@ -2148,6 +2176,11 @@ class AnalysesServiceBase(ServiceBase):
     ) -> "DuplicateAnalysisResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def delete_analysis(
+        self, delete_analysis_request: "DeleteAnalysisRequest"
+    ) -> "DeleteAnalysisResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_analyses_list(
         self, stream: "grpclib.server.Stream[AnalysesListRequest, AnalysesListResponse]"
     ) -> None:
@@ -2226,6 +2259,14 @@ class AnalysesServiceBase(ServiceBase):
         response = await self.duplicate_analysis(request)
         await stream.send_message(response)
 
+    async def __rpc_delete_analysis(
+        self,
+        stream: "grpclib.server.Stream[DeleteAnalysisRequest, DeleteAnalysisResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.delete_analysis(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.AnalysesService/AnalysesList": grpclib.const.Handler(
@@ -2287,6 +2328,12 @@ class AnalysesServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DuplicateAnalysisRequest,
                 DuplicateAnalysisResponse,
+            ),
+            "/sisu.v1.api.AnalysesService/DeleteAnalysis": grpclib.const.Handler(
+                self.__rpc_delete_analysis,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                DeleteAnalysisRequest,
+                DeleteAnalysisResponse,
             ),
         }
 

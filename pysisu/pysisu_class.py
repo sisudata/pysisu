@@ -41,7 +41,7 @@ from .proto.sisu.v1.api import (
     SetAnalysisFiltersRequest,
     UpdateAnalysisRequestAnalysis,
     UpdateAnalysisResponse,
-    WaterfallAnalysisResponse,
+    WaterfallAnalysisResponse, DeleteAnalysisResponse,
 )
 from .query_helpers import build_url, pathjoin, semver_parse
 from .version import __version__ as PYSISU_VERSION
@@ -343,4 +343,13 @@ class PySisu:
         url_path = build_url(self._url, pathjoin(*path), {})
         return WaterfallAnalysisResponse().from_dict(
             self._call_sisu_api(url_path, request_method="GET")
+        )
+
+    def delete_analysis(
+            self, analysis_id: int,
+    ) -> DeleteAnalysisResponse:
+        path = [f"api/v1/analyses/{analysis_id}"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return DeleteAnalysisResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="DELETE")
         )
