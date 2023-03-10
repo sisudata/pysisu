@@ -63,63 +63,20 @@
                     },
                     "impact": 82.0,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": [
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT",
-                            "name": "Net effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RATE_EFFECT",
-                            "name": "Rate effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE",
-                            "name": "Change in average",
-                            "value": -45.81767626124708
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM",
-                            "name": "Change in sum",
-                            "value": -2047042.139999997
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE",
-                            "name": "Change in size",
-                            "value": -0.4822598577334499
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT",
-                            "name": "Change in count",
-                            "value": -44678
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE",
-                            "name": "Relative change",
-                            "value": -1739538.3199999488
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT",
-                            "name": "Mix shift effect",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED",
-                            "name": "Net effect b normalized",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED",
-                            "name": "Mix shift effect b normalized",
-                            "value": 22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC",
-                            "name": "Relative percent change of metric",
-                            "value": -0.9280667114551557
-                        }
-                    ]
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Unweighted change in average": -45.81767626124708,
+                        "Weight": -44678,
+                        "Weighted change in sum": -2047042.139999997
+                    }
                 },
                 {
                     "id": "5",
@@ -148,63 +105,20 @@
                     },
                     "impact": -6.0,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": [
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT",
-                            "name": "Net effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RATE_EFFECT",
-                            "name": "Rate effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE",
-                            "name": "Change in average",
-                            "value": -45.81767626124708
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM",
-                            "name": "Change in sum",
-                            "value": -2047042.139999997
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE",
-                            "name": "Change in size",
-                            "value": -0.4822598577334499
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT",
-                            "name": "Change in count",
-                            "value": -44678
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE",
-                            "name": "Relative change",
-                            "value": -1739538.3199999488
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT",
-                            "name": "Mix shift effect",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED",
-                            "name": "Net effect b normalized",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED",
-                            "name": "Mix shift effect b normalized",
-                            "value": 22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC",
-                            "name": "Relative percent change of metric",
-                            "value": -0.9280667114551557
-                        }
-                    ]
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Unweighted change in average": -45.81767626124708,
+                        "Weight": -44678,
+                        "Weighted change in sum": -2047042.139999997
+                    }
                 },
                 {
                     "id": "4",
@@ -228,63 +142,20 @@
                     },
                     "impact": 3.0,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": [
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT",
-                            "name": "Net effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RATE_EFFECT",
-                            "name": "Rate effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE",
-                            "name": "Change in average",
-                            "value": -45.81767626124708
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM",
-                            "name": "Change in sum",
-                            "value": -2047042.139999997
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE",
-                            "name": "Change in size",
-                            "value": -0.4822598577334499
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT",
-                            "name": "Change in count",
-                            "value": -44678
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE",
-                            "name": "Relative change",
-                            "value": -1739538.3199999488
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT",
-                            "name": "Mix shift effect",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED",
-                            "name": "Net effect b normalized",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED",
-                            "name": "Mix shift effect b normalized",
-                            "value": 22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC",
-                            "name": "Relative percent change of metric",
-                            "value": -0.9280667114551557
-                        }
-                    ]
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Unweighted change in average": -45.81767626124708,
+                        "Weight": -44678,
+                        "Weighted change in sum": -2047042.139999997
+                    }
                 },
                 {
                     "id": "3",
@@ -313,63 +184,20 @@
                     },
                     "impact": -1.0,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": [
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT",
-                            "name": "Net effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RATE_EFFECT",
-                            "name": "Rate effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE",
-                            "name": "Change in average",
-                            "value": -45.81767626124708
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM",
-                            "name": "Change in sum",
-                            "value": -2047042.139999997
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE",
-                            "name": "Change in size",
-                            "value": -0.4822598577334499
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT",
-                            "name": "Change in count",
-                            "value": -44678
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE",
-                            "name": "Relative change",
-                            "value": -1739538.3199999488
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT",
-                            "name": "Mix shift effect",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED",
-                            "name": "Net effect b normalized",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED",
-                            "name": "Mix shift effect b normalized",
-                            "value": 22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC",
-                            "name": "Relative percent change of metric",
-                            "value": -0.9280667114551557
-                        }
-                    ]
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Unweighted change in average": -45.81767626124708,
+                        "Weight": -44678,
+                        "Weighted change in sum": -2047042.139999997
+                    }
                 },
                 {
                     "id": "2",
@@ -393,63 +221,20 @@
                     },
                     "impact": 1.666666666666666,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": [
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT",
-                            "name": "Net effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RATE_EFFECT",
-                            "name": "Rate effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE",
-                            "name": "Change in average",
-                            "value": -45.81767626124708
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM",
-                            "name": "Change in sum",
-                            "value": -2047042.139999997
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE",
-                            "name": "Change in size",
-                            "value": -0.4822598577334499
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT",
-                            "name": "Change in count",
-                            "value": -44678
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE",
-                            "name": "Relative change",
-                            "value": -1739538.3199999488
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT",
-                            "name": "Mix shift effect",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED",
-                            "name": "Net effect b normalized",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED",
-                            "name": "Mix shift effect b normalized",
-                            "value": 22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC",
-                            "name": "Relative percent change of metric",
-                            "value": -0.9280667114551557
-                        }
-                    ]
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Unweighted change in average": -45.81767626124708,
+                        "Weight": -44678,
+                        "Weighted change in sum": -2047042.139999997
+                    }
                 },
                 {
                     "id": "1",
@@ -478,63 +263,20 @@
                     },
                     "impact": 0.6666666666666661,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": [
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT",
-                            "name": "Net effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RATE_EFFECT",
-                            "name": "Rate effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE",
-                            "name": "Change in average",
-                            "value": -45.81767626124708
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM",
-                            "name": "Change in sum",
-                            "value": -2047042.139999997
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE",
-                            "name": "Change in size",
-                            "value": -0.4822598577334499
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT",
-                            "name": "Change in count",
-                            "value": -44678
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE",
-                            "name": "Relative change",
-                            "value": -1739538.3199999488
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT",
-                            "name": "Mix shift effect",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED",
-                            "name": "Net effect b normalized",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED",
-                            "name": "Mix shift effect b normalized",
-                            "value": 22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC",
-                            "name": "Relative percent change of metric",
-                            "value": -0.9280667114551557
-                        }
-                    ]
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Unweighted change in average": -45.81767626124708,
+                        "Weight": -44678,
+                        "Weighted change in sum": -2047042.139999997
+                    }
                 },
                 {
                     "id": "6",
@@ -558,63 +300,20 @@
                     },
                     "impact": 82.0,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": [
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT",
-                            "name": "Net effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RATE_EFFECT",
-                            "name": "Rate effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE",
-                            "name": "Change in average",
-                            "value": -45.81767626124708
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM",
-                            "name": "Change in sum",
-                            "value": -2047042.139999997
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE",
-                            "name": "Change in size",
-                            "value": -0.4822598577334499
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT",
-                            "name": "Change in count",
-                            "value": -44678
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE",
-                            "name": "Relative change",
-                            "value": -1739538.3199999488
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT",
-                            "name": "Mix shift effect",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED",
-                            "name": "Net effect b normalized",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED",
-                            "name": "Mix shift effect b normalized",
-                            "value": 22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC",
-                            "name": "Relative percent change of metric",
-                            "value": -0.9280667114551557
-                        }
-                    ]
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Unweighted change in average": -45.81767626124708,
+                        "Weight": -44678,
+                        "Weighted change in sum": -2047042.139999997
+                    }
                 },
                 {
                     "id": "5",
@@ -643,63 +342,20 @@
                     },
                     "impact": -6.0,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": [
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT",
-                            "name": "Net effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RATE_EFFECT",
-                            "name": "Rate effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE",
-                            "name": "Change in average",
-                            "value": -45.81767626124708
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM",
-                            "name": "Change in sum",
-                            "value": -2047042.139999997
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE",
-                            "name": "Change in size",
-                            "value": -0.4822598577334499
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT",
-                            "name": "Change in count",
-                            "value": -44678
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE",
-                            "name": "Relative change",
-                            "value": -1739538.3199999488
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT",
-                            "name": "Mix shift effect",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED",
-                            "name": "Net effect b normalized",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED",
-                            "name": "Mix shift effect b normalized",
-                            "value": 22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC",
-                            "name": "Relative percent change of metric",
-                            "value": -0.9280667114551557
-                        }
-                    ]
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Unweighted change in average": -45.81767626124708,
+                        "Weight": -44678,
+                        "Weighted change in sum": -2047042.139999997
+                    }
                 },
                 {
                     "id": "4",
@@ -723,63 +379,20 @@
                     },
                     "impact": 3.0,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": [
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT",
-                            "name": "Net effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RATE_EFFECT",
-                            "name": "Rate effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE",
-                            "name": "Change in average",
-                            "value": -45.81767626124708
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM",
-                            "name": "Change in sum",
-                            "value": -2047042.139999997
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE",
-                            "name": "Change in size",
-                            "value": -0.4822598577334499
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT",
-                            "name": "Change in count",
-                            "value": -44678
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE",
-                            "name": "Relative change",
-                            "value": -1739538.3199999488
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT",
-                            "name": "Mix shift effect",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED",
-                            "name": "Net effect b normalized",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED",
-                            "name": "Mix shift effect b normalized",
-                            "value": 22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC",
-                            "name": "Relative percent change of metric",
-                            "value": -0.9280667114551557
-                        }
-                    ]
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Unweighted change in average": -45.81767626124708,
+                        "Weight": -44678,
+                        "Weighted change in sum": -2047042.139999997
+                    }
                 },
                 {
                     "id": "3",
@@ -808,63 +421,20 @@
                     },
                     "impact": -1.0,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": [
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT",
-                            "name": "Net effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RATE_EFFECT",
-                            "name": "Rate effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE",
-                            "name": "Change in average",
-                            "value": -45.81767626124708
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM",
-                            "name": "Change in sum",
-                            "value": -2047042.139999997
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE",
-                            "name": "Change in size",
-                            "value": -0.4822598577334499
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT",
-                            "name": "Change in count",
-                            "value": -44678
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE",
-                            "name": "Relative change",
-                            "value": -1739538.3199999488
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT",
-                            "name": "Mix shift effect",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED",
-                            "name": "Net effect b normalized",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED",
-                            "name": "Mix shift effect b normalized",
-                            "value": 22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC",
-                            "name": "Relative percent change of metric",
-                            "value": -0.9280667114551557
-                        }
-                    ]
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Unweighted change in average": -45.81767626124708,
+                        "Weight": -44678,
+                        "Weighted change in sum": -2047042.139999997
+                    }
                 },
                 {
                     "id": "2",
@@ -888,63 +458,20 @@
                     },
                     "impact": 1.666666666666666,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": [
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT",
-                            "name": "Net effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RATE_EFFECT",
-                            "name": "Rate effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE",
-                            "name": "Change in average",
-                            "value": -45.81767626124708
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM",
-                            "name": "Change in sum",
-                            "value": -2047042.139999997
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE",
-                            "name": "Change in size",
-                            "value": -0.4822598577334499
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT",
-                            "name": "Change in count",
-                            "value": -44678
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE",
-                            "name": "Relative change",
-                            "value": -1739538.3199999488
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT",
-                            "name": "Mix shift effect",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED",
-                            "name": "Net effect b normalized",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED",
-                            "name": "Mix shift effect b normalized",
-                            "value": 22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC",
-                            "name": "Relative percent change of metric",
-                            "value": -0.9280667114551557
-                        }
-                    ]
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Unweighted change in average": -45.81767626124708,
+                        "Weight": -44678,
+                        "Weighted change in sum": -2047042.139999997
+                    }
                 },
                 {
                     "id": "1",
@@ -973,63 +500,20 @@
                     },
                     "impact": 0.6666666666666661,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": [
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT",
-                            "name": "Net effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RATE_EFFECT",
-                            "name": "Rate effect",
-                            "value": -22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_AVERAGE",
-                            "name": "Change in average",
-                            "value": -45.81767626124708
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SUM",
-                            "name": "Change in sum",
-                            "value": -2047042.139999997
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_SIZE",
-                            "name": "Change in size",
-                            "value": -0.4822598577334499
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_CHANGE_IN_COUNT",
-                            "name": "Change in count",
-                            "value": -44678
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_CHANGE",
-                            "name": "Relative change",
-                            "value": -1739538.3199999488
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT",
-                            "name": "Mix shift effect",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_NET_EFFECT_B_NORMALIZED",
-                            "name": "Net effect b normalized",
-                            "value": 0
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_MIX_SHIFT_EFFECT_B_NORMALIZED",
-                            "name": "Mix shift effect b normalized",
-                            "value": 22.09602603542628
-                        },
-                        {
-                            "calculationType": "CUSTOM_CALCULATION_TYPE_RELATIVE_PERCENT_CHANGE_OF_METRIC",
-                            "name": "Relative percent change of metric",
-                            "value": -0.9280667114551557
-                        }
-                    ]
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Unweighted change in average": -45.81767626124708,
+                        "Weight": -44678,
+                        "Weighted change in sum": -2047042.139999997
+                    }
                 }
             ]
         },

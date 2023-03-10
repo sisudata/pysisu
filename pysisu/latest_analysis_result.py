@@ -31,6 +31,102 @@ import datetime
 import betterproto
 
 
+def _set_weighted_sum(row_object, weighted_sum):
+    if hasattr(row_object, "weighted_sum"):
+        row_object.weighted_sum = weighted_sum
+
+
+def _set_unweighted_average(row_object, unweighted_average):
+    if hasattr(row_object, "unweighted_average"):
+        row_object.unweighted_average = unweighted_average
+
+
+def _set_weighted_change_in_sum(row_object, weighted_change_in_sum):
+    if hasattr(row_object, "weighted_change_in_sum"):
+        row_object.weighted_change_in_sum = weighted_change_in_sum
+
+
+def _set_unweighted_change_in_average(
+    row_object, unweighted_change_in_average
+):
+    if hasattr(row_object, "unweighted_change_in_average"):
+        row_object.unweighted_change_in_average = unweighted_change_in_average
+
+
+def _set_weight(row_object, weight):
+    if hasattr(row_object, "weight"):
+        row_object.weight = weight
+
+
+def _set_change_in_size(row_object, change_in_size):
+    if hasattr(row_object, "change_in_size"):
+        row_object.change_in_size = change_in_size
+
+
+def _set_rate_effect(row_object, rate_effect):
+    if hasattr(row_object, "rate_effect"):
+        row_object.rate_effect = rate_effect
+
+
+def _set_mix_effect(row_object, mix_effect):
+    if hasattr(row_object, "mix_effect"):
+        row_object.mix_effect = mix_effect
+
+
+def _set_relative_mix_effect(row_object, relative_mix_effect):
+    if hasattr(row_object, "relative_mix_effect"):
+        row_object.relative_mix_effect = relative_mix_effect
+
+
+def _set_net_effect(row_object, net_effect):
+    if hasattr(row_object, "net_effect"):
+        row_object.net_effect = net_effect
+
+
+def _set_net_relative_effect(row_object, net_relative_effect):
+    if hasattr(row_object, "net_relative_effect"):
+        row_object.net_relative_effect = net_relative_effect
+
+
+def _set_relative_change(row_object, relative_change):
+    if hasattr(row_object, "relative_change"):
+        row_object.relative_change = relative_change
+
+
+def _set_relative_percent_change(row_object, relative_percent_change):
+    if hasattr(row_object, "relative_percent_change"):
+        row_object.relative_percent_change = relative_percent_change
+
+
+def _set_change_in_impact(row_object, change_in_impact):
+    if hasattr(row_object, "change_in_impact"):
+        row_object.change_in_impact = change_in_impact
+
+
+def _set_change(row_object, change):
+    if hasattr(row_object, "change"):
+        row_object.change = change
+
+
+_setter_switch = {
+    "Weighted sum": _set_weighted_sum,
+    "Unweighted average": _set_unweighted_average,
+    "Weight": _set_weight,
+    "Weighted change in sum": _set_weighted_change_in_sum,
+    "Unweighted change in average": _set_unweighted_change_in_average,
+    "Change in size": _set_change_in_size,
+    "Rate effect": _set_rate_effect,
+    "Mix effect": _set_mix_effect,
+    "Relative mix effect": _set_relative_mix_effect,
+    "Net effect": _set_net_effect,
+    "Net relative effect": _set_net_relative_effect,
+    "Relative change": _set_relative_change,
+    r"Relative % change": _set_relative_percent_change,
+    "Change in impact": _set_change_in_impact,
+    "Change": _set_change,
+}
+
+
 @dataclass
 class LatestAnalysisResultTable(Table):
     pass
@@ -48,6 +144,16 @@ class KDARow(Row):
     factor_2_value: any
     impact: float
 
+    def set_custom_calculations_from_segment(
+        self,
+        segment: KeyDriverAnalysisResultSegment,
+        round_to_decimal_place: int,
+    ):
+        for custom_calculation, value in segment.custom_calculations.items():
+            _setter_switch[custom_calculation](
+                self, get_rounded_value(value, round_to_decimal_place)
+            )
+
 
 @dataclass
 class TimeCompareRow(KDARow):
@@ -59,6 +165,19 @@ class TimeCompareRow(KDARow):
     previous_period_end_date_inclusive: datetime.datetime
     recent_period_start_date_inclusive: datetime.datetime
     recent_period_end_date_inclusive: datetime.datetime
+    change_in_sum: Optional[float] = None
+    change_in_average: Optional[float] = None
+    weight: Optional[float] = None
+    change_in_size: Optional[float] = None
+    rate_effect: Optional[float] = None
+    mix_effect: Optional[float] = None
+    relative_mix_effect: Optional[float] = None
+    net_effect: Optional[float] = None
+    net_relative_effect: Optional[float] = None
+    relative_change: Optional[float] = None
+    relative_percent_change: Optional[float] = None
+    change_in_impact: Optional[float] = None
+    change: Optional[float] = None
 
 
 @dataclass
@@ -69,12 +188,28 @@ class GroupCompareRow(KDARow):
     group_b_value: float
     group_a_name: str
     group_b_name: str
+    change_in_sum: Optional[float] = None
+    change_in_average: Optional[float] = None
+    weight: Optional[float] = None
+    change_in_size: Optional[float] = None
+    rate_effect: Optional[float] = None
+    mix_effect: Optional[float] = None
+    relative_mix_effect: Optional[float] = None
+    net_effect: Optional[float] = None
+    net_relative_effect: Optional[float] = None
+    relative_change: Optional[float] = None
+    relative_percent_change: Optional[float] = None
+    change_in_impact: Optional[float] = None
+    change: Optional[float] = None
 
 
 @dataclass
 class GeneralPerformanceRow(KDARow):
     size: float
     value: float
+    weighted_sum: Optional[float] = None
+    unweighted_average: Optional[float] = None
+    weight: Optional[float] = None
 
 
 @dataclass
@@ -104,8 +239,7 @@ class safelist(list):
 
 
 def get_factor_value(
-    factor_value: Value,
-    round_to_decimal_place: int = 2
+    factor_value: Value, round_to_decimal_place: int = 2
 ) -> Union[str, int, float, bool, datetime.datetime]:
     _val_type, value = betterproto.which_one_of(factor_value, "value_type")
     return get_rounded_value(value, round_to_decimal_place)
@@ -117,10 +251,14 @@ class FactorDimVal:
     value: Optional[any]
 
 
-def get_factor(dimension: str, factor: Factor, round_to_decimal_place: int = 2) -> FactorDimVal:
+def get_factor(
+    dimension: str, factor: Factor, round_to_decimal_place: int = 2
+) -> FactorDimVal:
     factor_type, _factor_data = betterproto.which_one_of(factor, "factor_type")
     if factor_type == "value":
-        return FactorDimVal(dimension, get_factor_value(factor.value, round_to_decimal_place))
+        return FactorDimVal(
+            dimension, get_factor_value(factor.value, round_to_decimal_place)
+        )
     elif factor_type == "bin":
         return FactorDimVal(
             dimension,
@@ -136,8 +274,11 @@ def get_factors(
     factors: Dict[str, Factor], round_to_decimal_place: int = 2
 ) -> Tuple[FactorDimVal, FactorDimVal, FactorDimVal]:
     converted_factors = safelist(
-        [get_factor(dim, fact, round_to_decimal_place) for dim, fact in factors.items()]
-    )    
+        [
+            get_factor(dim, fact, round_to_decimal_place)
+            for dim, fact in factors.items()
+        ]
+    )
     empty_factor = FactorDimVal(None, None)
     return (
         converted_factors.get(0),
@@ -161,11 +302,13 @@ def build_header_from_row(rows: List[Row]) -> List[HeaderColumn]:
 def get_rows_time_comparision(
     subgroups: List[KeyDriverAnalysisResultSegment],
     time_comparision: KeyDriverAnalysisResultTimeComparison,
-    round_to_decimal_place: int = 2
+    round_to_decimal_place: int = 2,
 ) -> List[Row]:
     rows = []
     for subgroup in subgroups:
-        factor_0, factor_1, factor_2 = get_factors(subgroup.factors, round_to_decimal_place)
+        factor_0, factor_1, factor_2 = get_factors(
+            subgroup.factors, round_to_decimal_place
+        )
 
         r = TimeCompareRow(
             subgroup_id=subgroup.id,
@@ -176,15 +319,30 @@ def get_rows_time_comparision(
             factor_1_value=factor_1.value,
             factor_2_dimension=factor_2.dimension,
             factor_2_value=factor_2.value,
-            previous_period_size=get_rounded_value(subgroup.time_comparison.previous_period_size, round_to_decimal_place),
-            recent_period_size=get_rounded_value(subgroup.time_comparison.recent_period_size, round_to_decimal_place),
-            previous_period_value=get_rounded_value(subgroup.time_comparison.previous_period_value, round_to_decimal_place),
-            recent_period_value=get_rounded_value(subgroup.time_comparison.recent_period_value, round_to_decimal_place),
+            previous_period_size=get_rounded_value(
+                subgroup.time_comparison.previous_period_size,
+                round_to_decimal_place,
+            ),
+            recent_period_size=get_rounded_value(
+                subgroup.time_comparison.recent_period_size,
+                round_to_decimal_place,
+            ),
+            previous_period_value=get_rounded_value(
+                subgroup.time_comparison.previous_period_value,
+                round_to_decimal_place,
+            ),
+            recent_period_value=get_rounded_value(
+                subgroup.time_comparison.recent_period_value,
+                round_to_decimal_place,
+            ),
             previous_period_start_date_inclusive=time_comparision.previous_period.start_date_inclusive,
             previous_period_end_date_inclusive=time_comparision.previous_period.end_date_inclusive,
             recent_period_start_date_inclusive=time_comparision.recent_period.start_date_inclusive,
             recent_period_end_date_inclusive=time_comparision.recent_period.end_date_inclusive,
             impact=get_rounded_value(subgroup.impact, round_to_decimal_place),
+        )
+        r.set_custom_calculations_from_segment(
+            subgroup, round_to_decimal_place
         )
         rows.append(r)
 
@@ -194,28 +352,41 @@ def get_rows_time_comparision(
 def get_rows_group_comparision(
     subgroups: List[KeyDriverAnalysisResultSegment],
     group_comparision: KeyDriverAnalysisResultGroupComparison,
-    round_to_decimal_place: int = 2
+    round_to_decimal_place: int = 2,
 ) -> List[Row]:
     rows = []
     for subgroup in subgroups:
-        factor_0, factor_1, factor_2 = get_factors(subgroup.factors, round_to_decimal_place)
+        factor_0, factor_1, factor_2 = get_factors(
+            subgroup.factors, round_to_decimal_place
+        )
 
         r = GroupCompareRow(
             subgroup_id=subgroup.id,
             confidence=subgroup.confidence.name,
             factor_0_dimension=factor_0.dimension,
-            factor_0_value=factor_0.value, 
+            factor_0_value=factor_0.value,
             factor_1_dimension=factor_1.dimension,
-            factor_1_value=factor_1.value, 
+            factor_1_value=factor_1.value,
             factor_2_dimension=factor_2.dimension,
             factor_2_value=factor_2.value,
-            group_a_size=get_rounded_value(subgroup.group_comparison.group_a_size, round_to_decimal_place),
-            group_b_size=get_rounded_value(subgroup.group_comparison.group_b_size, round_to_decimal_place),
-            group_a_value=get_rounded_value(subgroup.group_comparison.group_a_value, round_to_decimal_place),
-            group_b_value=get_rounded_value(subgroup.group_comparison.group_b_value, round_to_decimal_place),
+            group_a_size=get_rounded_value(
+                subgroup.group_comparison.group_a_size, round_to_decimal_place
+            ),
+            group_b_size=get_rounded_value(
+                subgroup.group_comparison.group_b_size, round_to_decimal_place
+            ),
+            group_a_value=get_rounded_value(
+                subgroup.group_comparison.group_a_value, round_to_decimal_place
+            ),
+            group_b_value=get_rounded_value(
+                subgroup.group_comparison.group_b_value, round_to_decimal_place
+            ),
             group_a_name=group_comparision.group_a.name,
             group_b_name=group_comparision.group_b.name,
             impact=get_rounded_value(subgroup.impact, round_to_decimal_place),
+        )
+        r.set_custom_calculations_from_segment(
+            subgroup, round_to_decimal_place
         )
         rows.append(r)
 
@@ -224,11 +395,13 @@ def get_rows_group_comparision(
 
 def get_rows_general_performance(
     subgroups: List[KeyDriverAnalysisResultSegment],
-    round_to_decimal_place: int = 2
+    round_to_decimal_place: int = 2,
 ) -> List[Row]:
     rows = []
     for subgroup in subgroups:
-        factor_0, factor_1, factor_2 = get_factors(subgroup.factors, round_to_decimal_place)
+        factor_0, factor_1, factor_2 = get_factors(
+            subgroup.factors, round_to_decimal_place
+        )
 
         r = GeneralPerformanceRow(
             subgroup_id=subgroup.id,
@@ -239,9 +412,16 @@ def get_rows_general_performance(
             factor_1_value=factor_1.value,
             factor_2_dimension=factor_2.dimension,
             factor_2_value=factor_2.value,
-            size=get_rounded_value(subgroup.general_performance.size, round_to_decimal_place),
-            value=get_rounded_value(subgroup.general_performance.value, round_to_decimal_place),
+            size=get_rounded_value(
+                subgroup.general_performance.size, round_to_decimal_place
+            ),
+            value=get_rounded_value(
+                subgroup.general_performance.value, round_to_decimal_place
+            ),
             impact=get_rounded_value(subgroup.impact, round_to_decimal_place),
+        )
+        r.set_custom_calculations_from_segment(
+            subgroup, round_to_decimal_place
         )
         rows.append(r)
 
@@ -251,7 +431,7 @@ def get_rows_general_performance(
 def get_rows_trend(
     subgroups: List[TrendAnalysisResultSegment],
     overall_trends: List[TrendAnalysisResultTrend],
-    round_to_decimal_place: int = 2
+    round_to_decimal_place: int = 2,
 ) -> List[Row]:
     rows = []
 
@@ -267,14 +447,18 @@ def get_rows_trend(
             impact=get_rounded_value(otrend.trend, round_to_decimal_place),
             start_date_inclusive=otrend.time_range.start_date_inclusive,
             end_date_inclusive=otrend.time_range.end_date_inclusive,
-            intercept=get_rounded_value(otrend.intercept, round_to_decimal_place) ,
-            slope=get_rounded_value(otrend.trend, round_to_decimal_place) ,
-            size=get_rounded_value(otrend.size, round_to_decimal_place) ,
+            intercept=get_rounded_value(
+                otrend.intercept, round_to_decimal_place
+            ),
+            slope=get_rounded_value(otrend.trend, round_to_decimal_place),
+            size=get_rounded_value(otrend.size, round_to_decimal_place),
         )
         rows.append(r)
 
     for subgroup in subgroups:
-        factor_0, factor_1, factor_2 = get_factors(subgroup.factors, round_to_decimal_place)
+        factor_0, factor_1, factor_2 = get_factors(
+            subgroup.factors, round_to_decimal_place
+        )
 
         if factor_1.dimension is not None:
             if factor_2.dimension is not None:
@@ -296,21 +480,31 @@ def get_rows_trend(
                 factor_1_value=factor_1.value,
                 factor_2_dimension=factor_2.dimension,
                 factor_2_value=factor_2.value,
-                impact=get_rounded_value(subgroup.impact, round_to_decimal_place),
+                impact=get_rounded_value(
+                    subgroup.impact, round_to_decimal_place
+                ),
                 start_date_inclusive=trend.time_range.start_date_inclusive,
                 end_date_inclusive=trend.time_range.end_date_inclusive,
-                intercept=get_rounded_value(trend.intercept, round_to_decimal_place) ,
-                slope=get_rounded_value(trend.trend, round_to_decimal_place) ,
-                size=get_rounded_value(trend.size, round_to_decimal_place) ,
+                intercept=get_rounded_value(
+                    trend.intercept, round_to_decimal_place
+                ),
+                slope=get_rounded_value(trend.trend, round_to_decimal_place),
+                size=get_rounded_value(trend.size, round_to_decimal_place),
             )
             rows.append(r)
 
     return rows
+
+
 def get_rounded_value(value, round_to_decimal_place):
-    return round(value, round_to_decimal_place) if type(value) is float else value
+    return (
+        round(value, round_to_decimal_place) if type(value) is float else value
+    )
 
 
-def _get_rows(result: AnalysisRunResultsResponse, round_to_decimal_place: int = 2) -> List[Row]:
+def _get_rows(
+    result: AnalysisRunResultsResponse, round_to_decimal_place: int = 2
+) -> List[Row]:
     # Under the assumption that an analysis can't be
     # more than one of [KDA, TD]
     if result.analysis_result.key_driver_analysis_result:
@@ -319,14 +513,20 @@ def _get_rows(result: AnalysisRunResultsResponse, round_to_decimal_place: int = 
 
         if analysis_result.time_comparison:
             return get_rows_time_comparision(
-                subgroups, analysis_result.time_comparison, round_to_decimal_place
+                subgroups,
+                analysis_result.time_comparison,
+                round_to_decimal_place,
             )
         elif analysis_result.group_comparison:
             return get_rows_group_comparision(
-                subgroups, analysis_result.group_comparison, round_to_decimal_place
+                subgroups,
+                analysis_result.group_comparison,
+                round_to_decimal_place,
             )
         elif analysis_result.general_performance._serialized_on_wire:
-            return get_rows_general_performance(subgroups, round_to_decimal_place)
+            return get_rows_general_performance(
+                subgroups, round_to_decimal_place
+            )
         else:
             raise ValueError("Invalid key_driver_analysis_result")
 
@@ -334,12 +534,16 @@ def _get_rows(result: AnalysisRunResultsResponse, round_to_decimal_place: int = 
         analysis_result = result.analysis_result.trend_analysis_result
         subgroups = analysis_result.segments
 
-        return get_rows_trend(subgroups, analysis_result.overall_trends, round_to_decimal_place)
+        return get_rows_trend(
+            subgroups, analysis_result.overall_trends, round_to_decimal_place
+        )
 
     else:
         raise ValueError("Invalid analysis_result")
 
 
-def to_table(result: AnalysisRunResultsResponse, round_to_decimal_place: int = 2) -> LatestAnalysisResultTable:
+def to_table(
+    result: AnalysisRunResultsResponse, round_to_decimal_place: int = 2
+) -> LatestAnalysisResultTable:
     rows = _get_rows(result, round_to_decimal_place)
     return LatestAnalysisResultTable(build_header_from_row(rows), rows)
