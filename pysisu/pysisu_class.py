@@ -29,9 +29,11 @@ from .proto.sisu.v1.api import (
     CreateDataSetRequestDataset,
     DataSetsResponse,
     DataSourceListResponse,
+    DeleteAnalysisResponse,
     DeleteMetricResponse,
     DuplicateAnalysisResponse,
     GetAnalysisFiltersResponse,
+    GetDataSourceResponse,
     GetProjectsAnalysesListResponse,
     GetProjectsListResponseListProjectResponse,
     GetSegmentDataResponse,
@@ -41,7 +43,7 @@ from .proto.sisu.v1.api import (
     SetAnalysisFiltersRequest,
     UpdateAnalysisRequestAnalysis,
     UpdateAnalysisResponse,
-    WaterfallAnalysisResponse, DeleteAnalysisResponse,
+    WaterfallAnalysisResponse,
 )
 from .query_helpers import build_url, pathjoin, semver_parse
 from .version import __version__ as PYSISU_VERSION
@@ -352,4 +354,11 @@ class PySisu:
         url_path = build_url(self._url, pathjoin(*path), {})
         return DeleteAnalysisResponse().from_dict(
             self._call_sisu_api(url_path, request_method="DELETE")
+        )
+
+    def data_source(self, connection_id: int) -> GetDataSourceResponse:
+        path = [f"api/v1/data_sources/{connection_id}"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return GetDataSourceResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="GET")
         )

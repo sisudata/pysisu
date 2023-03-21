@@ -1289,6 +1289,43 @@ class CreateDataSetResponse(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class GetDataSourceResponse(betterproto.Message):
+    """Response payload for get data source."""
+
+    id: int = betterproto.uint64_field(1)
+    """Represents the id of data source."""
+
+    name: str = betterproto.string_field(2)
+    """Represents the table or query name of a data source."""
+
+    data_source_type: str = betterproto.string_field(3)
+    """Represents the type of data source."""
+
+    connection_uri: str = betterproto.string_field(4)
+    """Represents the JDBC connection URI to the data source location."""
+
+    data_source_username: str = betterproto.string_field(5)
+    """Represents the username of the data source."""
+
+    private: bool = betterproto.bool_field(6)
+    """Represents whether the data source is private or not."""
+
+    created_at: datetime = betterproto.message_field(7)
+    """Represents the created timestamp of data source."""
+
+    created_by: str = betterproto.string_field(8)
+    """Represents the creates of data source."""
+
+
+@dataclass(eq=False, repr=False)
+class GetDataSourceRequest(betterproto.Message):
+    """Request payload for get data source."""
+
+    id: int = betterproto.uint64_field(1)
+    """Data source id."""
+
+
+@dataclass(eq=False, repr=False)
 class GetProjectsListRequest(betterproto.Message):
     pass
 
@@ -2034,6 +2071,23 @@ class DataSourcesServiceStub(betterproto.ServiceStub):
             metadata=metadata,
         )
 
+    async def get_data_source(
+        self,
+        get_data_source_request: "GetDataSourceRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "GetDataSourceResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.DataSourcesService/GetDataSource",
+            get_data_source_request,
+            GetDataSourceResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
 
 class SegmentsServiceStub(betterproto.ServiceStub):
     async def get_segment_data(
@@ -2399,6 +2453,11 @@ class DataSourcesServiceBase(ServiceBase):
     ) -> "CreateDataSetResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def get_data_source(
+        self, get_data_source_request: "GetDataSourceRequest"
+    ) -> "GetDataSourceResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_data_source_list(
         self,
         stream: "grpclib.server.Stream[DataSourceListRequest, DataSourceListResponse]",
@@ -2415,6 +2474,14 @@ class DataSourcesServiceBase(ServiceBase):
         response = await self.create_data_set(request)
         await stream.send_message(response)
 
+    async def __rpc_get_data_source(
+        self,
+        stream: "grpclib.server.Stream[GetDataSourceRequest, GetDataSourceResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.get_data_source(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.DataSourcesService/DataSourceList": grpclib.const.Handler(
@@ -2428,6 +2495,12 @@ class DataSourcesServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 CreateDataSetRequest,
                 CreateDataSetResponse,
+            ),
+            "/sisu.v1.api.DataSourcesService/GetDataSource": grpclib.const.Handler(
+                self.__rpc_get_data_source,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                GetDataSourceRequest,
+                GetDataSourceResponse,
             ),
         }
 

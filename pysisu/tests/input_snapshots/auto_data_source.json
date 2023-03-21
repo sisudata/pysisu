@@ -1,0 +1,9 @@
+{
+    "connectionUri": "jdbc:snowflake://tsa34595.snowflakecomputing.com/?user=CUSTOMER_SANDBOX_READER&db=SISU_SANDBOX_ENVIRONMENT&role=CUSTOMER_SANDBOX_READER_ROLE&warehouse=CUSTOMER_SANDBOX_WH",
+    "createdAt": "2022-12-09 00:00:00",
+    "createdBy": "test1@sisudata.com",
+    "dataSourceType": "snowflake",
+    "dataSourceUsername": "CUSTOMER_SANDBOX_READER",
+    "id": "1",
+    "name": "Sandbox Data Sources"
+}
