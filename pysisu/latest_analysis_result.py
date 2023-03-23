@@ -165,8 +165,8 @@ class TimeCompareRow(KDARow):
     previous_period_end_date_inclusive: datetime.datetime
     recent_period_start_date_inclusive: datetime.datetime
     recent_period_end_date_inclusive: datetime.datetime
-    change_in_sum: Optional[float] = None
-    change_in_average: Optional[float] = None
+    weighted_change_in_sum: Optional[float] = None
+    unweighted_change_in_average: Optional[float] = None
     weight: Optional[float] = None
     change_in_size: Optional[float] = None
     rate_effect: Optional[float] = None
@@ -188,8 +188,8 @@ class GroupCompareRow(KDARow):
     group_b_value: float
     group_a_name: str
     group_b_name: str
-    change_in_sum: Optional[float] = None
-    change_in_average: Optional[float] = None
+    weighted_change_in_sum: Optional[float] = None
+    unweighted_change_in_average: Optional[float] = None
     weight: Optional[float] = None
     change_in_size: Optional[float] = None
     rate_effect: Optional[float] = None

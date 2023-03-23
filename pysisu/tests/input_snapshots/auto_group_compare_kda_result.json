@@ -64,7 +64,7 @@
                         "groupAValue": 0.8,
                         "groupBValue": 0.5
                     },
-                    "impact": 0.5,
+                    "impact": -0.3333333333333333,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
                     "customCalculations": {
                         "Change": -14035.643245,

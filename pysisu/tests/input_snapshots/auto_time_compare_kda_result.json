@@ -219,7 +219,7 @@
                         "previousPeriodValue": 9.0,
                         "recentPeriodValue": 20.0
                     },
-                    "impact": 1.666666666666666,
+                    "impact": 0.3333333333333335,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
                     "customCalculations": {
                         "Change": -14035.643245,
@@ -261,7 +261,7 @@
                         "previousPeriodValue": 9.0,
                         "recentPeriodValue": 12.0
                     },
-                    "impact": 0.6666666666666661,
+                    "impact": 1.0,
                     "confidence": "CONFIDENCE_LEVEL_LOW",
                     "customCalculations": {
                         "Change": -14035.643245,
