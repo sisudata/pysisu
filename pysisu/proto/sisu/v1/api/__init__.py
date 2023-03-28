@@ -640,6 +640,11 @@ class AnalysisResult(betterproto.Message):
     analysis is still in flight.
     """
 
+    status_message: Optional[str] = betterproto.message_field(
+        11, wraps=betterproto.TYPE_STRING
+    )
+    """Message for workflows that are unstarted, cancelled or have errors."""
+
 
 @dataclass(eq=False, repr=False)
 class KeyDriverAnalysisResult(betterproto.Message):
@@ -1189,6 +1194,21 @@ class DataSource(betterproto.Message):
 
     connection_uri: str = betterproto.string_field(6)
     """JDBC connection URI to the data source location."""
+
+
+@dataclass(eq=False, repr=False)
+class DeleteDataSourceRequest(betterproto.Message):
+    """Request payload for delete data source."""
+
+    id: int = betterproto.uint64_field(1)
+    """Data source id to be deleted."""
+
+
+@dataclass(eq=False, repr=False)
+class DeleteDataSourceResponse(betterproto.Message):
+    """Response payload for delete data source."""
+
+    pass
 
 
 @dataclass(eq=False, repr=False)
@@ -2088,6 +2108,23 @@ class DataSourcesServiceStub(betterproto.ServiceStub):
             metadata=metadata,
         )
 
+    async def delete_data_source(
+        self,
+        delete_data_source_request: "DeleteDataSourceRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "DeleteDataSourceResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.DataSourcesService/DeleteDataSource",
+            delete_data_source_request,
+            DeleteDataSourceResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
 
 class SegmentsServiceStub(betterproto.ServiceStub):
     async def get_segment_data(
@@ -2458,6 +2495,11 @@ class DataSourcesServiceBase(ServiceBase):
     ) -> "GetDataSourceResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def delete_data_source(
+        self, delete_data_source_request: "DeleteDataSourceRequest"
+    ) -> "DeleteDataSourceResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_data_source_list(
         self,
         stream: "grpclib.server.Stream[DataSourceListRequest, DataSourceListResponse]",
@@ -2482,6 +2524,14 @@ class DataSourcesServiceBase(ServiceBase):
         response = await self.get_data_source(request)
         await stream.send_message(response)
 
+    async def __rpc_delete_data_source(
+        self,
+        stream: "grpclib.server.Stream[DeleteDataSourceRequest, DeleteDataSourceResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.delete_data_source(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.DataSourcesService/DataSourceList": grpclib.const.Handler(
@@ -2501,6 +2551,12 @@ class DataSourcesServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 GetDataSourceRequest,
                 GetDataSourceResponse,
+            ),
+            "/sisu.v1.api.DataSourcesService/DeleteDataSource": grpclib.const.Handler(
+                self.__rpc_delete_data_source,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                DeleteDataSourceRequest,
+                DeleteDataSourceResponse,
             ),
         }
 

@@ -159,3 +159,11 @@ def test_get_data_source(mock_call_sisu_api, pysisu_client):
     validate_api_call(
         mock_call_sisu_api, "GET", "api/v1/data_sources/1"
     )
+
+
+@mock.patch("pysisu.pysisu_class.PySisu._call_sisu_api")
+def test_delete_data_source(mock_call_sisu_api, pysisu_client):
+    pysisu_client.delete_data_source(1)
+    validate_api_call(
+        mock_call_sisu_api, "DELETE", "api/v1/data_sources/1"
+    )

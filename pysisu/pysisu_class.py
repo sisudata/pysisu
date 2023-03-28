@@ -30,6 +30,7 @@ from .proto.sisu.v1.api import (
     DataSetsResponse,
     DataSourceListResponse,
     DeleteAnalysisResponse,
+    DeleteDataSourceResponse,
     DeleteMetricResponse,
     DuplicateAnalysisResponse,
     GetAnalysisFiltersResponse,
@@ -139,11 +140,15 @@ class PySisu:
         r = requests.request(
             request_method, url_path, headers=headers, json=json
         )
-        if r.status_code != HTTPStatus.OK:
+        if not r.ok:
             raise PySisuInvalidResponseFromServer(
                 "Result did not complete", r.content
             )
-        return r.json()
+        return (
+            r.json()
+            if "application/json" in r.headers.get("Content-Type", "") and r.status_code != HTTPStatus.NO_CONTENT
+            else {}
+        )
 
     def _check_compatibility(self):
         r = requests.get("https://pypi.python.org/pypi/pysisu/json")
@@ -361,4 +366,13 @@ class PySisu:
         url_path = build_url(self._url, pathjoin(*path), {})
         return GetDataSourceResponse().from_dict(
             self._call_sisu_api(url_path, request_method="GET")
+        )
+
+    def delete_data_source(
+            self, connection_id: int,
+    ) -> DeleteDataSourceResponse:
+        path = [f"api/v1/data_sources/{connection_id}"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return DeleteDataSourceResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="DELETE")
         )
