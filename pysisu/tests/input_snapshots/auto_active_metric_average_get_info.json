@@ -1,0 +1,46 @@
+{
+    "id": "1",
+    "name": "Average",
+    "timeDimension": {
+        "name": "time column",
+        "id": 6
+    },
+    "desiredDirection": "DESIRED_DIRECTION_DECREASE",
+    "filterExpression": {
+        "and": {
+            "expressions": [
+                {
+                    "basicCondition": {
+                        "operator": "OPERATOR_EQ",
+                        "dimensionName": "int_col",
+                        "literal": {
+                            "string": "column value for a"
+                        }
+                    }
+                },
+                {
+                    "basicCondition": {
+                        "operator": "OPERATOR_EQ",
+                        "dimensionName": "timestamp_col",
+                        "literal": {
+                            "string": "column value for b"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "metricDimension": {
+        "name": "mymetric",
+        "id": "7"
+    },
+    "type": "METRIC_CALCULATION_TYPE_AVERAGE",
+    "createdAt": "2023-03-14T16:57:56.577944Z",
+    "createdByEmail": "test1@sisudata.com",
+    "datasetId": "1",
+    "datasetName": "my_schema.my_table",
+    "dataSourceId": "2",
+    "dataSourceName": "my_favorite_connection",
+    "lastModifiedAt": "2023-03-14T16:57:56.577944Z",
+    "lastModifiedByEmail": "test1@sisudata.com"
+}

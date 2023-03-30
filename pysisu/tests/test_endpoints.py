@@ -162,6 +162,14 @@ def test_get_data_source(mock_call_sisu_api, pysisu_client):
 
 
 @mock.patch("pysisu.pysisu_class.PySisu._call_sisu_api")
+def test_get_metric(mock_call_sisu_api, pysisu_client):
+    pysisu_client.get_metric(1)
+    validate_api_call(
+        mock_call_sisu_api, "GET", "api/v1/metrics/1"
+    )
+
+
+@mock.patch("pysisu.pysisu_class.PySisu._call_sisu_api")
 def test_delete_data_source(mock_call_sisu_api, pysisu_client):
     pysisu_client.delete_data_source(1)
     validate_api_call(

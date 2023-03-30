@@ -1075,6 +1075,133 @@ class MetricMetricDimension(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class GetMetricRequest(betterproto.Message):
+    id: int = betterproto.int64_field(1)
+
+
+@dataclass(eq=False, repr=False)
+class GetMetricResponse(betterproto.Message):
+    """Response payload to get information about an individual metric."""
+
+    id: int = betterproto.uint64_field(1)
+    """Metric id."""
+
+    name: str = betterproto.string_field(2)
+    """Metric name."""
+
+    time_dimension: Optional[
+        "GetMetricResponseTimeDimension"
+    ] = betterproto.message_field(3, optional=True, group="_time_dimension")
+    """The time dimension name in a metric."""
+
+    weight_dimension: Optional[
+        "GetMetricResponseWeightDimension"
+    ] = betterproto.message_field(4, optional=True, group="_weight_dimension")
+    """The weight dimension name in a metric."""
+
+    desired_direction: "MetricDesiredDirection" = betterproto.enum_field(5)
+    """
+    Specifies whether the metric's goal is to increase or decrease the kpi
+    value.
+    """
+
+    filter_expression: "Expression" = betterproto.message_field(6)
+    """
+    An Expression which would facilitate building a filter expression on the
+    metrics.
+    """
+
+    metric_dimension: "GetMetricResponseMetricDimension" = betterproto.message_field(7)
+    """The dimension which defines the metric's goal."""
+
+    kpi_units_config: Optional["UnitsConfig"] = betterproto.message_field(
+        8, optional=True, group="_kpi_units_config"
+    )
+    """The unit associated with the KDA metric."""
+
+    type: "MetricMetricType" = betterproto.enum_field(9)
+    """Type of metric calculation."""
+
+    created_at: datetime = betterproto.message_field(10)
+    """Timestamp when the metric was created."""
+
+    created_by_email: str = betterproto.string_field(11)
+    """Email ID of a user who created this metric."""
+
+    dataset_id: int = betterproto.uint64_field(12)
+    """ID of the metric data set."""
+
+    dataset_name: str = betterproto.string_field(13)
+    """Name of the metric data set."""
+
+    data_source_id: int = betterproto.uint64_field(14)
+    """ID of the metric data source."""
+
+    data_source_name: str = betterproto.string_field(15)
+    """Name of the metric data source."""
+
+    last_modified_at: datetime = betterproto.message_field(16)
+    """Timestamp when the metric was last modified."""
+
+    last_modified_by_email: Optional[str] = betterproto.message_field(
+        17, wraps=betterproto.TYPE_STRING
+    )
+    """Email ID of a user last modified this metric."""
+
+    query_name: Optional[str] = betterproto.message_field(
+        18, wraps=betterproto.TYPE_STRING
+    )
+    """Saved query name used when the metric was created."""
+
+    verified_at: datetime = betterproto.message_field(19)
+    """Timestamp when the metric was verified."""
+
+    verified_by_email: Optional[str] = betterproto.message_field(
+        20, wraps=betterproto.TYPE_STRING
+    )
+    """Email ID of a user who verified this metric."""
+
+
+@dataclass(eq=False, repr=False)
+class GetMetricResponseMetricDimension(betterproto.Message):
+    """A dimension in a metric."""
+
+    name: str = betterproto.string_field(1)
+    """The name of the dimension."""
+
+    value: "Value" = betterproto.message_field(2)
+    """Value, it is either string, int, boolean, float or timestamp type."""
+
+    id: int = betterproto.uint64_field(3)
+    """ID of the dimension."""
+
+    include_null: bool = betterproto.bool_field(4)
+    """Include NULL values."""
+
+
+@dataclass(eq=False, repr=False)
+class GetMetricResponseTimeDimension(betterproto.Message):
+    """Time dimension in a metric."""
+
+    name: Optional[str] = betterproto.message_field(1, wraps=betterproto.TYPE_STRING)
+    """Time dimension name in a metric."""
+
+    id: Optional[int] = betterproto.message_field(2, wraps=betterproto.TYPE_INT64)
+    """ID of the time dimension."""
+
+
+@dataclass(eq=False, repr=False)
+class GetMetricResponseWeightDimension(betterproto.Message):
+    """Weight dimension in a metric."""
+
+    name: Optional[str] = betterproto.message_field(1, wraps=betterproto.TYPE_STRING)
+    """Weight dimension name in a metric."""
+
+    id: Optional[int] = betterproto.message_field(2, wraps=betterproto.TYPE_INT64)
+    """ID of the weight dimension."""
+
+
+@dataclass(eq=False, repr=False)
 class AnalysisDimensionsListRequest(betterproto.Message):
     """Request for a list of dimensions for a given `analysis_id`."""
 
@@ -2019,6 +2146,23 @@ class MetricServiceStub(betterproto.ServiceStub):
             metadata=metadata,
         )
 
+    async def get_metric(
+        self,
+        get_metric_request: "GetMetricRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "GetMetricResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.MetricService/GetMetric",
+            get_metric_request,
+            GetMetricResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
 
 class DatasetServiceStub(betterproto.ServiceStub):
     async def data_sets(
@@ -2405,6 +2549,11 @@ class MetricServiceBase(ServiceBase):
     ) -> "DeleteMetricResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def get_metric(
+        self, get_metric_request: "GetMetricRequest"
+    ) -> "GetMetricResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_metrics_list(
         self, stream: "grpclib.server.Stream[MetricsListRequest, MetricsListResponse]"
     ) -> None:
@@ -2417,6 +2566,13 @@ class MetricServiceBase(ServiceBase):
     ) -> None:
         request = await stream.recv_message()
         response = await self.delete_metric(request)
+        await stream.send_message(response)
+
+    async def __rpc_get_metric(
+        self, stream: "grpclib.server.Stream[GetMetricRequest, GetMetricResponse]"
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.get_metric(request)
         await stream.send_message(response)
 
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
@@ -2432,6 +2588,12 @@ class MetricServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DeleteMetricRequest,
                 DeleteMetricResponse,
+            ),
+            "/sisu.v1.api.MetricService/GetMetric": grpclib.const.Handler(
+                self.__rpc_get_metric,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                GetMetricRequest,
+                GetMetricResponse,
             ),
         }
 
