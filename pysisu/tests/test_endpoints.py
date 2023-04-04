@@ -1,6 +1,7 @@
 from unittest import mock
 
-from pysisu.proto.sisu.v1.api import CreateDataSetRequestDataset
+from pysisu.proto.sisu.v1.api import CreateDataSetRequestDataset, ModifyDataSourceRequest
+
 from .helpers_for_tests import SNAPSHOT_DICT
 
 
@@ -174,4 +175,12 @@ def test_delete_data_source(mock_call_sisu_api, pysisu_client):
     pysisu_client.delete_data_source(1)
     validate_api_call(
         mock_call_sisu_api, "DELETE", "api/v1/data_sources/1"
+    )
+
+
+@mock.patch("pysisu.pysisu_class.PySisu._call_sisu_api")
+def test_modify_data_source(mock_call_sisu_api, pysisu_client):
+    pysisu_client.modify_data_source(1, modify_data_source_req=ModifyDataSourceRequest())
+    validate_api_call(
+        mock_call_sisu_api, "PATCH", "api/v1/data_sources/1"
     )

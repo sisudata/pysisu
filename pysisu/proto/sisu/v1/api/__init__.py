@@ -1339,6 +1339,71 @@ class DeleteDataSourceResponse(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class ModifyDataSourceRequest(betterproto.Message):
+    """Request payload for modify data source."""
+
+    id: int = betterproto.uint64_field(1)
+    """The id of data source."""
+
+    datasource: "ModifyDataSourceRequestPayload" = betterproto.message_field(2)
+
+
+@dataclass(eq=False, repr=False)
+class ModifyDataSourceRequestPayload(betterproto.Message):
+    """The body payload of data source."""
+
+    name: Optional[str] = betterproto.string_field(1, optional=True, group="_name")
+    """The table or query name of a data source."""
+
+    password: Optional[str] = betterproto.string_field(
+        2, optional=True, group="_password"
+    )
+    """The password of data source."""
+
+    uri: Optional[str] = betterproto.string_field(3, optional=True, group="_uri")
+    """The JDBC connection URI to the data source location."""
+
+    username: Optional[str] = betterproto.string_field(
+        4, optional=True, group="_username"
+    )
+    """The username of the data source."""
+
+    is_restricted: Optional[bool] = betterproto.bool_field(
+        5, optional=True, group="_is_restricted"
+    )
+    """The data source is private or not."""
+
+
+@dataclass(eq=False, repr=False)
+class ModifyDataSourceResponse(betterproto.Message):
+    """Response payload for modify data source."""
+
+    id: int = betterproto.uint64_field(1)
+    """The id of data source."""
+
+    name: str = betterproto.string_field(2)
+    """The table or query name of a data source."""
+
+    data_source_type: str = betterproto.string_field(3)
+    """The type of data source."""
+
+    connection_uri: str = betterproto.string_field(4)
+    """The JDBC connection URI to the data source location."""
+
+    data_source_username: str = betterproto.string_field(5)
+    """The username of the data source."""
+
+    private: bool = betterproto.bool_field(6)
+    """The data source is private or not."""
+
+    created_at: datetime = betterproto.message_field(7)
+    """The created timestamp of data source."""
+
+    created_by: str = betterproto.string_field(8)
+    """The creates of data source."""
+
+
+@dataclass(eq=False, repr=False)
 class DataSetsRequest(betterproto.Message):
     pass
 
@@ -1440,28 +1505,28 @@ class GetDataSourceResponse(betterproto.Message):
     """Response payload for get data source."""
 
     id: int = betterproto.uint64_field(1)
-    """Represents the id of data source."""
+    """The id of data source."""
 
     name: str = betterproto.string_field(2)
-    """Represents the table or query name of a data source."""
+    """The table or query name of a data source."""
 
     data_source_type: str = betterproto.string_field(3)
-    """Represents the type of data source."""
+    """The type of data source."""
 
     connection_uri: str = betterproto.string_field(4)
-    """Represents the JDBC connection URI to the data source location."""
+    """The JDBC connection URI to the data source location."""
 
     data_source_username: str = betterproto.string_field(5)
-    """Represents the username of the data source."""
+    """The username of the data source."""
 
     private: bool = betterproto.bool_field(6)
-    """Represents whether the data source is private or not."""
+    """The data source is private or not."""
 
     created_at: datetime = betterproto.message_field(7)
-    """Represents the created timestamp of data source."""
+    """The created timestamp of data source."""
 
     created_by: str = betterproto.string_field(8)
-    """Represents the creates of data source."""
+    """The creates of data source."""
 
 
 @dataclass(eq=False, repr=False)
@@ -2269,6 +2334,23 @@ class DataSourcesServiceStub(betterproto.ServiceStub):
             metadata=metadata,
         )
 
+    async def modify_data_source(
+        self,
+        modify_data_source_request: "ModifyDataSourceRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "ModifyDataSourceResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.DataSourcesService/ModifyDataSource",
+            modify_data_source_request,
+            ModifyDataSourceResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
 
 class SegmentsServiceStub(betterproto.ServiceStub):
     async def get_segment_data(
@@ -2662,6 +2744,11 @@ class DataSourcesServiceBase(ServiceBase):
     ) -> "DeleteDataSourceResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def modify_data_source(
+        self, modify_data_source_request: "ModifyDataSourceRequest"
+    ) -> "ModifyDataSourceResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_data_source_list(
         self,
         stream: "grpclib.server.Stream[DataSourceListRequest, DataSourceListResponse]",
@@ -2694,6 +2781,14 @@ class DataSourcesServiceBase(ServiceBase):
         response = await self.delete_data_source(request)
         await stream.send_message(response)
 
+    async def __rpc_modify_data_source(
+        self,
+        stream: "grpclib.server.Stream[ModifyDataSourceRequest, ModifyDataSourceResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.modify_data_source(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.DataSourcesService/DataSourceList": grpclib.const.Handler(
@@ -2719,6 +2814,12 @@ class DataSourcesServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DeleteDataSourceRequest,
                 DeleteDataSourceResponse,
+            ),
+            "/sisu.v1.api.DataSourcesService/ModifyDataSource": grpclib.const.Handler(
+                self.__rpc_modify_data_source,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                ModifyDataSourceRequest,
+                ModifyDataSourceResponse,
             ),
         }
 

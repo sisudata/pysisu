@@ -42,6 +42,8 @@ from .proto.sisu.v1.api import (
     MetricsListResponse,
     ModifyAnalysisRequestAnalysis,
     ModifyAnalysisResponse,
+    ModifyDataSourceRequest,
+    ModifyDataSourceResponse,
     SetAnalysisFiltersRequest,
     UpdateAnalysisRequestAnalysis,
     UpdateAnalysisResponse,
@@ -89,11 +91,11 @@ class PySisu:
         return self
 
     def _auto_paginate(
-        self,
-        analysis_id: int,
-        params: dict,
-        result: AnalysisRunResultsResponse,
-        **kwargs,
+            self,
+            analysis_id: int,
+            params: dict,
+            result: AnalysisRunResultsResponse,
+            **kwargs,
     ) -> AnalysisRunResultsResponse:
         """
         Fetches the rest of the results if there is more results to fetch.
@@ -126,13 +128,13 @@ class PySisu:
             analysis_id, format=LatestAnalysisResultsFormats.PROTO, **kwargs
         )
         kda_result.segments = (
-            subgroups
-            + next_page.analysis_result.key_driver_analysis_result.segments
+                subgroups
+                + next_page.analysis_result.key_driver_analysis_result.segments
         )
         return result
 
     def _call_sisu_api(
-        self, url_path: int, request_method="get", json=None
+            self, url_path: int, request_method="get", json=None
     ) -> dict:
         headers = {
             "Authorization": self._api_key,
@@ -166,7 +168,7 @@ class PySisu:
         latest_major, latest_minor, latest_patch = semver_parse(latest_version)
 
         if local_major < latest_major or (
-            local_major == 0 and local_minor < latest_minor
+                local_major == 0 and local_minor < latest_minor
         ):
             raise PySisuDeprecatedVersionException(
                 "Pysisu has been updated with breaking changes from "
@@ -181,7 +183,7 @@ class PySisu:
             )
 
     def fetch_sisu_api(
-        self, analysis_id: int, params: dict = {}, **kwargs
+            self, analysis_id: int, params: dict = {}, **kwargs
     ) -> dict:
         path = ["api/v1/analyses/", str(analysis_id), "runs/latest"]
         url_path = build_url(self._url, pathjoin(*path), {**params, **kwargs})
@@ -198,13 +200,13 @@ class PySisu:
         return AnalysesListResponse().from_dict(self._call_sisu_api(url_path))
 
     def get_results(
-        self,
-        analysis_id: int,
-        params: dict = {"confidence_gte": "LOW"},
-        auto_paginate: bool = True,
-        format: LatestAnalysisResultsFormats = LatestAnalysisResultsFormats.TABLE,
-        round_to_decimal_place: int = 2,
-        **kwargs,
+            self,
+            analysis_id: int,
+            params: dict = {"confidence_gte": "LOW"},
+            auto_paginate: bool = True,
+            format: LatestAnalysisResultsFormats = LatestAnalysisResultsFormats.TABLE,
+            round_to_decimal_place: int = 2,
+            **kwargs,
     ) -> Union[AnalysisRunResultsResponse, Table]:
         assert type(params) is dict
         assert type(kwargs) is dict
@@ -249,7 +251,7 @@ class PySisu:
         return DataSetsResponse().from_dict(self._call_sisu_api(url_path))
 
     def get_filters(
-        self, analysis_id: int, **kwargs
+            self, analysis_id: int, **kwargs
     ) -> GetAnalysisFiltersResponse:
         path = [f"api/v1/analyses/{analysis_id}/filters"]
         url_path = build_url(self._url, pathjoin(*path), kwargs)
@@ -258,7 +260,7 @@ class PySisu:
         )
 
     def set_filters(
-        self, analysis_id: int, expr: SetAnalysisFiltersRequest, **kwargs
+            self, analysis_id: int, expr: SetAnalysisFiltersRequest, **kwargs
     ):
         path = [f"api/v1/analyses/{analysis_id}/filters"]
         url_path = build_url(self._url, pathjoin(*path), kwargs)
@@ -270,7 +272,7 @@ class PySisu:
         return self._call_sisu_api(url_path, request_method="PUT", json=expr)
 
     def duplicate_analysis(
-        self, analysis_id: int, name: Optional[str] = None, **kwargs
+            self, analysis_id: int, name: Optional[str] = None, **kwargs
     ) -> DuplicateAnalysisResponse:
         path = [f"api/v1/analyses/{analysis_id}/duplicate"]
         url_path = build_url(self._url, pathjoin(*path), kwargs)
@@ -287,7 +289,7 @@ class PySisu:
         )
 
     def create_dataset(
-        self, data_source_id: int, body: CreateDataSetRequestDataset
+            self, data_source_id: int, body: CreateDataSetRequestDataset
     ) -> GetSegmentDataResponse:
         path = [f"api/v1/data_sources/{data_source_id}/datasets"]
         url_path = build_url(self._url, pathjoin(*path), {})
@@ -305,7 +307,7 @@ class PySisu:
         )
 
     def get_project_analyses_list(
-        self, project_id
+            self, project_id
     ) -> GetProjectsAnalysesListResponse:
         path = [f"api/v1/projects/{project_id}/analyses"]
         url_path = build_url(self._url, pathjoin(*path), {})
@@ -314,9 +316,9 @@ class PySisu:
         )
 
     def modify_analysis(
-        self,
-        analysis_id: int,
-        modify_analysis_req: ModifyAnalysisRequestAnalysis,
+            self,
+            analysis_id: int,
+            modify_analysis_req: ModifyAnalysisRequestAnalysis,
     ) -> ModifyAnalysisResponse:
         path = [f"api/v1/analyses/{analysis_id}"]
         url_path = build_url(self._url, pathjoin(*path), {})
@@ -329,9 +331,9 @@ class PySisu:
         )
 
     def update_analysis(
-        self,
-        analysis_id: int,
-        modify_analysis_req: UpdateAnalysisRequestAnalysis,
+            self,
+            analysis_id: int,
+            modify_analysis_req: UpdateAnalysisRequestAnalysis,
     ) -> UpdateAnalysisResponse:
         path = [f"api/v1/analyses/{analysis_id}"]
         url_path = build_url(self._url, pathjoin(*path), {})
@@ -344,13 +346,14 @@ class PySisu:
         )
 
     def get_analysis_dimensions_list(
-        self, analysis_id
+            self, analysis_id
     ) -> AnalysisDimensionsListResponse:
         path = [f"api/v1/analyses/{analysis_id}/dimensions"]
         url_path = build_url(self._url, pathjoin(*path), {})
         return AnalysisDimensionsListResponse().from_dict(
             self._call_sisu_api(url_path, request_method="GET")
         )
+
     def get_analysis_waterfall(self, analysis_id) -> WaterfallAnalysisResponse:
         path = [f"api/v1/analyses/{analysis_id}/waterfall"]
         url_path = build_url(self._url, pathjoin(*path), {})
@@ -381,4 +384,19 @@ class PySisu:
         url_path = build_url(self._url, pathjoin(*path), {})
         return DeleteDataSourceResponse().from_dict(
             self._call_sisu_api(url_path, request_method="DELETE")
+        )
+
+    def modify_data_source(
+            self,
+            connection_id: int,
+            modify_data_source_req: ModifyDataSourceRequest,
+    ) -> ModifyDataSourceResponse:
+        path = [f"api/v1/data_sources/{connection_id}"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return ModifyDataSourceResponse().from_dict(
+            self._call_sisu_api(
+                url_path,
+                request_method="PATCH",
+                json=modify_data_source_req.to_dict(),
+            )
         )
