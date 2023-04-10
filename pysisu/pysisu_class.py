@@ -48,6 +48,8 @@ from .proto.sisu.v1.api import (
     UpdateAnalysisRequestAnalysis,
     UpdateAnalysisResponse,
     WaterfallAnalysisResponse,
+    GetProjectResponse,
+    GetDatasetResponse,
 )
 from .query_helpers import build_url, pathjoin, semver_parse
 from .version import __version__ as PYSISU_VERSION
@@ -400,3 +402,18 @@ class PySisu:
                 json=modify_data_source_req.to_dict(),
             )
         )
+
+    def get_project(self, project_id) -> GetProjectResponse:
+        path = [f"api/v1/projects/{project_id}"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return GetProjectResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="GET")
+        )
+
+    def get_dataset_by_id(self, dataset_id: int) -> GetDatasetResponse:
+        path = [f"api/v1/datasets/{dataset_id}"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return GetDatasetResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="GET")
+        )
+

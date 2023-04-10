@@ -19,6 +19,7 @@ SNAPSHOT_DICT = {
     "get analysis filters": "mixed_filter_expression.json",
     "list projects": "auto_project_list.json",
     "list project analyses": "auto_project_analysis_list.json",
+    "get dataset by id": "auto_dataset_by_id_result.json"
 }
 
 

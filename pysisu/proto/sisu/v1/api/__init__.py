@@ -1538,6 +1538,64 @@ class GetDataSourceRequest(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class GetDatasetRequest(betterproto.Message):
+    """Request payload for get dataset."""
+
+    id: int = betterproto.uint64_field(1)
+    """Dataset id."""
+
+
+@dataclass(eq=False, repr=False)
+class GetDatasetResponse(betterproto.Message):
+    """Response payload for get dataset."""
+
+    id: int = betterproto.uint64_field(1)
+    """Dataset id."""
+
+    name: str = betterproto.string_field(2)
+    """
+    The table name for DATASET_TYPE_TABLE or user-defined for
+    DATASET_TYPE_QUERY.
+    """
+
+    dataset_type: "DatasetDatasetType" = betterproto.enum_field(3)
+    """Dataset type represents how data has been obtained."""
+
+    query_string: str = betterproto.string_field(4)
+    """A SQL query string for a dataset of type query."""
+
+    last_modified_at: datetime = betterproto.message_field(5)
+    """Last time the data set was modified."""
+
+    created_at: datetime = betterproto.message_field(6)
+    """Time when the data set was created."""
+
+    data_source_id: int = betterproto.uint64_field(7)
+    """Data Source id of the data set."""
+
+    data_source: str = betterproto.string_field(8)
+    """The name of data source."""
+
+    last_modified_by_email: str = betterproto.string_field(9)
+    """The last modified by email."""
+
+    associated_count_analyses: Optional[int] = betterproto.uint64_field(
+        10, optional=True, group="_associated_count_analyses"
+    )
+    """The associated analyses count of the dataset."""
+
+    associated_count_explorations: Optional[int] = betterproto.uint64_field(
+        11, optional=True, group="_associated_count_explorations"
+    )
+    """The associated explorations count of the dataset."""
+
+    associated_count_metrics: Optional[int] = betterproto.uint64_field(
+        12, optional=True, group="_associated_count_metrics"
+    )
+    """The associated metrics count of the dataset."""
+
+
+@dataclass(eq=False, repr=False)
 class GetProjectsListRequest(betterproto.Message):
     pass
 
@@ -1557,6 +1615,26 @@ class GetProjectsListResponseListProjectResponse(betterproto.Message):
 class GetProjectsListResponseProject(betterproto.Message):
     """Provides detailed information about a project."""
 
+    id: int = betterproto.uint64_field(1)
+    """Project id."""
+
+    name: str = betterproto.string_field(2)
+    """Project name."""
+
+    description: str = betterproto.string_field(3)
+    """Project description."""
+
+    created_at: datetime = betterproto.message_field(4)
+    """Timestamp when the Project was created."""
+
+
+@dataclass(eq=False, repr=False)
+class GetProjectRequest(betterproto.Message):
+    id: int = betterproto.int64_field(1)
+
+
+@dataclass(eq=False, repr=False)
+class GetProjectResponse(betterproto.Message):
     id: int = betterproto.uint64_field(1)
     """Project id."""
 
@@ -2264,6 +2342,23 @@ class DatasetServiceStub(betterproto.ServiceStub):
             metadata=metadata,
         )
 
+    async def get_dataset(
+        self,
+        get_dataset_request: "GetDatasetRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "GetDatasetResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.DatasetService/GetDataset",
+            get_dataset_request,
+            GetDatasetResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
 
 class DataSourcesServiceStub(betterproto.ServiceStub):
     async def data_source_list(
@@ -2401,6 +2496,23 @@ class ProjectsServiceStub(betterproto.ServiceStub):
             "/sisu.v1.api.ProjectsService/GetProjectsAnalysesList",
             get_projects_analyses_list_request,
             GetProjectsAnalysesListResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+    async def get_project(
+        self,
+        get_project_request: "GetProjectRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "GetProjectResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.ProjectsService/GetProject",
+            get_project_request,
+            GetProjectResponse,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2691,6 +2803,11 @@ class DatasetServiceBase(ServiceBase):
     ) -> "DataSetDimensionsListResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def get_dataset(
+        self, get_dataset_request: "GetDatasetRequest"
+    ) -> "GetDatasetResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_data_sets(
         self, stream: "grpclib.server.Stream[DataSetsRequest, DataSetsResponse]"
     ) -> None:
@@ -2706,6 +2823,13 @@ class DatasetServiceBase(ServiceBase):
         response = await self.data_set_dimensions_list(request)
         await stream.send_message(response)
 
+    async def __rpc_get_dataset(
+        self, stream: "grpclib.server.Stream[GetDatasetRequest, GetDatasetResponse]"
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.get_dataset(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.DatasetService/DataSets": grpclib.const.Handler(
@@ -2719,6 +2843,12 @@ class DatasetServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DataSetDimensionsListRequest,
                 DataSetDimensionsListResponse,
+            ),
+            "/sisu.v1.api.DatasetService/GetDataset": grpclib.const.Handler(
+                self.__rpc_get_dataset,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                GetDatasetRequest,
+                GetDatasetResponse,
             ),
         }
 
@@ -2860,6 +2990,11 @@ class ProjectsServiceBase(ServiceBase):
     ) -> "GetProjectsAnalysesListResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def get_project(
+        self, get_project_request: "GetProjectRequest"
+    ) -> "GetProjectResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_get_projects_list(
         self,
         stream: "grpclib.server.Stream[GetProjectsListRequest, GetProjectsListResponse]",
@@ -2876,6 +3011,13 @@ class ProjectsServiceBase(ServiceBase):
         response = await self.get_projects_analyses_list(request)
         await stream.send_message(response)
 
+    async def __rpc_get_project(
+        self, stream: "grpclib.server.Stream[GetProjectRequest, GetProjectResponse]"
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.get_project(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.ProjectsService/GetProjectsList": grpclib.const.Handler(
@@ -2889,5 +3031,11 @@ class ProjectsServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 GetProjectsAnalysesListRequest,
                 GetProjectsAnalysesListResponse,
+            ),
+            "/sisu.v1.api.ProjectsService/GetProject": grpclib.const.Handler(
+                self.__rpc_get_project,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                GetProjectRequest,
+                GetProjectResponse,
             ),
         }

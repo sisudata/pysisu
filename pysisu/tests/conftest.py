@@ -11,6 +11,7 @@ from pysisu.proto.sisu.v1.api import (
     GetProjectsListResponseListProjectResponse,
     MetricsListResponse,
     PaginationHints,
+    GetDatasetResponse,
 )
 from pytest import fixture
 
@@ -125,4 +126,11 @@ def projects_list() -> GetProjectsListResponseListProjectResponse:
 def project_analyses_list() -> GetProjectsAnalysesListResponse:
     return GetProjectsAnalysesListResponse().from_dict(
         load_snapshot("list project analyses")
+    )
+
+
+@fixture
+def dataset_filter() -> GetDatasetResponse:
+    return GetDatasetResponse().from_dict(
+        load_snapshot("get dataset by id")
     )

@@ -184,3 +184,22 @@ def test_modify_data_source(mock_call_sisu_api, pysisu_client):
     validate_api_call(
         mock_call_sisu_api, "PATCH", "api/v1/data_sources/1"
     )
+
+@mock.patch("pysisu.pysisu_class.PySisu._call_sisu_api")
+def test_get_project(mock_call_sisu_api, pysisu_client):
+    pysisu_client.get_project(1)
+    validate_api_call(
+        mock_call_sisu_api, "GET", "api/v1/projects/1"
+    )
+
+
+@mock.patch("pysisu.pysisu_class.PySisu._call_sisu_api")
+def test_get_dataset_by_id(mock_call_sisu_api, dataset_filter, pysisu_client, pysisu_input_snapshot):
+    mock_call_sisu_api.return_value = dataset_filter.to_dict()
+    pysisu_input_snapshot.assert_match(
+        pysisu_client.get_dataset_by_id(1).to_json(indent=4),
+        SNAPSHOT_DICT["get dataset by id"],
+    )
+    validate_api_call(
+        mock_call_sisu_api, "GET", "api/v1/datasets/1"
+    )
