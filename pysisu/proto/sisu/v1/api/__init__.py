@@ -1062,6 +1062,11 @@ class Metric(betterproto.Message):
     dataset_id: int = betterproto.uint64_field(10)
     """Id of the metric data set."""
 
+    excel_format: Optional[Optional[str]] = betterproto.message_field(
+        11, wraps=betterproto.TYPE_STRING, optional=True, group="_excel_format"
+    )
+    """Excel format of the looker created metric."""
+
 
 @dataclass(eq=False, repr=False)
 class MetricMetricDimension(betterproto.Message):
@@ -1160,6 +1165,11 @@ class GetMetricResponse(betterproto.Message):
         20, wraps=betterproto.TYPE_STRING
     )
     """Email ID of a user who verified this metric."""
+
+    excel_format: Optional[Optional[str]] = betterproto.message_field(
+        21, wraps=betterproto.TYPE_STRING, optional=True, group="_excel_format"
+    )
+    """Excel format of the looker created metric."""
 
 
 @dataclass(eq=False, repr=False)
@@ -1593,6 +1603,21 @@ class GetDatasetResponse(betterproto.Message):
         12, optional=True, group="_associated_count_metrics"
     )
     """The associated metrics count of the dataset."""
+
+
+@dataclass(eq=False, repr=False)
+class DeleteDatasetRequest(betterproto.Message):
+    """Request payload for delete dataset."""
+
+    id: int = betterproto.uint64_field(1)
+    """Dataset id to be deleted."""
+
+
+@dataclass(eq=False, repr=False)
+class DeleteDatasetResponse(betterproto.Message):
+    """Response for delete dataset."""
+
+    pass
 
 
 @dataclass(eq=False, repr=False)
@@ -2359,6 +2384,23 @@ class DatasetServiceStub(betterproto.ServiceStub):
             metadata=metadata,
         )
 
+    async def delete_dataset(
+        self,
+        delete_dataset_request: "DeleteDatasetRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "DeleteDatasetResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.DatasetService/DeleteDataset",
+            delete_dataset_request,
+            DeleteDatasetResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
 
 class DataSourcesServiceStub(betterproto.ServiceStub):
     async def data_source_list(
@@ -2808,6 +2850,11 @@ class DatasetServiceBase(ServiceBase):
     ) -> "GetDatasetResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def delete_dataset(
+        self, delete_dataset_request: "DeleteDatasetRequest"
+    ) -> "DeleteDatasetResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_data_sets(
         self, stream: "grpclib.server.Stream[DataSetsRequest, DataSetsResponse]"
     ) -> None:
@@ -2830,6 +2877,14 @@ class DatasetServiceBase(ServiceBase):
         response = await self.get_dataset(request)
         await stream.send_message(response)
 
+    async def __rpc_delete_dataset(
+        self,
+        stream: "grpclib.server.Stream[DeleteDatasetRequest, DeleteDatasetResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.delete_dataset(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.DatasetService/DataSets": grpclib.const.Handler(
@@ -2849,6 +2904,12 @@ class DatasetServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 GetDatasetRequest,
                 GetDatasetResponse,
+            ),
+            "/sisu.v1.api.DatasetService/DeleteDataset": grpclib.const.Handler(
+                self.__rpc_delete_dataset,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                DeleteDatasetRequest,
+                DeleteDatasetResponse,
             ),
         }
 

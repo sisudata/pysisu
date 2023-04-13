@@ -203,3 +203,11 @@ def test_get_dataset_by_id(mock_call_sisu_api, dataset_filter, pysisu_client, py
     validate_api_call(
         mock_call_sisu_api, "GET", "api/v1/datasets/1"
     )
+
+
+@mock.patch("pysisu.pysisu_class.PySisu._call_sisu_api")
+def test_delete_dataset_by_id(mock_call_sisu_api, pysisu_client):
+    pysisu_client.delete_dataset_by_id(1)
+    validate_api_call(
+        mock_call_sisu_api, "DELETE", "api/v1/datasets/1"
+    )

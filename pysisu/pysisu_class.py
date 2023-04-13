@@ -50,6 +50,7 @@ from .proto.sisu.v1.api import (
     WaterfallAnalysisResponse,
     GetProjectResponse,
     GetDatasetResponse,
+    DeleteDatasetResponse,
 )
 from .query_helpers import build_url, pathjoin, semver_parse
 from .version import __version__ as PYSISU_VERSION
@@ -417,3 +418,9 @@ class PySisu:
             self._call_sisu_api(url_path, request_method="GET")
         )
 
+    def delete_dataset_by_id(self, dataset_id: int) -> DeleteDatasetResponse:
+        path = [f"api/v1/datasets/{dataset_id}"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return DeleteDatasetResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="DELETE")
+        )
