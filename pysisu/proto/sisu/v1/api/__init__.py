@@ -33,6 +33,13 @@ class AnalysisType(betterproto.Enum):
     ANALYSIS_TYPE_GROUP_COMPARE = 4
 
 
+class WorkflowCalculationType(betterproto.Enum):
+    WORKFLOW_CALCULATION_TYPE_AVERAGE = 0
+    WORKFLOW_CALCULATION_TYPE_SUM = 1
+    WORKFLOW_CALCULATION_TYPE_COUNT = 2
+    WORKFLOW_CALCULATION_TYPE_RATE = 3
+
+
 class SqlDataType(betterproto.Enum):
     """Represents a datatype of a specific dimension."""
 
@@ -997,6 +1004,197 @@ class DeleteMetricRequest(betterproto.Message):
 @dataclass(eq=False, repr=False)
 class DeleteMetricResponse(betterproto.Message):
     pass
+
+
+@dataclass(eq=False, repr=False)
+class UpdateMetricRequest(betterproto.Message):
+    id: int = betterproto.uint64_field(1)
+    """Metric id."""
+
+    dataset_id: Optional[int] = betterproto.uint64_field(
+        2, optional=True, group="_dataset_id"
+    )
+    """Dataset id of a metric."""
+
+    desired_direction: Optional["MetricDesiredDirection"] = betterproto.enum_field(
+        3, optional=True, group="_desired_direction"
+    )
+    """
+    Specifies whether the metric's goal is to increase or decrease the kpi
+    value.
+    """
+
+    filter_expression: Optional["Expression"] = betterproto.message_field(
+        4, optional=True, group="_filter_expression"
+    )
+    """
+    An Expression which would facilitate building a filter expression on the
+    metrics.
+    """
+
+    include_null: Optional[bool] = betterproto.bool_field(
+        5, optional=True, group="_include_null"
+    )
+    """Include NULL values."""
+
+    is_verified: Optional[bool] = betterproto.bool_field(
+        6, optional=True, group="_is_verified"
+    )
+    """Specifies whether the metric is verified or not."""
+
+    metric_dimension: "MetricMetricDimension" = betterproto.message_field(7)
+    """Specifies metric dimension name, data type and value."""
+
+    kpi_units_config: Optional["UnitsConfig"] = betterproto.message_field(
+        8, optional=True, group="_kpi_units_config"
+    )
+    """The unit associated with the KDA metric."""
+
+    metric_type: Optional["MetricMetricType"] = betterproto.enum_field(
+        9, optional=True, group="_metric_type"
+    )
+    """Type of metric calculation."""
+
+    name: Optional[str] = betterproto.string_field(10, optional=True, group="_name")
+    """Metric name."""
+
+    time_dimension_name: Optional[str] = betterproto.string_field(
+        11, optional=True, group="_time_dimension_name"
+    )
+    """
+    The name of metric's time dimension which represents the date range of the
+    metric.
+    """
+
+    weight_dimension_name: Optional[str] = betterproto.string_field(
+        12, optional=True, group="_weight_dimension_name"
+    )
+    """
+    The name of the weight dimension. A weight dimension is used to increases
+    the importance of a given row in an analysis.
+    """
+
+
+@dataclass(eq=False, repr=False)
+class UpdateMetricResponse(betterproto.Message):
+    id: int = betterproto.uint64_field(1)
+    """Metric id."""
+
+    name: str = betterproto.string_field(2)
+    """Metric name."""
+
+    time_dimension: Optional[
+        "UpdateMetricResponseTimeDimension"
+    ] = betterproto.message_field(3, optional=True, group="_time_dimension")
+    """The time dimension name in a metric."""
+
+    weight_dimension: Optional[
+        "UpdateMetricResponseWeightDimension"
+    ] = betterproto.message_field(4, optional=True, group="_weight_dimension")
+    """The weight dimension name in a metric."""
+
+    desired_direction: "MetricDesiredDirection" = betterproto.enum_field(5)
+    """
+    Specifies whether the metric's goal is to increase or decrease the kpi
+    value.
+    """
+
+    filter_expression: "Expression" = betterproto.message_field(6)
+    """
+    An Expression which would facilitate building a filter expression on the
+    metrics.
+    """
+
+    metric_dimension: "UpdateMetricResponseMetricDimension" = betterproto.message_field(
+        7
+    )
+    """The dimension which defines the metric's goal."""
+
+    kpi_units_config: Optional["UnitsConfig"] = betterproto.message_field(
+        8, optional=True, group="_kpi_units_config"
+    )
+    """The unit associated with the KDA metric."""
+
+    type: "MetricMetricType" = betterproto.enum_field(9)
+    """Type of metric calculation."""
+
+    created_at: datetime = betterproto.message_field(10)
+    """Timestamp when the metric was created."""
+
+    created_by_email: str = betterproto.string_field(11)
+    """Email ID of a user who created this metric."""
+
+    dataset_id: int = betterproto.uint64_field(12)
+    """ID of the metric data set."""
+
+    dataset_name: str = betterproto.string_field(13)
+    """Name of the metric data set."""
+
+    data_source_id: int = betterproto.uint64_field(14)
+    """ID of the metric data source."""
+
+    data_source_name: str = betterproto.string_field(15)
+    """Name of the metric data source."""
+
+    last_modified_at: datetime = betterproto.message_field(16)
+    """Timestamp when the metric was last modified."""
+
+    last_modified_by_email: Optional[str] = betterproto.message_field(
+        17, wraps=betterproto.TYPE_STRING
+    )
+    """Email ID of a user last modified this metric."""
+
+    query_name: Optional[str] = betterproto.message_field(
+        18, wraps=betterproto.TYPE_STRING
+    )
+    """Saved query name used when the metric was created."""
+
+    verified_at: datetime = betterproto.message_field(19)
+    """Timestamp when the metric was verified."""
+
+    verified_by_email: Optional[str] = betterproto.message_field(
+        20, wraps=betterproto.TYPE_STRING
+    )
+    """Email ID of a user who verified this metric."""
+
+
+@dataclass(eq=False, repr=False)
+class UpdateMetricResponseMetricDimension(betterproto.Message):
+    """A dimension in a metric."""
+
+    name: str = betterproto.string_field(1)
+    """The name of the dimension."""
+
+    value: "Value" = betterproto.message_field(2)
+    """Value, it is either string, int, boolean, float or timestamp type."""
+
+    id: int = betterproto.uint64_field(3)
+    """ID of the dimension."""
+
+    include_null: bool = betterproto.bool_field(4)
+    """Include NULL values."""
+
+
+@dataclass(eq=False, repr=False)
+class UpdateMetricResponseTimeDimension(betterproto.Message):
+    """Time dimension in a metric."""
+
+    name: Optional[str] = betterproto.message_field(1, wraps=betterproto.TYPE_STRING)
+    """Time dimension name in a metric."""
+
+    id: Optional[int] = betterproto.message_field(2, wraps=betterproto.TYPE_INT64)
+    """ID of the time dimension."""
+
+
+@dataclass(eq=False, repr=False)
+class UpdateMetricResponseWeightDimension(betterproto.Message):
+    """Weight dimension in a metric."""
+
+    name: Optional[str] = betterproto.message_field(1, wraps=betterproto.TYPE_STRING)
+    """Weight dimension name in a metric."""
+
+    id: Optional[int] = betterproto.message_field(2, wraps=betterproto.TYPE_INT64)
+    """ID of the weight dimension."""
 
 
 @dataclass(eq=False, repr=False)
@@ -2331,6 +2529,23 @@ class MetricServiceStub(betterproto.ServiceStub):
             metadata=metadata,
         )
 
+    async def update_metric(
+        self,
+        update_metric_request: "UpdateMetricRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "UpdateMetricResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.MetricService/UpdateMetric",
+            update_metric_request,
+            UpdateMetricResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
 
 class DatasetServiceStub(betterproto.ServiceStub):
     async def data_sets(
@@ -2790,6 +3005,11 @@ class MetricServiceBase(ServiceBase):
     ) -> "GetMetricResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def update_metric(
+        self, update_metric_request: "UpdateMetricRequest"
+    ) -> "UpdateMetricResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_metrics_list(
         self, stream: "grpclib.server.Stream[MetricsListRequest, MetricsListResponse]"
     ) -> None:
@@ -2811,6 +3031,13 @@ class MetricServiceBase(ServiceBase):
         response = await self.get_metric(request)
         await stream.send_message(response)
 
+    async def __rpc_update_metric(
+        self, stream: "grpclib.server.Stream[UpdateMetricRequest, UpdateMetricResponse]"
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.update_metric(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.MetricService/MetricsList": grpclib.const.Handler(
@@ -2830,6 +3057,12 @@ class MetricServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 GetMetricRequest,
                 GetMetricResponse,
+            ),
+            "/sisu.v1.api.MetricService/UpdateMetric": grpclib.const.Handler(
+                self.__rpc_update_metric,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                UpdateMetricRequest,
+                UpdateMetricResponse,
             ),
         }
 

@@ -1,6 +1,6 @@
 from unittest import mock
 
-from pysisu.proto.sisu.v1.api import CreateDataSetRequestDataset, ModifyDataSourceRequest
+from pysisu.proto.sisu.v1.api import CreateDataSetRequestDataset, ModifyDataSourceRequest, UpdateMetricRequest
 
 from .helpers_for_tests import SNAPSHOT_DICT
 
@@ -210,4 +210,11 @@ def test_delete_dataset_by_id(mock_call_sisu_api, pysisu_client):
     pysisu_client.delete_dataset_by_id(1)
     validate_api_call(
         mock_call_sisu_api, "DELETE", "api/v1/datasets/1"
+    )
+
+@mock.patch("pysisu.pysisu_class.PySisu._call_sisu_api")
+def test_update_metric(mock_call_sisu_api, pysisu_client):
+    pysisu_client.update_metric(1, update_metric_req=UpdateMetricRequest())
+    validate_api_call(
+        mock_call_sisu_api, "PATCH", "api/v1/metrics/1"
     )

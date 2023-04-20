@@ -51,6 +51,8 @@ from .proto.sisu.v1.api import (
     GetProjectResponse,
     GetDatasetResponse,
     DeleteDatasetResponse,
+    UpdateMetricRequest,
+    UpdateMetricResponse
 )
 from .query_helpers import build_url, pathjoin, semver_parse
 from .version import __version__ as PYSISU_VERSION
@@ -423,4 +425,19 @@ class PySisu:
         url_path = build_url(self._url, pathjoin(*path), {})
         return DeleteDatasetResponse().from_dict(
             self._call_sisu_api(url_path, request_method="DELETE")
+        )
+
+    def update_metric(
+        self,
+        metric_id: int,
+        update_metric_req: UpdateMetricRequest,
+    ) -> UpdateMetricResponse:
+        path = [f"api/v1/metrics/{metric_id}"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return UpdateMetricResponse().from_dict(
+            self._call_sisu_api(
+                url_path,
+                request_method="PATCH",
+                json=update_metric_req.to_dict(),
+            )
         )
