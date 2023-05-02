@@ -51,6 +51,15 @@ class SqlDataType(betterproto.Enum):
     SQL_DATA_TYPE_BOOLEAN = 5
 
 
+class AggregationPeriod(betterproto.Enum):
+    AGGREGATION_PERIOD_UNKNOWN = 0
+    AGGREGATION_PERIOD_HOURLY = 1
+    AGGREGATION_PERIOD_DAILY = 2
+    AGGREGATION_PERIOD_WEEKLY = 3
+    AGGREGATION_PERIOD_MONTHLY = 4
+    AGGREGATION_PERIOD_ANNUALLY = 5
+
+
 class ExpressionBasicExpressionOperator(betterproto.Enum):
     OPERATOR_UNKNOWN = 0
     OPERATOR_LT = 1
@@ -1233,7 +1242,7 @@ class Metric(betterproto.Message):
         4, wraps=betterproto.TYPE_STRING
     )
     """
-    The name of metric's time dimension which represnts the date range of the
+    The name of metric's time dimension which represents the date range of the
     metric.
     """
 
@@ -1434,7 +1443,7 @@ class DataSetDimensionsListRequest(betterproto.Message):
 
 @dataclass(eq=False, repr=False)
 class Dimension(betterproto.Message):
-    """Represents a dimension (column) within a specfic `Dataset`."""
+    """Represents a dimension (column) within a specific `Dataset`."""
 
     name: str = betterproto.string_field(1)
     """
@@ -1456,7 +1465,7 @@ class Dimension(betterproto.Message):
 
 @dataclass(eq=False, repr=False)
 class AnalysisDimension(betterproto.Message):
-    """Represents a dimension (column) within a specfic `analsyis`."""
+    """Represents a dimension (column) within a specific `analysis`."""
 
     name: str = betterproto.string_field(1)
     """
@@ -1656,7 +1665,7 @@ class DuplicateAnalysisRequest(betterproto.Message):
     """Analysis id to be duplicated"""
 
     name: str = betterproto.string_field(2)
-    """optinal name for the new analysis"""
+    """optional name for the new analysis"""
 
 
 @dataclass(eq=False, repr=False)
@@ -1920,12 +1929,12 @@ class CreateAnalysisRequestAnalysis(betterproto.Message):
         3, wraps=betterproto.TYPE_STRING
     )
     """
-    The name of metric's time dimension which represnts the date range of the
+    The name of metric's time dimension which represents the date range of the
     metric.
     """
 
     metric_id: int = betterproto.uint64_field(4)
-    """The metic id which the analysis depends on."""
+    """The metric id which the analysis depends on."""
 
     filter_expression: "Expression" = betterproto.message_field(5)
     """
@@ -1948,12 +1957,12 @@ class CreateAnalysisRequestAnalysis(betterproto.Message):
 
     group_a_expression: "Expression" = betterproto.message_field(9)
     """
-    A filter expression where group a is denfined in a Group compare analysis.
+    A filter expression where group a is defined in a Group compare analysis.
     """
 
     group_b_expression: "Expression" = betterproto.message_field(10)
     """
-    A filter expression where group b is denfined in a Group compare analysis.
+    A filter expression where group b is defined in a Group compare analysis.
     """
 
     recent_range: "TimeWindow" = betterproto.message_field(11)
@@ -1975,7 +1984,7 @@ class CreateAnalysisResponse(betterproto.Message):
         3, wraps=betterproto.TYPE_STRING
     )
     """
-    The name of metric's time dimension which represnts the date range of the
+    The name of metric's time dimension which represents the date range of the
     metric.
     """
 
@@ -1986,7 +1995,7 @@ class CreateAnalysisResponse(betterproto.Message):
     """
 
     metric_id: int = betterproto.int32_field(5)
-    """The metic id which the analysis depends on."""
+    """The metric id which the analysis depends on."""
 
     time_range: "TimeWindow" = betterproto.message_field(6)
     """A time window the analysis should run on."""
@@ -2003,12 +2012,12 @@ class CreateAnalysisResponse(betterproto.Message):
 
     group_a_expression: "Expression" = betterproto.message_field(9)
     """
-    A filter expression where group a is denfined in a Group compare analysis.
+    A filter expression where group a is defined in a Group compare analysis.
     """
 
     group_b_expression: "Expression" = betterproto.message_field(10)
     """
-    A filter expression where group b is denfined in a Group compare analysis.
+    A filter expression where group b is defined in a Group compare analysis.
     """
 
     project_id: int = betterproto.int32_field(11)
@@ -2048,7 +2057,7 @@ class ModifyAnalysisRequestAnalysis(betterproto.Message):
         2, wraps=betterproto.TYPE_STRING, optional=True, group="_time_dimension_name"
     )
     """
-    The name of metric's time dimension which represnts the date range of the
+    The name of metric's time dimension which represents the date range of the
     metric.
     """
 
@@ -2079,14 +2088,14 @@ class ModifyAnalysisRequestAnalysis(betterproto.Message):
         7, optional=True, group="_group_a_expression"
     )
     """
-    A filter expression where group a is denfined in a Group compare analysis.
+    A filter expression where group a is defined in a Group compare analysis.
     """
 
     group_b_expression: Optional["Expression"] = betterproto.message_field(
         8, optional=True, group="_group_b_expression"
     )
     """
-    A filter expression where group b is denfined in a Group compare analysis.
+    A filter expression where group b is defined in a Group compare analysis.
     """
 
     recent_range: Optional["TimeWindow"] = betterproto.message_field(
@@ -2126,7 +2135,7 @@ class UpdateAnalysisRequestAnalysis(betterproto.Message):
         3, wraps=betterproto.TYPE_STRING
     )
     """
-    The name of metric's time dimension which represnts the date range of the
+    The name of metric's time dimension which represents the date range of the
     metric.
     """
 
@@ -2151,12 +2160,12 @@ class UpdateAnalysisRequestAnalysis(betterproto.Message):
 
     group_a_expression: "Expression" = betterproto.message_field(8)
     """
-    A filter expression where group a is denfined in a Group compare analysis.
+    A filter expression where group a is defined in a Group compare analysis.
     """
 
     group_b_expression: "Expression" = betterproto.message_field(9)
     """
-    A filter expression where group b is denfined in a Group compare analysis.
+    A filter expression where group b is defined in a Group compare analysis.
     """
 
     recent_range: "TimeWindow" = betterproto.message_field(10)
@@ -2178,7 +2187,7 @@ class UpdateAnalysisResponse(betterproto.Message):
         3, wraps=betterproto.TYPE_STRING
     )
     """
-    The name of metric's time dimension which represnts the date range of the
+    The name of metric's time dimension which represents the date range of the
     metric.
     """
 
@@ -2189,7 +2198,7 @@ class UpdateAnalysisResponse(betterproto.Message):
     """
 
     metric_id: int = betterproto.uint64_field(5)
-    """The metic id which the analysis depends on."""
+    """The metric id which the analysis depends on."""
 
     time_range: "TimeWindow" = betterproto.message_field(6)
     """A time window the analysis should run on."""
@@ -2206,12 +2215,12 @@ class UpdateAnalysisResponse(betterproto.Message):
 
     group_a_expression: "Expression" = betterproto.message_field(9)
     """
-    A filter expression where group a is denfined in a Group compare analysis.
+    A filter expression where group a is defined in a Group compare analysis.
     """
 
     group_b_expression: "Expression" = betterproto.message_field(10)
     """
-    A filter expression where group b is denfined in a Group compare analysis.
+    A filter expression where group b is defined in a Group compare analysis.
     """
 
     project_id: int = betterproto.uint64_field(11)
@@ -2239,10 +2248,10 @@ class UpdateAnalysisResponse(betterproto.Message):
 @dataclass(eq=False, repr=False)
 class WaterfallStep(betterproto.Message):
     cumulative_impact_before_step: float = betterproto.double_field(1)
-    """The cummulative value of impact prior to the waterfall step."""
+    """The cumulative value of impact prior to the waterfall step."""
 
     cumulative_impact_after_step: float = betterproto.double_field(2)
-    """The cummulative value of impact after to the waterfall step."""
+    """The cumulative value of impact after to the waterfall step."""
 
     overlapping_impact: float = betterproto.double_field(3)
     """The value of overlapping impact."""
@@ -2286,6 +2295,100 @@ class WaterfallAnalysisResponse(betterproto.Message):
 class WaterfallAnalysisRequest(betterproto.Message):
     id: int = betterproto.uint64_field(1)
     """Analysis id"""
+
+
+@dataclass(eq=False, repr=False)
+class GetAnalysisRequest(betterproto.Message):
+    id: int = betterproto.uint64_field(1)
+    """Analysis id to be fetch."""
+
+
+@dataclass(eq=False, repr=False)
+class GetAnalysisResponse(betterproto.Message):
+    name: str = betterproto.string_field(1)
+    """The name of the analysis."""
+
+    id: int = betterproto.int32_field(2)
+    """Analysis id."""
+
+    time_dimension_name: Optional[str] = betterproto.message_field(
+        3, wraps=betterproto.TYPE_STRING
+    )
+    """
+    The name of metric's time dimension which represents the date range of the
+    metric.
+    """
+
+    filter_expression: "Expression" = betterproto.message_field(4)
+    """
+    An Expression which would facilitate building a filter expression on the
+    analysis.
+    """
+
+    metric_id: int = betterproto.int32_field(5)
+    """The metric id which the analysis depends on."""
+
+    time_range: "TimeWindow" = betterproto.message_field(6)
+    """A time window the analysis should run on."""
+
+    group_a_name: Optional[str] = betterproto.message_field(
+        7, wraps=betterproto.TYPE_STRING
+    )
+    """The Group a name in a Group compare analysis."""
+
+    group_b_name: Optional[str] = betterproto.message_field(
+        8, wraps=betterproto.TYPE_STRING
+    )
+    """The Group b name in a Group compare analysis."""
+
+    group_a_expression: "Expression" = betterproto.message_field(9)
+    """
+    A filter expression where group a is defined in a Group compare analysis.
+    """
+
+    group_b_expression: "Expression" = betterproto.message_field(10)
+    """
+    A filter expression where group b is defined in a Group compare analysis.
+    """
+
+    project_id: int = betterproto.int32_field(11)
+    """Project id corresponding to the analysis."""
+
+    type: "AnalysisType" = betterproto.enum_field(12)
+    """The Type of the analysis."""
+
+    created_at: datetime = betterproto.message_field(13)
+    """Timestamp when the analysis was created."""
+
+    application_url: str = betterproto.string_field(14)
+    """
+    Link to the live sisu analysis this represents. ex:
+    vip.sisudata.com/projects/{id}/analysis/{id}
+    """
+
+    recent_range: "TimeWindow" = betterproto.message_field(15)
+    """Recent time window range used for time compare analysis."""
+
+    previous_range: "TimeWindow" = betterproto.message_field(16)
+    """Previous time window range used for time compare analysis."""
+
+    created_by_email: str = betterproto.string_field(17)
+    """Email ID of a user who created the analysis."""
+
+    last_modified_at: datetime = betterproto.message_field(18)
+    """Timestamp of when analysis was last modified."""
+
+    last_modified_by_email: str = betterproto.string_field(19)
+    """Email ID of a user last modified this metric."""
+
+    last_run: datetime = betterproto.message_field(20)
+    """Timestamp of when analysis was last modified."""
+
+    applied_dimensions: List[str] = betterproto.string_field(21)
+    """List of applied dimensions name."""
+
+    aggregation_period: "AggregationPeriod" = betterproto.enum_field(22)
+    """Summary period of the analysis."""
 
 
 class AnalysesServiceStub(betterproto.ServiceStub):
@@ -2471,6 +2574,23 @@ class AnalysesServiceStub(betterproto.ServiceStub):
             "/sisu.v1.api.AnalysesService/DeleteAnalysis",
             delete_analysis_request,
             DeleteAnalysisResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+    async def get_analysis(
+        self,
+        get_analysis_request: "GetAnalysisRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "GetAnalysisResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.AnalysesService/GetAnalysis",
+            get_analysis_request,
+            GetAnalysisResponse,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2832,6 +2952,11 @@ class AnalysesServiceBase(ServiceBase):
     ) -> "DeleteAnalysisResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def get_analysis(
+        self, get_analysis_request: "GetAnalysisRequest"
+    ) -> "GetAnalysisResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_analyses_list(
         self, stream: "grpclib.server.Stream[AnalysesListRequest, AnalysesListResponse]"
     ) -> None:
@@ -2918,6 +3043,13 @@ class AnalysesServiceBase(ServiceBase):
         response = await self.delete_analysis(request)
         await stream.send_message(response)
 
+    async def __rpc_get_analysis(
+        self, stream: "grpclib.server.Stream[GetAnalysisRequest, GetAnalysisResponse]"
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.get_analysis(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.AnalysesService/AnalysesList": grpclib.const.Handler(
@@ -2985,6 +3117,12 @@ class AnalysesServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DeleteAnalysisRequest,
                 DeleteAnalysisResponse,
+            ),
+            "/sisu.v1.api.AnalysesService/GetAnalysis": grpclib.const.Handler(
+                self.__rpc_get_analysis,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                GetAnalysisRequest,
+                GetAnalysisResponse,
             ),
         }
 

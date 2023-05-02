@@ -185,6 +185,7 @@ def test_modify_data_source(mock_call_sisu_api, pysisu_client):
         mock_call_sisu_api, "PATCH", "api/v1/data_sources/1"
     )
 
+
 @mock.patch("pysisu.pysisu_class.PySisu._call_sisu_api")
 def test_get_project(mock_call_sisu_api, pysisu_client):
     pysisu_client.get_project(1)
@@ -211,6 +212,15 @@ def test_delete_dataset_by_id(mock_call_sisu_api, pysisu_client):
     validate_api_call(
         mock_call_sisu_api, "DELETE", "api/v1/datasets/1"
     )
+
+
+@mock.patch("pysisu.pysisu_class.PySisu._call_sisu_api")
+def test_get_analysis(mock_call_sisu_api, pysisu_client):
+    pysisu_client.get_analysis(1)
+    validate_api_call(
+        mock_call_sisu_api, "GET", "api/v1/analyses/1"
+    )
+
 
 @mock.patch("pysisu.pysisu_class.PySisu._call_sisu_api")
 def test_update_metric(mock_call_sisu_api, pysisu_client):

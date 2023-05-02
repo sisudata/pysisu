@@ -34,6 +34,7 @@ from .proto.sisu.v1.api import (
     DeleteMetricResponse,
     DuplicateAnalysisResponse,
     GetAnalysisFiltersResponse,
+    GetAnalysisResponse,
     GetMetricResponse,
     GetDataSourceResponse,
     GetProjectsAnalysesListResponse,
@@ -425,6 +426,15 @@ class PySisu:
         url_path = build_url(self._url, pathjoin(*path), {})
         return DeleteDatasetResponse().from_dict(
             self._call_sisu_api(url_path, request_method="DELETE")
+        )
+
+    def get_analysis(
+            self, analysis_id: int,
+    ) -> GetAnalysisResponse:
+        path = [f"api/v1/analyses/{analysis_id}"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return GetAnalysisResponse().from_dict(
+            self._call_sisu_api(url_path, request_method="GET")
         )
 
     def update_metric(
