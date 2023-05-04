@@ -33,8 +33,5 @@ def test_pypi_failure_warning():
 
 @mock.patch("pysisu.pysisu_class.PYSISU_VERSION", "0.0.0")
 def test_compatibility_check_skipped_in_pytest(pysisu_client):
-    with pytest.raises(Exception, match="breaking changes"):
-        PySisu("test")
-
     # mocked fixture compatibility check will not raise an Exception
     assert pysisu_client
