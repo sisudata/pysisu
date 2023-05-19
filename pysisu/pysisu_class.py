@@ -53,7 +53,7 @@ from .proto.sisu.v1.api import (
     GetDatasetResponse,
     DeleteDatasetResponse,
     UpdateMetricRequest,
-    UpdateMetricResponse
+    UpdateMetricResponse, OrchestratorCreateRunAnalysisRequest, OrchestratorCreateRunAnalysisResponse,
 )
 from .query_helpers import build_url, pathjoin, semver_parse
 from .version import __version__ as PYSISU_VERSION
@@ -428,6 +428,25 @@ class PySisu:
             self._call_sisu_api(url_path, request_method="DELETE")
         )
 
+    def orchestrator_create_and_run_analysis(self, body: OrchestratorCreateRunAnalysisRequest
+                                     ) -> OrchestratorCreateRunAnalysisResponse:
+        """
+        An oneshot method to seamlessly create and run new analysis using following combination.
+        1. Using new dataset and new metric.
+        2. Using existing dataset(by providing id) and new metric.
+        3. Using existing metric(by providing id).
+        When awaitResult is True, wait for analysis to get completed and includes analysis result in the response.
+        When awaitResult is False, runs the analysis and returns the response with analysis id. User can get the
+        analysis result by calling PySisu fetch_sisu_api(analysis_id) method.
+        """
+        path = [f"api/v1/orchestrator"]
+        url_path = build_url(self._url, pathjoin(*path), {})
+        return OrchestratorCreateRunAnalysisResponse().from_dict(
+            self._call_sisu_api(
+                url_path, request_method="POST", json=body.to_dict()
+            )
+        )
+
     def get_analysis(
             self, analysis_id: int,
     ) -> GetAnalysisResponse:
@@ -451,3 +470,4 @@ class PySisu:
                 json=update_metric_req.to_dict(),
             )
         )
+

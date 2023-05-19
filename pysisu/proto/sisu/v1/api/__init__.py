@@ -202,6 +202,71 @@ class DatasetDatasetType(betterproto.Enum):
     """Data is sourced from a user-defined query."""
 
 
+class OrchestratorMetricMetricDesiredDirection(betterproto.Enum):
+    """
+    Specifies whether the metric's goal is to increase or decrease the kpi
+    value. Default value is increase.
+    """
+
+    DESIRED_DIRECTION_UNKNOWN = 0
+    INCREASE = 1
+    DECREASE = 2
+
+
+class OrchestratorMetricAggregate(betterproto.Enum):
+    """
+    The aggregation method that is used to evaluate the metric's dimension.
+    Required when id is not specified.
+    """
+
+    UNKNOWN = 0
+    AVERAGE = 1
+    """Average of a single metric dimension(e.g., average order value)."""
+
+    SUM = 2
+    """Sum of a single metric dimension(e.g., total revenue)."""
+
+    WEIGHTED_SUM = 3
+    """
+    Sum of a metric dimension weighted by a weight dimension(e.g., price per
+    share).
+    """
+
+    WEIGHTED_AVERAGE = 4
+    """
+    Average of a metric dimension weighted by a weight dimension(e.g., price
+    per share).
+    """
+
+    CATEGORICAL_COUNT = 5
+    """
+    Count of a matching condition in a metric dimension(e.g., number of
+    churns).
+    """
+
+    CATEGORICAL_RATE = 6
+    """
+    Rate of a matching condition in a metric dimension(e.g., churn rate).
+    """
+
+    COUNT_DISTINCT = 7
+    """
+    Count of a matching condition in a metric dimension(e.g., number of
+    churns).
+    """
+
+    NUMERICAL_COUNT = 8
+    """
+    Count of the rows of a single metric dimension(e.g., number of orders).
+    """
+
+    NUMERICAL_RATE = 9
+    """
+    A metric dimension divided by a denominator dimension(e.g., lead conversion
+    rate).
+    """
+
+
 @dataclass(eq=False, repr=False)
 class GetAnalysisFiltersRequest(betterproto.Message):
     """Request parameters for analysis filters endpoints"""
@@ -1686,6 +1751,197 @@ class DeleteAnalysisResponse(betterproto.Message):
 
 
 @dataclass(eq=False, repr=False)
+class OrchestratorDataset(betterproto.Message):
+    data_source_id: Optional[int] = betterproto.uint64_field(
+        1, optional=True, group="_data_source_id"
+    )
+    """
+    ID of the datasource from which the dataset can be fetched. Required when
+    id or metric id is not specified.
+    """
+
+    name: Optional[str] = betterproto.string_field(2, optional=True, group="_name")
+    """
+    The name of the newly created query. If not specified, unique dataset name
+    will be given in format dataset_USER_NAME_DATETIME. ex:
+    dataset_sisuuser_2023-04-13T17:10:52Z.
+    """
+
+    sql: Optional[str] = betterproto.string_field(3, optional=True, group="_sql")
+    """
+    Custom SQL query to use on the datasource id. Required when id or metric id
+    is not specified.
+    """
+
+    id: Optional[int] = betterproto.uint64_field(4, optional=True, group="_id")
+    """The dataset id of existing custom SQL query."""
+
+
+@dataclass(eq=False, repr=False)
+class OrchestratorMetric(betterproto.Message):
+    name: Optional[str] = betterproto.string_field(1, optional=True, group="_name")
+    """
+    The name of the newly created metric. If not specified, metric name will be
+    given in format metric_METRIC_DIMENSION.
+    """
+
+    desired_direction: Optional[
+        "OrchestratorMetricMetricDesiredDirection"
+    ] = betterproto.enum_field(2, optional=True, group="_desired_direction")
+    aggregate: Optional["OrchestratorMetricAggregate"] = betterproto.enum_field(
+        3, optional=True, group="_aggregate"
+    )
+    metric_dimension: Optional[str] = betterproto.string_field(
+        4, optional=True, group="_metric_dimension"
+    )
+    """
+    Name of the dimension of the connected dataset on which the metric is
+    based. Required when id is not specified.
+    """
+
+    weight_dimension: Optional[str] = betterproto.string_field(
+        5, optional=True, group="_weight_dimension"
+    )
+    """
+    The name of the weight dimension. A weight dimension is used to increases
+    the importance of a given row in an analysis. Required for aggregate values
+    WEIGHTED_SUM, WEIGHTED_AVERAGE and NUMERICAL_RATE.
+    """
+
+    id: Optional[int] = betterproto.uint64_field(6, optional=True, group="_id")
+    """Metric id."""
+
+
+@dataclass(eq=False, repr=False)
+class OrchestratorDimension(betterproto.Message):
+    use_all_dimensions: Optional[bool] = betterproto.bool_field(
+        1, optional=True, group="_use_all_dimensions"
+    )
+    """
+    If true, all dimensions of the dataset will be used for analysis. If false,
+    the specified dimensions will be used for Analysis. If false and no
+    dimensions are specified, then smart dimensions will be used for Analysis.
+    """
+
+    dimension_list: List[
+        "OrchestratorDimensionDimensionName"
+    ] = betterproto.message_field(2)
+    """List of the dimensions to be used for analysis."""
+
+
+@dataclass(eq=False, repr=False)
+class OrchestratorDimensionDimensionName(betterproto.Message):
+    name: str = betterproto.string_field(1)
+
+
+@dataclass(eq=False, repr=False)
+class OrchestratorAnalysis(betterproto.Message):
+    project_id: Optional[int] = betterproto.uint64_field(
+        1, optional=True, group="_project_id"
+    )
+    """
+    The project id to which the analysis would belong. If not specified,
+    analysis would be created in default project.
+    """
+
+    name: Optional[str] = betterproto.string_field(2, optional=True, group="_name")
+    """
+    The name of the newly created analysis. If not specified, unique analysis
+    name will be given in format analysis_USERNAME_DATETIME. ex:
+    analysis_sisuuser_2023-04-13T17:10:52Z.
+    """
+
+    time_dimension: Optional[str] = betterproto.string_field(
+        3, optional=True, group="_time_dimension"
+    )
+    """
+    The name of metric's time dimension which represents the date range of the
+    metric.
+    """
+
+    time_compare: "OrchestratorAnalysisTimeCompare" = betterproto.message_field(4)
+    time_range: "TimeWindow" = betterproto.message_field(5)
+    """A time window the analysis should run on."""
+
+
+@dataclass(eq=False, repr=False)
+class OrchestratorAnalysisTimeCompare(betterproto.Message):
+    """
+    Recent and previous time window range used for time compare analysis.
+    """
+
+    recent_range: "TimeWindow" = betterproto.message_field(1)
+    """Recent time window range used for time compare analysis."""
+
+    previous_range: "TimeWindow" = betterproto.message_field(2)
+    """Previous time window range used for time compare analysis."""
+
+
+@dataclass(eq=False, repr=False)
+class OrchestratorCreateRunAnalysisRequest(betterproto.Message):
+    dataset: Optional["OrchestratorDataset"] = betterproto.message_field(
+        1, optional=True, group="_dataset"
+    )
+    metric: "OrchestratorMetric" = betterproto.message_field(2)
+    dimension: Optional["OrchestratorDimension"] = betterproto.message_field(
+        3, optional=True, group="_dimension"
+    )
+    analysis: Optional["OrchestratorAnalysis"] = betterproto.message_field(
+        4, optional=True, group="_analysis"
+    )
+
+
+@dataclass(eq=False, repr=False)
+class OrchestratorCreateRunAnalysisResponse(betterproto.Message):
+    name: str = betterproto.string_field(1)
+    """The name of the analysis."""
+
+    id: int = betterproto.uint64_field(2)
+    """Analysis id."""
+
+    time_dimension: Optional[str] = betterproto.message_field(
+        3, wraps=betterproto.TYPE_STRING
+    )
+    """
+    The name of metric's time dimension which represents the date range of the
+    metric.
+    """
+
+    metric_id: int = betterproto.uint64_field(4)
+    """The metric id which the analysis depends on."""
+
+    project_id: int = betterproto.uint64_field(5)
+    """Project id corresponding to the analysis."""
+
+    type: "AnalysisType" = betterproto.enum_field(6)
+    """The Type of the analysis."""
+
+    created_at: datetime = betterproto.message_field(7)
+    """Timestamp when the analysis was created."""
+
+    application_url: str = betterproto.string_field(8)
+    """
+    Link to the live sisu analysis this represents. ex:
+    vip.sisudata.com/projects/{id}/analysis/{id}.
+    """
+
+    recent_range: "TimeWindow" = betterproto.message_field(9)
+    """Recent time window range used for time compare analysis."""
+
+    previous_range: "TimeWindow" = betterproto.message_field(10)
+    """Previous time window range used for time compare analysis."""
+
+    time_range: "TimeWindow" = betterproto.message_field(11)
+    """A time window the analysis should run on."""
+
+    dataset_id: int = betterproto.uint64_field(12)
+    """ID of dataset."""
+
+    result_id: int = betterproto.uint64_field(13)
+    """The analysis result id."""
+
+
+@dataclass(eq=False, repr=False)
 class GetSegmentDataRequest(betterproto.Message):
     id: int = betterproto.uint64_field(1)
     """Segment id to get data for."""
@@ -1895,10 +2151,16 @@ class GetProjectsAnalysesListResponse(betterproto.Message):
 @dataclass(eq=False, repr=False)
 class TimeWindow(betterproto.Message):
     start_date: datetime = betterproto.message_field(1)
-    """Start date inclsuvie."""
+    """
+    Start date inclusive in format %Y-%m-%dT%H:%M:%S.%fZ. ex:
+    2023-04-13T17:10:52Z.
+    """
 
     end_date: datetime = betterproto.message_field(2)
-    """End date exclusive."""
+    """
+    End date exclusive in format %Y-%m-%dT%H:%M:%S.%fZ. ex:
+    2023-04-13T17:10:52Z.
+    """
 
 
 @dataclass(eq=False, repr=False)
@@ -2596,6 +2858,23 @@ class AnalysesServiceStub(betterproto.ServiceStub):
             metadata=metadata,
         )
 
+    async def orchestrator_create_run_analysis(
+        self,
+        orchestrator_create_run_analysis_request: "OrchestratorCreateRunAnalysisRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "OrchestratorCreateRunAnalysisResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.AnalysesService/OrchestratorCreateRunAnalysis",
+            orchestrator_create_run_analysis_request,
+            OrchestratorCreateRunAnalysisResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
 
 class MetricServiceStub(betterproto.ServiceStub):
     async def metrics_list(
@@ -2957,6 +3236,12 @@ class AnalysesServiceBase(ServiceBase):
     ) -> "GetAnalysisResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
+    async def orchestrator_create_run_analysis(
+        self,
+        orchestrator_create_run_analysis_request: "OrchestratorCreateRunAnalysisRequest",
+    ) -> "OrchestratorCreateRunAnalysisResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
     async def __rpc_analyses_list(
         self, stream: "grpclib.server.Stream[AnalysesListRequest, AnalysesListResponse]"
     ) -> None:
@@ -3050,6 +3335,14 @@ class AnalysesServiceBase(ServiceBase):
         response = await self.get_analysis(request)
         await stream.send_message(response)
 
+    async def __rpc_orchestrator_create_run_analysis(
+        self,
+        stream: "grpclib.server.Stream[OrchestratorCreateRunAnalysisRequest, OrchestratorCreateRunAnalysisResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.orchestrator_create_run_analysis(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.AnalysesService/AnalysesList": grpclib.const.Handler(
@@ -3123,6 +3416,12 @@ class AnalysesServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 GetAnalysisRequest,
                 GetAnalysisResponse,
+            ),
+            "/sisu.v1.api.AnalysesService/OrchestratorCreateRunAnalysis": grpclib.const.Handler(
+                self.__rpc_orchestrator_create_run_analysis,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                OrchestratorCreateRunAnalysisRequest,
+                OrchestratorCreateRunAnalysisResponse,
             ),
         }
 
