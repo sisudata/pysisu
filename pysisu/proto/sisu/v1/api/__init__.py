@@ -848,6 +848,15 @@ class KeyDriverAnalysisResultSegment(betterproto.Message):
     )
     """custom calculation statistics."""
 
+    sisu_rank: Optional[int] = betterproto.message_field(
+        10, wraps=betterproto.TYPE_INT64
+    )
+    """
+    A segment's recommendedRank is determined by its percentage change as well
+    as how certain Sisu's statistical models are that the segment is worth
+    paying attention to.
+    """
+
 
 @dataclass(eq=False, repr=False)
 class KeyDriverAnalysisResultSegmentGroupComparisonPerformance(betterproto.Message):
@@ -1814,19 +1823,13 @@ class OrchestratorMetric(betterproto.Message):
 
 @dataclass(eq=False, repr=False)
 class OrchestratorDimension(betterproto.Message):
-    use_all_dimensions: Optional[bool] = betterproto.bool_field(
-        1, optional=True, group="_use_all_dimensions"
-    )
-    """
-    If true, all dimensions of the dataset will be used for analysis. If false,
-    the specified dimensions will be used for Analysis. If false and no
-    dimensions are specified, then smart dimensions will be used for Analysis.
-    """
-
     dimension_list: List[
         "OrchestratorDimensionDimensionName"
-    ] = betterproto.message_field(2)
-    """List of the dimensions to be used for analysis."""
+    ] = betterproto.message_field(1)
+    """
+    List of the dimensions to be used for analysis. When dimensions are not
+    provided, all dimensions of the dataset will be used for analysis.
+    """
 
 
 @dataclass(eq=False, repr=False)
@@ -2653,6 +2656,25 @@ class GetAnalysisResponse(betterproto.Message):
     """Summary period of the analysis."""
 
 
+class OrchestratorServiceStub(betterproto.ServiceStub):
+    async def orchestrator_create_run_analysis(
+        self,
+        orchestrator_create_run_analysis_request: "OrchestratorCreateRunAnalysisRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "OrchestratorCreateRunAnalysisResponse":
+        return await self._unary_unary(
+            "/sisu.v1.api.OrchestratorService/OrchestratorCreateRunAnalysis",
+            orchestrator_create_run_analysis_request,
+            OrchestratorCreateRunAnalysisResponse,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
+
 class AnalysesServiceStub(betterproto.ServiceStub):
     async def analyses_list(
         self,
@@ -2853,23 +2875,6 @@ class AnalysesServiceStub(betterproto.ServiceStub):
             "/sisu.v1.api.AnalysesService/GetAnalysis",
             get_analysis_request,
             GetAnalysisResponse,
-            timeout=timeout,
-            deadline=deadline,
-            metadata=metadata,
-        )
-
-    async def orchestrator_create_run_analysis(
-        self,
-        orchestrator_create_run_analysis_request: "OrchestratorCreateRunAnalysisRequest",
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
-    ) -> "OrchestratorCreateRunAnalysisResponse":
-        return await self._unary_unary(
-            "/sisu.v1.api.AnalysesService/OrchestratorCreateRunAnalysis",
-            orchestrator_create_run_analysis_request,
-            OrchestratorCreateRunAnalysisResponse,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -3175,6 +3180,32 @@ class ProjectsServiceStub(betterproto.ServiceStub):
         )
 
 
+class OrchestratorServiceBase(ServiceBase):
+    async def orchestrator_create_run_analysis(
+        self,
+        orchestrator_create_run_analysis_request: "OrchestratorCreateRunAnalysisRequest",
+    ) -> "OrchestratorCreateRunAnalysisResponse":
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def __rpc_orchestrator_create_run_analysis(
+        self,
+        stream: "grpclib.server.Stream[OrchestratorCreateRunAnalysisRequest, OrchestratorCreateRunAnalysisResponse]",
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.orchestrator_create_run_analysis(request)
+        await stream.send_message(response)
+
+    def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
+        return {
+            "/sisu.v1.api.OrchestratorService/OrchestratorCreateRunAnalysis": grpclib.const.Handler(
+                self.__rpc_orchestrator_create_run_analysis,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                OrchestratorCreateRunAnalysisRequest,
+                OrchestratorCreateRunAnalysisResponse,
+            ),
+        }
+
+
 class AnalysesServiceBase(ServiceBase):
     async def analyses_list(
         self, analyses_list_request: "AnalysesListRequest"
@@ -3234,12 +3265,6 @@ class AnalysesServiceBase(ServiceBase):
     async def get_analysis(
         self, get_analysis_request: "GetAnalysisRequest"
     ) -> "GetAnalysisResponse":
-        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
-
-    async def orchestrator_create_run_analysis(
-        self,
-        orchestrator_create_run_analysis_request: "OrchestratorCreateRunAnalysisRequest",
-    ) -> "OrchestratorCreateRunAnalysisResponse":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def __rpc_analyses_list(
@@ -3335,14 +3360,6 @@ class AnalysesServiceBase(ServiceBase):
         response = await self.get_analysis(request)
         await stream.send_message(response)
 
-    async def __rpc_orchestrator_create_run_analysis(
-        self,
-        stream: "grpclib.server.Stream[OrchestratorCreateRunAnalysisRequest, OrchestratorCreateRunAnalysisResponse]",
-    ) -> None:
-        request = await stream.recv_message()
-        response = await self.orchestrator_create_run_analysis(request)
-        await stream.send_message(response)
-
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/sisu.v1.api.AnalysesService/AnalysesList": grpclib.const.Handler(
@@ -3416,12 +3433,6 @@ class AnalysesServiceBase(ServiceBase):
                 grpclib.const.Cardinality.UNARY_UNARY,
                 GetAnalysisRequest,
                 GetAnalysisResponse,
-            ),
-            "/sisu.v1.api.AnalysesService/OrchestratorCreateRunAnalysis": grpclib.const.Handler(
-                self.__rpc_orchestrator_create_run_analysis,
-                grpclib.const.Cardinality.UNARY_UNARY,
-                OrchestratorCreateRunAnalysisRequest,
-                OrchestratorCreateRunAnalysisResponse,
             ),
         }
 

@@ -73,9 +73,7 @@
                         "Relative % change": -0.9280667114551557,
                         "Relative change": -1739538.3199999488,
                         "Relative mix effect": 22.09602603542628,
-                        "Unweighted change in average": -45.81767626124708,
-                        "Weight": -44678,
-                        "Weighted change in sum": -2047042.139999997
+                        "Weight": -44678
                     }
                 },
                 {
@@ -115,9 +113,7 @@
                         "Relative % change": -0.9280667114551557,
                         "Relative change": -1739538.3199999488,
                         "Relative mix effect": 22.09602603542628,
-                        "Unweighted change in average": -45.81767626124708,
-                        "Weight": -44678,
-                        "Weighted change in sum": -2047042.139999997
+                        "Weight": -44678
                     }
                 },
                 {
@@ -152,9 +148,7 @@
                         "Relative % change": -0.9280667114551557,
                         "Relative change": -1739538.3199999488,
                         "Relative mix effect": 22.09602603542628,
-                        "Unweighted change in average": -45.81767626124708,
-                        "Weight": -44678,
-                        "Weighted change in sum": -2047042.139999997
+                        "Weight": -44678
                     }
                 },
                 {
@@ -194,46 +188,7 @@
                         "Relative % change": -0.9280667114551557,
                         "Relative change": -1739538.3199999488,
                         "Relative mix effect": 22.09602603542628,
-                        "Unweighted change in average": -45.81767626124708,
-                        "Weight": -44678,
-                        "Weighted change in sum": -2047042.139999997
-                    }
-                },
-                {
-                    "id": "2",
-                    "factors": {
-                        "attr0": {
-                            "value": {
-                                "stringValue": "D"
-                            }
-                        },
-                        "attr1": {
-                            "value": {
-                                "stringValue": "E"
-                            }
-                        }
-                    },
-                    "timeComparison": {
-                        "previousPeriodSize": 0.3333333333333333,
-                        "recentPeriodSize": 0.16666666666666666,
-                        "previousPeriodValue": 9.0,
-                        "recentPeriodValue": 20.0
-                    },
-                    "impact": 0.3333333333333335,
-                    "confidence": "CONFIDENCE_LEVEL_LOW",
-                    "customCalculations": {
-                        "Change": -14035.643245,
-                        "Change in size": -0.4822598577334499,
-                        "Mix effect": 0,
-                        "Net effect": -22.09602603542628,
-                        "Net relative effect": 0,
-                        "Rate effect": -22.09602603542628,
-                        "Relative % change": -0.9280667114551557,
-                        "Relative change": -1739538.3199999488,
-                        "Relative mix effect": 22.09602603542628,
-                        "Unweighted change in average": -45.81767626124708,
-                        "Weight": -44678,
-                        "Weighted change in sum": -2047042.139999997
+                        "Weight": -44678
                     }
                 },
                 {
@@ -273,9 +228,42 @@
                         "Relative % change": -0.9280667114551557,
                         "Relative change": -1739538.3199999488,
                         "Relative mix effect": 22.09602603542628,
-                        "Unweighted change in average": -45.81767626124708,
-                        "Weight": -44678,
-                        "Weighted change in sum": -2047042.139999997
+                        "Weight": -44678
+                    }
+                },
+                {
+                    "id": "2",
+                    "factors": {
+                        "attr0": {
+                            "value": {
+                                "stringValue": "D"
+                            }
+                        },
+                        "attr1": {
+                            "value": {
+                                "stringValue": "E"
+                            }
+                        }
+                    },
+                    "timeComparison": {
+                        "previousPeriodSize": 0.3333333333333333,
+                        "recentPeriodSize": 0.16666666666666666,
+                        "previousPeriodValue": 9.0,
+                        "recentPeriodValue": 20.0
+                    },
+                    "impact": 0.3333333333333335,
+                    "confidence": "CONFIDENCE_LEVEL_LOW",
+                    "customCalculations": {
+                        "Change": -14035.643245,
+                        "Change in size": -0.4822598577334499,
+                        "Mix effect": 0,
+                        "Net effect": -22.09602603542628,
+                        "Net relative effect": 0,
+                        "Rate effect": -22.09602603542628,
+                        "Relative % change": -0.9280667114551557,
+                        "Relative change": -1739538.3199999488,
+                        "Relative mix effect": 22.09602603542628,
+                        "Weight": -44678
                     }
                 }
             ]
