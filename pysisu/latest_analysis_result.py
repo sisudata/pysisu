@@ -262,7 +262,7 @@ def get_factor(
     elif factor_type == "bin":
         return FactorDimVal(
             dimension,
-            f"{get_rounded_value(factor.bin.lower_bound , round_to_decimal_place)}-{get_rounded_value(factor.bin.upper_bound , round_to_decimal_place)} ({get_rounded_value(factor.bin.lower_bound_percentile , round_to_decimal_place)}-{get_rounded_value(factor.bin.upper_bound_percentile , round_to_decimal_place)} percentile)",
+            f"{get_rounded_value(factor.bin.lower_bound , round_to_decimal_place)}-{get_rounded_value(factor.bin.upper_bound , round_to_decimal_place)} ({get_rounded_value(factor.bin.lower_bound_percentile , round_to_decimal_place)}-{get_rounded_value(factor.bin.upper_bound_percentile , round_to_decimal_place)} percentile) {factor.bin.tags.name if factor.bin.tags and factor.bin.tags.name != 'UNKNOWN' else ''}",
         )
     elif factor_type == "keyword":
         return FactorDimVal(dimension, factor.keyword.keyword)

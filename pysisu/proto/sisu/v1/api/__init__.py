@@ -33,6 +33,15 @@ class AnalysisType(betterproto.Enum):
     ANALYSIS_TYPE_GROUP_COMPARE = 4
 
 
+class TagType(betterproto.Enum):
+    LOW = 0
+    MEDIUM = 1
+    HIGH = 2
+    LOW_MEDIUM = 3
+    MEDIUM_HIGH = 4
+    UNKNOWN = 5
+
+
 class WorkflowCalculationType(betterproto.Enum):
     WORKFLOW_CALCULATION_TYPE_AVERAGE = 0
     WORKFLOW_CALCULATION_TYPE_SUM = 1
@@ -1061,6 +1070,12 @@ class FactorBin(betterproto.Message):
         4, wraps=betterproto.TYPE_DOUBLE
     )
     """The percentile of `upper_bound` within the factor's dimension."""
+
+    tags: Optional["TagType"] = betterproto.enum_field(5, optional=True, group="_tags")
+    """
+    tags, it returns one of the value like high, medium, low, low-medium,
+    medium-high
+    """
 
 
 @dataclass(eq=False, repr=False)
